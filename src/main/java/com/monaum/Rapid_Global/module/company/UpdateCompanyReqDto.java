@@ -23,24 +23,15 @@ public class UpdateCompanyReqDto {
     @NotNull(message = "Company ID is required.")
     private Long id;
 
-    @NotNull(message = "Source ID is required.")
-//    @ExistsInDatabase(entity = Source.class, message = "Source not found")
-    private Long source;
+    @NotBlank(message = "Company name required.")
+    private String name;
 
-    @NotNull(message = "Wallet ID is required.")
-//    @ExistsInDatabase(entity = Wallet.class, message = "Wallet not found")
-    private Long wallet;
+    private Long address;
 
-    @NotNull(message = "Amount is required.")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0.")
-    private Double amount;
+    @NotNull(message = "Phone is required.")
+    private String phone;
 
-    @NotBlank(message = "Currency is required.")
-    @Size(max = 10, message = "Currency code must be at most 10 characters.")
-    private String currency;
+    private String email;
 
-    @Size(max = 255, message = "Description can't exceed 255 characters.")
-    private String description;
-
-    private LocalDate date; // Consider using LocalDate for better date validation
+    private Boolean status;
 }

@@ -19,25 +19,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CreateCompanyReqDto {
 
-    @NotBlank(message = "Company type required.")
-    private String transactionType;
+    @NotBlank(message = "Company name required.")
+    private String name;
 
-    @NotNull(message = "Source required.")
-    private Long source;
+    private Long address;
 
-    @NotNull(message = "Wallet required.")
-    private Long wallet;
+    @NotNull(message = "Phone is required.")
+    private String phone;
 
-    @NotNull(message = "Amount is required.")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0.")
-    private Double amount;
+    private String email;
 
-    @NotBlank(message = "Currency required.")
-    private String currency;
-
-    @NotBlank(message = "Description required.")
-    private String description;
-
-    private LocalDate date;
+    private Boolean status;
 
 }

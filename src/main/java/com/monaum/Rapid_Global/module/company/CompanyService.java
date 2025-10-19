@@ -20,20 +20,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CompanyService {
 
-    @Autowired private CompanyRepo transactionRepo;
+    @Autowired private CompanyRepo companyRepo;
     @Autowired private CompanyMapper companyMapper;
     @Autowired private SecurityUtil securityUtil;
 
     @Transactional
     public CompanyResDto create(CreateCompanyReqDto reqDto) {
             Company company = companyMapper.toEntity(reqDto);
-            company = transactionRepo.save(company);
+            company = companyRepo.save(company);
 
             return companyMapper.toDto(company);
     }
 
     public CompanyResDto getById(Long id) throws CustomException {
-        Company company = transactionRepo.findById(id).orElseThrow(() -> new CustomException("Company not found", HttpStatus.NOT_FOUND));
+        Company company = companyRepo.findById(id).orElseThrow(() -> new CustomException("Company not found", HttpStatus.NOT_FOUND));
 
         return companyMapper.toDto(company);
     }
@@ -41,24 +41,24 @@ public class CompanyService {
     public Page<CompanyResDto> getAllByUser(Pageable pageable) {
         User currentUser = securityUtil.getCurrentUser().orElseThrow(() -> new CustomException("User not authenticated", HttpStatus.UNAUTHORIZED));
 
-        Page<Company> transactions = transactionRepo.findAllByCreatedBy(currentUser, pageable);
+        Page<Company> transactions = companyRepo.findAllByCreatedBy(currentUser, pageable);
         return transactions.map(companyMapper::toDto);
     }
 
     @Transactional
     public CompanyResDto update(UpdateCompanyReqDto dto) {
-        Company company = transactionRepo.getReferenceById(dto.getId());
+        Company company = companyRepo.getReferenceById(dto.getId());
 
         companyMapper.toEntity(dto, company);
 
-        Company updated = transactionRepo.save(company);
+        Company updated = companyRepo.save(company);
 
         return companyMapper.toDto(updated);
     }
 
     
     public void delete(Long id) throws CustomException {
-        Company company = transactionRepo.findById(id).orElseThrow(() -> new CustomException("Company not found", HttpStatus.NOT_FOUND));
-        transactionRepo.delete(company);
+        Company company = companyRepo.findById(id).orElseThrow(() -> new CustomException("Company not found", HttpStatus.NOT_FOUND));
+        companyRepo.delete(company);
     }
 }
