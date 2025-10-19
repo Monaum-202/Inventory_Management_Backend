@@ -1,0 +1,40 @@
+Register
+
+Post localhost:9090/api/v1/auth/register
+{
+    "firstName": "Fahim",
+    "lastName": "Hossain",
+    "userName": "fahim",
+    "email": "fahim@test.com",
+    "password": "123456"
+}
+
+
+
+Login 
+
+Post localhost:9090/api/v1/auth/authenticate
+
+{
+    "login": "fahim",
+    "password": "123456"
+}
+
+
+Transaction
+Post localhost:9090/api/transactions
+
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "source": 1,
+  "wallet": 1,
+  "amount": 4000.0,
+  "currency": "BDT",
+  "description": "Salary for July",
+  "date": "2025-07-15"
+}
+
+GET localhost:9090/api/transactions
+Authorization: Bearer <access_token>
