@@ -1,13 +1,11 @@
-package com.monaum.Rapid_Global.module.company;
+package com.monaum.Rapid_Global.module.master.company;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 /**
  * Monaum Hossain
@@ -15,9 +13,13 @@ import java.time.LocalDate;
  */
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class CreateCompanyReqDto {
+@AllArgsConstructor
+public class UpdateCompanyReqDto {
+
+    @NotNull(message = "Company ID is required.")
+    private Long id;
 
     @NotBlank(message = "Company name required.")
     private String name;
@@ -30,5 +32,4 @@ public class CreateCompanyReqDto {
     private String email;
 
     private Boolean status;
-
 }

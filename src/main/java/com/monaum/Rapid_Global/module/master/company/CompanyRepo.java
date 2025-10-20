@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.company;
+package com.monaum.Rapid_Global.module.master.company;
 
 import com.monaum.Rapid_Global.module.user.User;
 import org.springframework.data.domain.Page;

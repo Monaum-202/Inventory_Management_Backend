@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.company;
+package com.monaum.Rapid_Global.module.master.company;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

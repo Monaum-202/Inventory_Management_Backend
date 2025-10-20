@@ -1,11 +1,8 @@
-package com.monaum.Rapid_Global.module.company;
+package com.monaum.Rapid_Global.module.master.company;
 
-import com.monaum.Rapid_Global.enums.TransactionType;
 import com.monaum.Rapid_Global.model.AbstractModel;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 
 /**
  * Monaum Hossain
@@ -34,10 +31,10 @@ public class Company extends AbstractModel {
     @Column(name = "PHONE", nullable = false, length = 20)
     private String phone;
 
-    @Column(name = "EMAIL" , length = 10)
+    @Column(name = "EMAIL" , length = 100)
     private String email;
 
-    @Column(name = "STATUS", length = 255)
+    @Column(name = "STATUS")
     private Boolean status;
 
 }
