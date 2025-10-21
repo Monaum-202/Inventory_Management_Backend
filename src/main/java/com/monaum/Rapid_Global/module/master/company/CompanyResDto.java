@@ -22,6 +22,7 @@ public class CompanyResDto {
     private String phone;
     private String email;
     private Boolean status;
+
 }
 
 
