@@ -27,19 +27,22 @@ public class Employee extends AbstractModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "NAME", length = 100, nullable = false)
     private String name;
 
+    @Column(name = "EMAIL", unique = true, length = 50)
     private String email;
 
+    @Column(name = "PHONE", unique = true, length = 50)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(name ="SALARY", nullable = false)
     private BigDecimal monthlySalary;
 
-    private boolean active = true;
-
     private LocalDate joiningDate;
+
+    @Column(name = "ACTIVE", nullable = false)
+    private boolean active = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
