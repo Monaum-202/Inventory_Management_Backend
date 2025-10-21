@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.auth;
+package com.monaum.Rapid_Global.security.auth;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,11 +7,11 @@ import java.util.Optional;
 import com.monaum.Rapid_Global.enums.TokenType;
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.security.JwtService;
-import com.monaum.Rapid_Global.module.tokens.Token;
-import com.monaum.Rapid_Global.module.tokens.TokenRepo;
-import com.monaum.Rapid_Global.module.user.User;
-import com.monaum.Rapid_Global.module.user.UserRepo;
-import com.monaum.Rapid_Global.module.user.UserService;
+import com.monaum.Rapid_Global.security.tokens.Token;
+import com.monaum.Rapid_Global.security.tokens.TokenRepo;
+import com.monaum.Rapid_Global.module.personnel.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.UserRepo;
+import com.monaum.Rapid_Global.module.personnel.user.UserService;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

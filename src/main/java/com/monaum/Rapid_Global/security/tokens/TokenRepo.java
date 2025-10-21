@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.tokens;
+package com.monaum.Rapid_Global.security.tokens;
 
 import java.util.List;
 import java.util.Optional;

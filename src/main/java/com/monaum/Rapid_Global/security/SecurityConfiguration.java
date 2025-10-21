@@ -2,8 +2,8 @@ package com.monaum.Rapid_Global.security;
 
 import com.monaum.Rapid_Global.exception.CustomAccessDeniedHandler;
 import com.monaum.Rapid_Global.exception.CustomAuthenticationEntryPoint;
-import com.monaum.Rapid_Global.module.auth.LogoutService;
-import com.monaum.Rapid_Global.module.user.UserService;
+import com.monaum.Rapid_Global.security.auth.LogoutService;
+import com.monaum.Rapid_Global.module.personnel.user.UserService;
 import jakarta.annotation.PostConstruct;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;

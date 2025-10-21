@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.auth;
+package com.monaum.Rapid_Global.security.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

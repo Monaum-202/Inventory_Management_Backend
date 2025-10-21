@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.auth;
+package com.monaum.Rapid_Global.security.auth;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.enums.ResponseStatusType;

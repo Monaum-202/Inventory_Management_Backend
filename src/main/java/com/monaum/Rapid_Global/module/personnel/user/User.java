@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.user;
+package com.monaum.Rapid_Global.module.personnel.user;
 
 import java.util.Date;
 

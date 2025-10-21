@@ -1,7 +1,7 @@
-package com.monaum.Rapid_Global.module.auth;
+package com.monaum.Rapid_Global.security.auth;
 
-import com.monaum.Rapid_Global.module.tokens.Token;
-import com.monaum.Rapid_Global.module.tokens.TokenRepo;
+import com.monaum.Rapid_Global.security.tokens.Token;
+import com.monaum.Rapid_Global.security.tokens.TokenRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;

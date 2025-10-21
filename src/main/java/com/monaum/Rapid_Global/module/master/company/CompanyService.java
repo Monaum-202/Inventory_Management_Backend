@@ -2,7 +2,7 @@ package com.monaum.Rapid_Global.module.master.company;
 
 import com.monaum.Rapid_Global.config.SecurityUtil;
 import com.monaum.Rapid_Global.exception.CustomException;
-import com.monaum.Rapid_Global.module.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;

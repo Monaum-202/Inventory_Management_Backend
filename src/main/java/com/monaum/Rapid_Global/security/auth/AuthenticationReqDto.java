@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.auth;
+package com.monaum.Rapid_Global.security.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequestDto {
+public class AuthenticationReqDto {
 
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String userName;
+	private String login;
 	private String password;
 }

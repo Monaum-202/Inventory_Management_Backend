@@ -2,8 +2,8 @@ package com.monaum.Rapid_Global.security;
 
 import java.io.IOException;
 
-import com.monaum.Rapid_Global.module.tokens.TokenRepo;
-import com.monaum.Rapid_Global.module.user.UserService;
+import com.monaum.Rapid_Global.security.tokens.TokenRepo;
+import com.monaum.Rapid_Global.module.personnel.user.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;

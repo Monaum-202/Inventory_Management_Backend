@@ -1,7 +1,7 @@
 package com.monaum.Rapid_Global.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.monaum.Rapid_Global.module.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;

@@ -1,7 +1,7 @@
 package com.monaum.Rapid_Global.model;
 
-import com.monaum.Rapid_Global.module.user.User;
-import com.monaum.Rapid_Global.module.user.UserRepo;
+import com.monaum.Rapid_Global.module.personnel.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.UserRepo;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;

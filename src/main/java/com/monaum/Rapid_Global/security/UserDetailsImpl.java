@@ -1,7 +1,7 @@
 package com.monaum.Rapid_Global.security;
 
 
-import com.monaum.Rapid_Global.module.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,7 +1,7 @@
 package com.monaum.Rapid_Global.config;
 
-import com.monaum.Rapid_Global.module.user.User;
-import com.monaum.Rapid_Global.module.user.UserRepo;
+import com.monaum.Rapid_Global.module.personnel.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.UserRepo;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
