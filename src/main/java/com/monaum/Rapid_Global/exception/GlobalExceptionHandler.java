@@ -2,9 +2,13 @@ package com.monaum.Rapid_Global.exception;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.monaum.Rapid_Global.util.ResponseUtils;
+import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,26 +45,11 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-		StringBuilder errorMessages = new StringBuilder();
-		Map<String, String> errors = new HashMap<>();
-		ex.getBindingResult().getFieldErrors().forEach(error -> {
-			errors.put(error.getField(), error.getDefaultMessage());
-			errorMessages.append(error.getDefaultMessage() + "|");
-		});
-
-		String message = errorMessages.toString();
-		if (message.endsWith("|")) {
-			message = message.substring(0, message.lastIndexOf("|"));
-		}
-
-		ErrorResponse error = ErrorResponse.builder()
-				.status(HttpStatus.BAD_REQUEST.value())
-				.error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-				.fieldErrors(errors)
-				.message(message)
-				.build();
-		
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	public ResponseEntity<BaseApiResponseDTO<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+		Map<String, String> errors = ex.getBindingResult().getFieldErrors()
+				.stream()
+				.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+		return ResponseUtils.ValidationErrorResponse("Validation Failed", errors);
 	}
+
 }

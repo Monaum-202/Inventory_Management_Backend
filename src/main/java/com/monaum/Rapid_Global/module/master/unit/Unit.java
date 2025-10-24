@@ -10,7 +10,6 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Unit extends AbstractModel {
 
     @Id

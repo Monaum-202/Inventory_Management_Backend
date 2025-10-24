@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.monaum.Rapid_Global.module.master.company.Company;
 import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,5 +44,10 @@ public abstract class AbstractModel implements Serializable {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+
+//	@JsonIgnore
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "company_id", nullable = false, updatable = false)
+//	private Company company;
 
 }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ResponseUtils {
 
@@ -52,19 +53,21 @@ public class ResponseUtils {
     }
 
 
-    // Method 1: Accepts a custom message and detailed errors map
-    public static ResponseEntity<BaseApiResponseDTO<?>> ValidationErrorResponse(String msg, Map<String, List<String>> errors) {
-        ApiErrorResponseDTO errorResponseDTO = new ApiErrorResponseDTO(msg, errors);
+//    // Method 1: Accepts a custom message and detailed errors map
+//    public static ResponseEntity<BaseApiResponseDTO<?>> ValidationErrorResponse(String msg, Map<String, List<String>> errors) {
+//        ApiErrorResponseDTO errorResponseDTO = new ApiErrorResponseDTO(msg, errors);
+//        return new ResponseEntity<>(errorResponseDTO, HttpStatus.OK);
+//    }
+
+    // Method 2: Accepts a single field name and error message, builds a standard error response
+    public static ResponseEntity<BaseApiResponseDTO<?>> ValidationErrorResponse(String msg, Map<String, String> errors) {
+        // Convert to ApiErrorResponseDTO however you prefer
+        Map<String, List<String>> converted = errors.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> List.of(e.getValue())));
+
+        ApiErrorResponseDTO errorResponseDTO = new ApiErrorResponseDTO(msg, converted);
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.OK);
     }
 
-    // Method 2: Accepts a single field name and error message, builds a standard error response
-    public static ResponseEntity<BaseApiResponseDTO<?>> ValidationErrorResponse(String name, String message) {
-        ApiErrorResponseDTO errorResponseDTO = new ApiErrorResponseDTO(
-                "Validation error",
-                Map.of(name, List.of(message))
-        );
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.OK);
-    }
 
 }

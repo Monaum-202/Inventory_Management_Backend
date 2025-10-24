@@ -6,7 +6,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
 
-
     Company toEntity(CreateCompanyReqDto dto);
 
     void toEntity(UpdateCompanyReqDto dto, @MappingTarget Company company);

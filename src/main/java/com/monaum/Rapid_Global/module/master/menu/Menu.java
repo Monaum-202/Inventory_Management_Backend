@@ -1,7 +1,9 @@
 package com.monaum.Rapid_Global.module.master.menu;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.master.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +32,8 @@ public class Menu extends AbstractModel {
     @Column(name = "SEQUENCE")
     private Integer sqnce;
 
-    @Column(name = "COMPANY_ID", nullable = false)
-    private Long companyId;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 }

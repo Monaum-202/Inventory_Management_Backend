@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.security;
 
 
+import com.monaum.Rapid_Global.module.master.company.Company;
 import com.monaum.Rapid_Global.module.personnel.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import java.util.Collections;
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
+//    private Company activeCompany;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

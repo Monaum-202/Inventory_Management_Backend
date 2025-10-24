@@ -1,9 +1,11 @@
 package com.monaum.Rapid_Global.module.personnel.user;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.master.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -60,4 +62,12 @@ public class User extends AbstractModel {
 	@Lob
 	@Column(name = "thumbnail")
 	private byte[] thumbnail;
+
+	@ManyToMany
+	@JoinTable(
+			name = "user_company",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "company_id")
+	)
+	private Set<Company> companies;
 }
