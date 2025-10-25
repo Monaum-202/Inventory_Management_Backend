@@ -13,7 +13,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "COMPANY")
+@Table(name = "COMPANY_ggffff")
 @EqualsAndHashCode(callSuper = true)
 public class Company extends AbstractModel {
 

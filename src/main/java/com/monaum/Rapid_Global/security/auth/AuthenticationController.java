@@ -20,7 +20,7 @@ import java.io.IOException;
  */
 
 @RestApiController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
 	private @Autowired AuthenticationService authenticationService;

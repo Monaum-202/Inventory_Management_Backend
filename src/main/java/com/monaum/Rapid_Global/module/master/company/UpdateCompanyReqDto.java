@@ -26,7 +26,7 @@ public class UpdateCompanyReqDto {
 
     private Long address;
 
-    @NotNull(message = "Phone is required.")
+    @NotBlank(message = "Phone is required.")
     private String phone;
 
     private String email;

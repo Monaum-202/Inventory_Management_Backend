@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
@@ -26,8 +27,13 @@ public class ApplicationExceptionHandler {
             String msg = error.getDefaultMessage();
             errorMap.put(error.getField(), List.of(msg == null ? "Unknown error" : msg));
         });
-        return ResponseUtils.ValidationErrorResponse("Validation failed",errorMap).getBody();
+        Map<String, String> simpleErrorMap = errorMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
+
+        return ResponseUtils.ValidationErrorResponse("Validation failed", simpleErrorMap).getBody();
+
     }
+
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
