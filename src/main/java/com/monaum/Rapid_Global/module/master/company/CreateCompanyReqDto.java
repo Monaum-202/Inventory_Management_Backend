@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class CreateCompanyReqDto {
 
     @NotBlank(message = "Company name required.")
-    private String name;
+    private String name_abcd;
 
     private String address;
 

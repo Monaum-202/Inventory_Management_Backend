@@ -31,7 +31,7 @@ public class Expense extends AbstractModel {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id",  nullable = false)
     private ExpenseCategory expenseCategory;
 
     private BigDecimal amount;
@@ -41,9 +41,11 @@ public class Expense extends AbstractModel {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    @Column(name = "paid_to", nullable = false)
     private String paidTo;
 
-    private LocalDate date;
+
+    private LocalDate expenseDate;
 
     private String description;
 

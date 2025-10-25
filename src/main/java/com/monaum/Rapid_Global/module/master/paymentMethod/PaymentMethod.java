@@ -23,15 +23,10 @@ public class PaymentMethod extends AbstractModel {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // e.g. "Cash", "Bank Transfer", "Bkash", "Card"
+    private String name;
 
     private String description;
 
     @Column(nullable = false)
     private Boolean active = true;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
 }
