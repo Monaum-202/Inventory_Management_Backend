@@ -1,6 +1,6 @@
 package com.monaum.Rapid_Global.module.master.product_log;
 
-import com.monaum.Rapid_Global.module.master.product_log.dto.*;
+import com.monaum.Rapid_Global.module.master.product_log.*;
         import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
