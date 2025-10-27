@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.master.product_log;
 
+import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.master.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductLog {
+public class ProductLog extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
+public class ProductResDto {
 
     private String name;
     private String productType;
@@ -16,8 +16,6 @@ public class ProductDto {
     private String unitName;
     private Integer sortingOrder;
     private BigDecimal pricePerUnit;
-    private Long companyId;
-    private String companyName;
     private Boolean status;
 }
 

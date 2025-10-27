@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.master.product;
 import com.monaum.Rapid_Global.enums.ProductType;
+import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.master.company.Company;
 import com.monaum.Rapid_Global.module.master.unit.Unit;
 import jakarta.persistence.*;
@@ -13,13 +14,13 @@ import jakarta.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50, nullable = false, unique = true)
+    @Column(length = 50, nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -38,10 +39,6 @@ public class Product {
 
     @Column(name = "price_per_unit", precision = 10, scale = 2)
     private BigDecimal pricePerUnit;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
 
     private Boolean status;
 }
