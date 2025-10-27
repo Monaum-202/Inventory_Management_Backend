@@ -14,13 +14,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateCustomerReqDto {
+
     @NotNull(message = "Company ID is required.")
     private Long id;
 
     @NotBlank(message = "Company name required.")
     private String name;
 
-    @NotNull(message = "Phone is required.")
+    @NotBlank(message = "Phone is required.")
     private String phone;
 
     private Long altPhone;
@@ -30,8 +31,4 @@ public class UpdateCustomerReqDto {
     private String address;
 
     private String businessAddress;
-
-    private BigDecimal totalTransaction;
-
-    private Long companyId;
 }

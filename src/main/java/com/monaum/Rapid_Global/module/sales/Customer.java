@@ -38,17 +38,10 @@ public class Customer extends AbstractModel {
     @Column(name = "Address", length = 100)
     private String address;
 
-
     @Column(name = "business_address", length = 100)
     private String businessAddress;
 
     @Column(name = "total_transaction", precision = 10, scale = 2)
     private BigDecimal totalTransaction;
-
-    @Column(name = "company_id")
-    private Long companyId;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

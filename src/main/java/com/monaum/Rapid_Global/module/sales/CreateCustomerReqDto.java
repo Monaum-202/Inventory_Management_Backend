@@ -16,7 +16,7 @@ public class CreateCustomerReqDto {
     @NotBlank(message = "Company name is required.")
     private String name;
 
-    @NotNull(message = "Phone is required.")
+    @NotBlank(message = "Phone is required.")
     private String phone;
 
     private Long altPhone;
@@ -26,9 +26,4 @@ public class CreateCustomerReqDto {
     private String address;
 
     private String businessAddress;
-
-    private BigDecimal totalTransaction;
-
-    private Long companyId;
-
 }
