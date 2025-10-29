@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.supply;
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

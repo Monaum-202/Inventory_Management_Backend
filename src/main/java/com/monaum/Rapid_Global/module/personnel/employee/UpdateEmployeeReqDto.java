@@ -36,6 +36,4 @@ public class UpdateEmployeeReqDto {
 
     private Boolean active;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
 }

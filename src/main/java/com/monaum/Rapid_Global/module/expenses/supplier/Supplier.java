@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.supply;
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import com.monaum.Rapid_Global.model.AbstractModel;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.sales;
+package com.monaum.Rapid_Global.module.incomes.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

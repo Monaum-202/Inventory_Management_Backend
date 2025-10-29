@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.sales;
+package com.monaum.Rapid_Global.module.incomes.customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 

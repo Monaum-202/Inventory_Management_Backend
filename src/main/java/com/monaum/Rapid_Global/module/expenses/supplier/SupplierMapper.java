@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.supply;
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

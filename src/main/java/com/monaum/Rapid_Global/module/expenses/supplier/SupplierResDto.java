@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.supply;
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

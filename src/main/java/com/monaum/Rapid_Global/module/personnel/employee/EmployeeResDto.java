@@ -23,9 +23,7 @@ public class EmployeeResDto {
     private String phone;
     private BigDecimal monthlySalary;
     private LocalDate joiningDate;
-    private Boolean active;
-    private Long companyId;
-    private String companyName;
+    private Boolean status;
 
     private List<ExpenseResDto> lends;
 }

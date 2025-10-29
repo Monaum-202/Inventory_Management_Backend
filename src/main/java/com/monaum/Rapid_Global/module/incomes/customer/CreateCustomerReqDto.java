@@ -1,24 +1,16 @@
-package com.monaum.Rapid_Global.module.sales;
+package com.monaum.Rapid_Global.module.incomes.customer;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UpdateCustomerReqDto {
+@NoArgsConstructor
+public class CreateCustomerReqDto {
 
-    @NotNull(message = "Company ID is required.")
-    private Long id;
-
-    @NotBlank(message = "Company name required.")
+    @NotBlank(message = "Company name is required.")
     private String name;
 
     @NotBlank(message = "Phone is required.")

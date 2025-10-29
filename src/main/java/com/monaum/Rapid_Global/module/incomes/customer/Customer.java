@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.sales;
+package com.monaum.Rapid_Global.module.incomes.customer;
 
 import com.monaum.Rapid_Global.model.AbstractModel;
 import jakarta.persistence.*;
@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Data

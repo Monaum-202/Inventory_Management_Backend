@@ -41,16 +41,12 @@ public class Employee extends AbstractModel {
 
     private LocalDate joiningDate;
 
-    @Column(name = "ACTIVE", nullable = false)
-    private boolean active = true;
+    @Column(name = "STATUS", nullable = false)
+    private boolean status = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> lends;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
 
 }
