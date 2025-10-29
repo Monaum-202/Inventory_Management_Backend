@@ -21,6 +21,5 @@ public interface EmployeeMapper {
 
     Employee toEntity(CreateEmployeeReqDto dto);
 
-    @Mapping(target = "lends", ignore = true)
     void toEntity(UpdateEmployeeReqDto dto, @MappingTarget Employee employee);
 }

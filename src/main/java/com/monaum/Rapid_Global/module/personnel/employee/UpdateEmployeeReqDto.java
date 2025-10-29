@@ -16,9 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UpdateEmployeeReqDto {
 
-    @NotNull(message = "Employee ID is required.")
-    private Long id;
-
     @NotBlank(message = "Employee name is required.")
     private String name;
 
@@ -33,7 +30,5 @@ public class UpdateEmployeeReqDto {
     private BigDecimal monthlySalary;
 
     private LocalDate joiningDate;
-
-    private Boolean active;
 
 }

@@ -45,7 +45,7 @@ public class Employee extends AbstractModel {
     private boolean status = true;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<Expense> lends;
 
 

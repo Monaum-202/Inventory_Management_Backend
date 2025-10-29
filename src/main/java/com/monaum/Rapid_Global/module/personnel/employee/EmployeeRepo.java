@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
     Page<Employee> findAllByStatus(boolean status, Pageable pageable);
+    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByPhoneAndIdNot(String phone, Long id);
+
 }

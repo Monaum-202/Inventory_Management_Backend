@@ -27,38 +27,40 @@ public class CompanyController {
     @Autowired private CompanyService companyService;
 
     @GetMapping
-    public ResponseEntity<BaseApiResponseDTO<?>> getCompanies(
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ) {
+    ){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         return companyService.getAllByUser(pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> getCompanyById
-            (@PathVariable Long id)
-    {
+    public ResponseEntity<BaseApiResponseDTO<?>> getById(
+            @PathVariable Long id
+    ){
         return companyService.getById(id);
     }
 
     @PostMapping
-    public ResponseEntity<BaseApiResponseDTO<?>> create(@Valid @RequestBody CreateCompanyReqDto reqDto)
-    {
+    public ResponseEntity<BaseApiResponseDTO<?>> create(
+            @Valid @RequestBody CreateCompanyReqDto reqDto
+    ){
         return companyService.create(reqDto);
     }
 
     @PutMapping
-    public ResponseEntity<BaseApiResponseDTO<?>> update
-            (@Valid @RequestBody UpdateCompanyReqDto dto)
-    {
+    public ResponseEntity<BaseApiResponseDTO<?>> update(
+            @Valid @RequestBody UpdateCompanyReqDto dto
+    ){
         return companyService.update(dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> delete(@PathVariable Long id)
-    {
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(
+            @PathVariable Long id
+    ){
         return companyService.delete(id);
     }
 

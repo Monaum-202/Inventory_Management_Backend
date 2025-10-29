@@ -31,7 +31,4 @@ public class CreateEmployeeReqDto {
 
     @NotNull(message = "Joining date is required.")
     private LocalDate joiningDate;
-
-    private Boolean status ;
-
 }
