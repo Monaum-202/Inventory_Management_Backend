@@ -15,38 +15,31 @@ import java.util.List;
  * @since oct 21, 2025
  */
 
-@Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "EMPLOYEES")
-@EqualsAndHashCode(callSuper = false)
+@Entity
+@Table(name = "employeesggg")
+@EqualsAndHashCode(onlyExplicitlyIncluded = false, callSuper = false)
 public class Employee extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "NAME", length = 100, nullable = false)
-    private String name;
+    @Column( precision = 38, scale = 2)
+    private BigDecimal salary;
 
-    @Column(name = "EMAIL", unique = true, length = 50)
-    private String email;
+    private Integer status;
 
-    @Column(name = "PHONE", unique = true, length = 50)
-    private String phone;
-
-    @Column(name ="SALARY", nullable = false)
-    private BigDecimal monthlySalary;
 
     private LocalDate joiningDate;
 
-    @Column(name = "STATUS", nullable = false)
-    private boolean status = true;
+    @Column(length = 50)
+    private String email;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-    private List<Expense> lends;
+    @Column(length = 50)
+    private String phone;
 
+    @Column(length = 100)
+    private String name;
 
 }

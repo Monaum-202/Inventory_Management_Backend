@@ -17,10 +17,11 @@ import java.time.LocalDateTime;
  * @since oct 21, 2025
  */
 
-@Data
-@Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "EXPENSE")
 @EqualsAndHashCode(callSuper = false)
 public class Expense extends AbstractModel {
@@ -57,7 +58,8 @@ public class Expense extends AbstractModel {
     private LocalDateTime approvedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id")
+    @JsonIgnore
     private Employee employee;
 
 }

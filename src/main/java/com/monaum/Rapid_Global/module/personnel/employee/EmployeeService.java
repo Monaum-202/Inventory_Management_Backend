@@ -7,15 +7,16 @@ import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import com.monaum.Rapid_Global.util.response.CustomPageResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 /**
  * Monaum Hossain
@@ -24,13 +25,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
+    private static final Logger log = LogManager.getLogger(EmployeeService.class);
     @Autowired
     private EmployeeRepo employeeRepo;
     @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired EmployeeMap employeeMap;
 
     @Transactional
-    public ResponseEntity<BaseApiResponseDTO<?>> createEmployee(CreateEmployeeReqDto dto) {
+    public ResponseEntity<BaseApiResponseDTO<?>> createEmployee(EmployeeReqDto dto) {
 
         Employee employee = employeeMapper.toEntity(dto);
         employee = employeeRepo.save(employee);
@@ -66,41 +69,32 @@ public class EmployeeService {
     }
 
     @Transactional
-    public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, UpdateEmployeeReqDto dto) {
+    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) {
         Employee employee = employeeRepo.findById(id)
-                .orElseThrow(() -> new CustomException("Employee not found with ID: " + id, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
 
-        // Unique checks
-        if (employeeRepo.existsByPhoneAndIdNot(dto.getPhone(), id)) {
-            throw new CustomException("Phone number already exists for another employee.", HttpStatus.BAD_REQUEST);
-        }
+        // Update only if value is provided (null checks)
+        if (dto.getSalary() != null) employee.setSalary(dto.getSalary());
+        if (dto.getJoiningDate() != null) employee.setJoiningDate(dto.getJoiningDate());
+        if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
+        if (dto.getPhone() != null) employee.setPhone(dto.getPhone());
+        if (dto.getName() != null) employee.setName(dto.getName());
 
-        if (employeeRepo.existsByEmailAndIdNot(dto.getEmail(), id)) {
-            throw new CustomException("Email address already exists for another employee.", HttpStatus.BAD_REQUEST);
-        }
 
-        // Map DTO → existing entity
-        employeeMapper.toEntity(dto, employee);
-
-        try {
-            Employee updated = employeeRepo.save(employee);
-            return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(updated));
-        } catch (Exception e) {
-            Throwable root = e;
-            while (root.getCause() != null && root != root.getCause()) {
-                root = root.getCause();
-            }
-            root.printStackTrace();
-            throw new CustomException("Employee update failed: " + root.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) {
-        Employee employee = employeeRepo.getReferenceById(id);
-
-        employee.setStatus(!employee.isStatus());
         employeeRepo.save(employee);
 
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+        return ResponseUtils.SuccessResponseWithData("Employee updated successfully", employeeMapper.toDto(employee));
     }
+
+
+
+
+//    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) {
+//        Employee employee = employeeRepo.getReferenceById(id);
+//
+//        employee.setStatus(!employee.isStatus());
+//        employeeRepo.save(employee);
+//
+//        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+//    }
 }

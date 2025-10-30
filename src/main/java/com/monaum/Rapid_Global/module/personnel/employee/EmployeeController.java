@@ -52,17 +52,17 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
-            @Valid @RequestBody CreateEmployeeReqDto dto
+            @Valid @RequestBody EmployeeReqDto dto
     ){
         return employeeService.createEmployee(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> update(
+    public ResponseEntity<Employee> updateEmployee(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateEmployeeReqDto dto
-    ){
-        return employeeService.update(id, dto);
+            @RequestBody EmployeeReqDto dto) {
+        Employee updatedEmployee = employeeService.updateEmployee(id, dto);
+        return ResponseEntity.ok(updatedEmployee);
     }
 
     @DeleteMapping("/{id}")
@@ -72,10 +72,10 @@ public class EmployeeController {
         return employeeService.delete(id);
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
-            @PathVariable Long id
-    ) {
-        return employeeService.statusUpdate(id);
-    }
+//    @PatchMapping("/{id}/status")
+//    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
+//            @PathVariable Long id
+//    ) {
+//        return employeeService.statusUpdate(id);
+//    }
 }

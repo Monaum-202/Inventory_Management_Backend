@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateEmployeeReqDto {
+public class EmployeeReqDto {
 
     @NotBlank(message = "Employee name is required.")
     private String name;
@@ -27,7 +27,7 @@ public class CreateEmployeeReqDto {
 
     @NotNull(message = "Monthly salary is required.")
     @DecimalMin(value = "0.0", inclusive = false, message = "Salary must be greater than zero.")
-    private BigDecimal monthlySalary;
+    private BigDecimal salary;
 
     @NotNull(message = "Joining date is required.")
     private LocalDate joiningDate;

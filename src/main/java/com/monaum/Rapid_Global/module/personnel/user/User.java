@@ -63,11 +63,4 @@ public class User extends AbstractModel {
 	@Column(name = "thumbnail")
 	private byte[] thumbnail;
 
-	@ManyToMany
-	@JoinTable(
-			name = "user_company",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "company_id")
-	)
-	private Set<Company> companies;
 }

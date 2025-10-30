@@ -45,9 +45,4 @@ public abstract class AbstractModel implements Serializable {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
-//	@JsonIgnore
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "company_id", nullable = false, updatable = false)
-//	private Company company;
-
 }
