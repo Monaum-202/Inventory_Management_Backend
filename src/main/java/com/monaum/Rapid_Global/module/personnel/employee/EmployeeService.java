@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
+ *
  * @since 29-Oct-25 9:49 PM
  */
 
@@ -30,21 +31,6 @@ public class EmployeeService {
     private static final Logger log = LogManager.getLogger(EmployeeService.class);
     @Autowired private EmployeeRepo employeeRepo;
     @Autowired private EmployeeMapper employeeMapper;
-
-    @Transactional
-    public ResponseEntity<BaseApiResponseDTO<?>> createEmployee(EmployeeReqDto dto) {
-
-        Employee employee = employeeMapper.toEntity(dto);
-        employee = employeeRepo.save(employee);
-
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
-    }
-
-    public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
-        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
-
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
-    }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
 
@@ -62,15 +48,22 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
+    public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
-        employeeRepo.delete(employee);
-
-        return ResponseUtils.SuccessResponse("Employee deleted successfully", HttpStatus.OK);
+        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) {
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> create(EmployeeReqDto dto) {
+
+        Employee employee = employeeMapper.toEntity(dto);
+        employee = employeeRepo.save(employee);
+
+        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) throws CustomException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         employeeMapper.toEntityUpdate(dto, employee);
@@ -79,7 +72,15 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(updated));
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) {
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+
+        employeeRepo.delete(employee);
+
+        return ResponseUtils.SuccessResponse("Employee deleted successfully", HttpStatus.OK);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) throws CustomException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         employee.setStatus(!Boolean.TRUE.equals(employee.getStatus()));
