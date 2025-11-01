@@ -61,6 +61,7 @@ public class EmployeeController {
     public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(
             @PathVariable Long id,
             @RequestBody EmployeeReqDto dto) {
+
         return employeeService.updateEmployee(id, dto);
     }
 

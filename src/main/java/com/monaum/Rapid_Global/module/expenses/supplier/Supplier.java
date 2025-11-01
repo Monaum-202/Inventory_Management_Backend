@@ -52,7 +52,4 @@ public class Supplier extends AbstractModel {
     @Column(name = "company_id")
     private Long companyId;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
 }

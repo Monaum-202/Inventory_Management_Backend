@@ -1,14 +1,11 @@
 package com.monaum.Rapid_Global.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.monaum.Rapid_Global.module.master.company.Company;
-import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
@@ -16,33 +13,26 @@ import java.time.LocalDateTime;
 
 /**
  * Monaum Hossain
- * @since jul 18, 2025
+ * @since Jul 18, 2025
  */
-
-@Getter
-@Setter
-@ToString(onlyExplicitlyIncluded = true) // Safe version
+@Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AbstractModel implements Serializable {
 
-	@JsonIgnore
 	@CreatedBy
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "created_by", updatable = false)
-	private User createdBy;
+	@Column(name = "created_by")
+	private Long createdBy;
 
-	@JsonIgnore
 	@LastModifiedBy
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "updated_by")
-	private User updatedBy;
+	@Column(name = "updated_by")
+	private Long updatedBy;
 
-	@CreatedDate
+	@CreationTimestamp
+	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@LastModifiedDate
+	@UpdateTimestamp
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-
 }
