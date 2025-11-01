@@ -73,13 +73,11 @@ public class EmployeeService {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
 
-        // Update only if value is provided (null checks)
-        if (dto.getSalary() != null) employee.setSalary(dto.getSalary());
-        if (dto.getJoiningDate() != null) employee.setJoiningDate(dto.getJoiningDate());
+        if (dto.getName() != null) employee.setName(dto.getName());
         if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
         if (dto.getPhone() != null) employee.setPhone(dto.getPhone());
-        if (dto.getName() != null) employee.setName(dto.getName());
-
+        if (dto.getSalary() != null) employee.setSalary(dto.getSalary());
+        if (dto.getJoiningDate() != null) employee.setJoiningDate(dto.getJoiningDate());
 
         employeeRepo.save(employee);
 

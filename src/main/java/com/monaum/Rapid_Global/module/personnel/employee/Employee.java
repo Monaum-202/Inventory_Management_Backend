@@ -1,15 +1,11 @@
 package com.monaum.Rapid_Global.module.personnel.employee;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
-import com.monaum.Rapid_Global.module.expenses.expense.Expense;
-import com.monaum.Rapid_Global.module.master.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 /**
  * Monaum Hossain
  * @since oct 21, 2025
@@ -17,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "employeesggg")
+@Table(name = "employees")
 @EqualsAndHashCode(onlyExplicitlyIncluded = false, callSuper = false)
 public class Employee extends AbstractModel {
 

@@ -58,11 +58,10 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(
+    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(
             @PathVariable Long id,
             @RequestBody EmployeeReqDto dto) {
-        Employee updatedEmployee = employeeService.updateEmployee(id, dto);
-        return ResponseEntity.ok(updatedEmployee);
+        return employeeService.updateEmployee(id, dto);
     }
 
     @DeleteMapping("/{id}")
