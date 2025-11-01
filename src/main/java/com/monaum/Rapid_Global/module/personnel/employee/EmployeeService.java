@@ -20,16 +20,17 @@ import java.math.BigDecimal;
 
 /**
  * Monaum Hossain
+ * monaum.202@gmail.com
+ * @since 29-Oct-25 9:49 PM
  */
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
     private static final Logger log = LogManager.getLogger(EmployeeService.class);
-    @Autowired
-    private EmployeeRepo employeeRepo;
-    @Autowired
-    private EmployeeMapper employeeMapper;
+    @Autowired private EmployeeRepo employeeRepo;
+    @Autowired private EmployeeMapper employeeMapper;
+
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> createEmployee(EmployeeReqDto dto) {
 
@@ -40,34 +41,37 @@ public class EmployeeService {
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
-        Employee employee = employeeRepo.findById(id).orElseThrow(()-> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
+
         Page<EmployeeResDto> employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
         CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status,Pageable pageable) {
-        Page<EmployeeResDto> employees = employeeRepo.findAllByStatus(status,pageable).map(employeeMapper::toDto);
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, Pageable pageable) {
+
+        Page<EmployeeResDto> employees = employeeRepo.findAllByStatus(status, pageable).map(employeeMapper::toDto);
         CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
-        Employee employee = employeeRepo.findById(id).orElseThrow(()-> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+
         employeeRepo.delete(employee);
 
         return ResponseUtils.SuccessResponse("Employee deleted successfully", HttpStatus.OK);
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) {
-        Employee employee = employeeRepo.findById(id).orElseThrow(()-> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         employeeMapper.toEntityUpdate(dto, employee);
         Employee updated = employeeRepo.save(employee);
@@ -75,15 +79,13 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(updated));
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) {
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
+        employee.setStatus(!Boolean.TRUE.equals(employee.getStatus()));
+        employeeRepo.save(employee);
 
+        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+    }
 
-//    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) {
-//        Employee employee = employeeRepo.getReferenceById(id);
-//
-//        employee.setStatus(!employee.isStatus());
-//        employeeRepo.save(employee);
-//
-//        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
-//    }
 }

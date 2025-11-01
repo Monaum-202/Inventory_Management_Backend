@@ -18,12 +18,13 @@ import java.util.List;
 
 /**
  * Monaum Hossain
- * @since oct 21, 2025
+ * monaum.202@gmail.com
+ * @since 29-Oct-25 9:49 PM
  */
 
 @Data
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 public class Employee extends AbstractModel {
 
     @Id

@@ -4,7 +4,8 @@ import org.mapstruct.*;
 
 /**
  * Monaum Hossain
- * @since Oct 21, 2025
+ * monaum.202@gmail.com
+ * @since 29-Oct-25 9:49 PM
  */
 
 @Mapper(componentModel = "spring")

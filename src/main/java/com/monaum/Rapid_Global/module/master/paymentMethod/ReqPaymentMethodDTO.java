@@ -13,7 +13,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentMethodCreateDTO {
+public class ReqPaymentMethodDTO {
 
     @NotBlank(message = "Payment method name is required")
     @Size(max = 100, message = "Name cannot exceed 100 characters")

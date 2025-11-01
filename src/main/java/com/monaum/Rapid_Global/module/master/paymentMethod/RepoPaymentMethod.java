@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
- * @since 25-Oct-25 10:32 PM
+ * @since 29-Oct-25 9:49 PM
  */
 
 @Repository
-public interface PaymentMethodRepo extends JpaRepository<PaymentMethod, Integer> {
+public interface RepoPaymentMethod extends JpaRepository<PaymentMethod, Long> {
+
 }

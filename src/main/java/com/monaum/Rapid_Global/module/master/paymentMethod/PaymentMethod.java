@@ -15,7 +15,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "payment_methods")
+@Table(name = "payment_method")
 public class PaymentMethod extends AbstractModel {
 
     @Id
@@ -25,8 +25,9 @@ public class PaymentMethod extends AbstractModel {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(length = 255)
     private String description;
 
     @Column(nullable = false)
-    private Boolean active = true;
+    private Boolean status = true;
 }

@@ -72,10 +72,10 @@ public class EmployeeController {
         return employeeService.delete(id);
     }
 
-//    @PatchMapping("/{id}/status")
-//    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
-//            @PathVariable Long id
-//    ) {
-//        return employeeService.statusUpdate(id);
-//    }
+   @PatchMapping("/{id}/status")
+   public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
+           @PathVariable Long id
+   ) {
+       return employeeService.statusUpdate(id);
+   }
 }

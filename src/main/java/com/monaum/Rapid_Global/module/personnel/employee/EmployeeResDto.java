@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * Monaum Hossain
- * @since Oct 21, 2025
+ * monaum.202@gmail.com
+ * @since 29-Oct-25 9:49 PM
  */
 
 @Data
@@ -23,7 +24,7 @@ public class EmployeeResDto {
     private String phone;
     private BigDecimal salary;
     private LocalDate joiningDate;
-    private Integer status;
+    private Boolean status;
 
     private List<ExpenseResDto> lends;
 }
