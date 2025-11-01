@@ -10,9 +10,14 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", constant = "true")
+    @Mapping(target = "lends", ignore = true)
     Employee toEntity(EmployeeReqDto dto);
 
     EmployeeResDto toDto(Employee entity);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void toEntityUpdate(EmployeeReqDto dto, @MappingTarget Employee employee);
 }
 

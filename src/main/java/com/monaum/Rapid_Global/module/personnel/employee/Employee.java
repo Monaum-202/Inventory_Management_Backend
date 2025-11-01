@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.personnel.employee;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.expenses.expense.Expense;
 import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Monaum Hossain
@@ -31,9 +33,10 @@ public class Employee extends AbstractModel {
     @Column( precision = 38, scale = 2)
     private BigDecimal salary;
 
-    private Integer status;
+    @Column(name = "status")
+    private Boolean status = true;
 
-
+    @Column(name = "joining_date")
     private LocalDate joiningDate;
 
     @Column(length = 50)
@@ -45,4 +48,7 @@ public class Employee extends AbstractModel {
     @Column(length = 100)
     private String name;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+    private List<Expense> lends;
 }

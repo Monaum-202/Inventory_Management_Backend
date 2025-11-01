@@ -30,8 +30,6 @@ public class EmployeeService {
     private EmployeeRepo employeeRepo;
     @Autowired
     private EmployeeMapper employeeMapper;
-    @Autowired EmployeeMap employeeMap;
-
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> createEmployee(EmployeeReqDto dto) {
 
@@ -68,20 +66,13 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponse("Employee deleted successfully", HttpStatus.OK);
     }
 
-    @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) {
-        Employee employee = employeeRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        Employee employee = employeeRepo.findById(id).orElseThrow(()-> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
-        if (dto.getName() != null) employee.setName(dto.getName());
-        if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
-        if (dto.getPhone() != null) employee.setPhone(dto.getPhone());
-        if (dto.getSalary() != null) employee.setSalary(dto.getSalary());
-        if (dto.getJoiningDate() != null) employee.setJoiningDate(dto.getJoiningDate());
+        employeeMapper.toEntityUpdate(dto, employee);
+        Employee updated = employeeRepo.save(employee);
 
-        employeeRepo.save(employee);
-
-        return ResponseUtils.SuccessResponseWithData("Employee updated successfully", employeeMapper.toDto(employee));
+        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(updated));
     }
 
 
