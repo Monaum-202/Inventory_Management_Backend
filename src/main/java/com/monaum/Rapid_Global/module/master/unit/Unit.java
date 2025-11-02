@@ -23,9 +23,6 @@ public class Unit extends AbstractModel {
     @Column(name = "SHORT_NAME", unique = true, length = 20, nullable = false)
     private String shortName;
 
-    @Column(name = "COMPANY_ID", nullable = false)
-    private Long companyId;
-
     @Column(name = "STATUS", nullable = false)
     private Boolean status = true;
 

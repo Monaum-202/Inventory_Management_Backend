@@ -14,10 +14,7 @@ public class UnitReqDto {
     @NotBlank(message = "Short name is required.")
     private String shortName;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
-
     private Boolean status = true;
 
-    private Integer sortingOrder;
+    private Integer sqn;
 }

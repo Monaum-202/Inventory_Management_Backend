@@ -2,6 +2,8 @@ package com.monaum.Rapid_Global.module.master.unit;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,8 +13,10 @@ public class UnitResDto {
     private Long id;
     private String name;
     private String shortName;
-    private Long companyId;
     private Boolean status;
-    private Integer sortingOrder;
+    private Integer sqn;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
 
