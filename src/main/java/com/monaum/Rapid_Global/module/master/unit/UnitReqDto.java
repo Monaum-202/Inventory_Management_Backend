@@ -6,7 +6,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUnitReqDto {
+public class UnitReqDto {
 
     @NotBlank(message = "Unit name is required.")
     private String name;

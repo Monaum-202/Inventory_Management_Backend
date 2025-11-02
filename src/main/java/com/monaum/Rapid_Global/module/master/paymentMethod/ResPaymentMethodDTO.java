@@ -18,6 +18,7 @@ public class ResPaymentMethodDTO {
     private String name;
     private String description;
     private Boolean active;
+    private Integer sqn;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

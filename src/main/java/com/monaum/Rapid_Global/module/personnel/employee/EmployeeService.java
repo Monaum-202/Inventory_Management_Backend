@@ -63,7 +63,7 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(Long id, EmployeeReqDto dto) throws CustomException {
+    public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, EmployeeReqDto dto) throws CustomException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         employeeMapper.toEntityUpdate(dto, employee);

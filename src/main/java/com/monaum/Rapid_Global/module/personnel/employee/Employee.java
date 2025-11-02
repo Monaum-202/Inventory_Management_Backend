@@ -25,29 +25,35 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "employee")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employee extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column( precision = 38, scale = 2)
-    private BigDecimal salary;
+    @Column(name = "name", length = 100)
+    private String name;
 
-    @Column(name = "status")
-    private Boolean status = true;
+    @Column(name = "email", length = 50)
+    private String email;
+
+    @Column(name = "phone", length = 50, unique = true)
+    private String phone;
+
+    @Column(name = "salary", precision = 18, scale = 2)
+    private BigDecimal salary;
 
     @Column(name = "joining_date")
     private LocalDate joiningDate;
 
-    @Column(length = 50)
-    private String email;
+    @Column(name = "sqn")
+    private Integer sqn;
 
-    @Column(length = 50)
-    private String phone;
-
-    @Column(length = 100)
-    private String name;
+    @Column(name = "status")
+    private Boolean status = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)

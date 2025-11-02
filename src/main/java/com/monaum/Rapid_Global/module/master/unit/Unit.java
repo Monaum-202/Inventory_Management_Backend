@@ -27,9 +27,9 @@ public class Unit extends AbstractModel {
     private Long companyId;
 
     @Column(name = "STATUS", nullable = false)
-    private Boolean status;
+    private Boolean status = true;
 
-    @Column(name = "SORTING_ORDER")
-    private Integer sortingOrder;
+    @Column(name = "sqn")
+    private Integer sqn;
 }
 

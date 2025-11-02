@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UnitDto {
+public class UnitResDto {
 
     private Long id;
     private String name;

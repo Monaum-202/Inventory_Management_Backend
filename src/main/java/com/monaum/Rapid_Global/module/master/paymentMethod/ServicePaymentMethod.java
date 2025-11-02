@@ -37,6 +37,14 @@ public class ServicePaymentMethod {
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, Pageable pageable){
+
+        Page<ResPaymentMethodDTO> page = repo.findAllByActive(status,pageable).map(mapper::toDTO);
+        CustomPageResponseDTO<ResPaymentMethodDTO> paginatedResponse = PaginationUtil.buildPageResponse(page, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
+
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
         PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found", HttpStatus.NOT_FOUND));
 
@@ -65,7 +73,7 @@ public class ServicePaymentMethod {
     public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(Long id) throws CustomException {
         PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found", HttpStatus.NOT_FOUND));
 
-        paymentMethod.setStatus(!Boolean.TRUE.equals(paymentMethod.getStatus()));
+        paymentMethod.setActive(!Boolean.TRUE.equals(paymentMethod.getActive()));
         repo.save(paymentMethod);
 
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));

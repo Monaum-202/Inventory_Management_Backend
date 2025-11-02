@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.paymentMethod;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -22,5 +23,7 @@ public class ReqPaymentMethodDTO {
     @Size(max = 255, message = "Description cannot exceed 255 characters")
     private String description;
 
-    private Boolean active = true;
+    @NotNull(message = "Sequence is required")
+    private Integer sqn;
+
 }

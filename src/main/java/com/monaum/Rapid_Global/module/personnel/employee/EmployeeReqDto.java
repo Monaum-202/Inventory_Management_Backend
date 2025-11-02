@@ -31,4 +31,7 @@ public class EmployeeReqDto {
 
     @NotNull(message = "Joining date is required.")
     private LocalDate joiningDate;
+
+    @NotNull(message = "Sequence requried")
+    private Integer sqn;
 }

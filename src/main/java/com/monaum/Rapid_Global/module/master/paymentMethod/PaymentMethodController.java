@@ -1,7 +1,8 @@
-package com.monaum.Rapid_Global.module.personnel.employee;
+package com.monaum.Rapid_Global.module.master.paymentMethod;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
+import com.monaum.Rapid_Global.util.response.CustomPageResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -13,23 +14,23 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
- * @since 29-Oct-25 9:49 PM
+ * Created on 11/2/2025 at 10:28 AM
  */
 
 @RestApiController
-@RequestMapping("/api/employee")
-public class EmployeeController {
+@RequestMapping("/api/payment-method")
+public class PaymentMethodController {
 
-    @Autowired private EmployeeService employeeService;
+    @Autowired private ServicePaymentMethod service;
 
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    ){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
 
-        return employeeService.getAll(pageable);
+        return service.getAll(pageable);
     }
 
     @GetMapping("/all-active")
@@ -38,44 +39,38 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
 
-        return employeeService.getAllActive(status,pageable);
+        return service.getAllActive(status,pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BaseApiResponseDTO<?>> getById(
             @PathVariable Long id
     ){
-        return employeeService.getById(id);
+        return service.getById(id);
     }
 
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
-            @Valid @RequestBody EmployeeReqDto dto
+            @Valid @RequestBody ReqPaymentMethodDTO req
     ){
-        return employeeService.create(dto);
+        return service.create(req);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> updateEmployee(
+    public ResponseEntity<BaseApiResponseDTO<?>> update(
             @PathVariable Long id,
-            @RequestBody EmployeeReqDto dto) {
-
-        return employeeService.update(id, dto);
+            @Valid @RequestBody ReqPaymentMethodDTO req
+    ){
+        return service.update(id, req);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> delete(
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(
             @PathVariable Long id
     ){
-        return employeeService.delete(id);
+        return service.updateStatus(id);
     }
 
-   @PatchMapping("/{id}/status")
-   public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
-           @PathVariable Long id
-   ) {
-       return employeeService.statusUpdate(id);
-   }
 }

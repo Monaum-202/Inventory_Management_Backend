@@ -8,6 +8,7 @@ import lombok.*;
 
 /**
  * Monaum Hossain
+ * monaum.202@gmail.com
  * @since oct 21, 2025
  */
 
@@ -29,5 +30,8 @@ public class PaymentMethod extends AbstractModel {
     private String description;
 
     @Column(nullable = false)
-    private Boolean status = true;
+    private Boolean active = true;
+
+    @Column(nullable = false)
+    private Integer sqn;
 }
