@@ -21,4 +21,6 @@ public class ProductCategoryResDto {
 
     private Boolean status;
 
+    private Integer sqn;
+
 }

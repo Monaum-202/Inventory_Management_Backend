@@ -30,4 +30,7 @@ public class ProductCategory {
     @Column(name = "status", nullable = false, length = 50)
     private Boolean status = true;
 
+    @Column(nullable = false)
+    private Integer sqn;
+
 }
