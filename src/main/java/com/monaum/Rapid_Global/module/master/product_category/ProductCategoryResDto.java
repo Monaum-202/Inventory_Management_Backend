@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,15 +14,12 @@ import lombok.NoArgsConstructor;
 public class ProductCategoryResDto {
 
     private Long id;
-
     private String name;
-
     private String code;
-
     private String description;
-
     private Boolean status;
-
     private Integer sqn;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
