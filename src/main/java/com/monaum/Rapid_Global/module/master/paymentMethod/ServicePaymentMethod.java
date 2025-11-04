@@ -46,7 +46,7 @@ public class ServicePaymentMethod {
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
-        PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found", HttpStatus.NOT_FOUND));
+        PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found at "+ id , HttpStatus.NOT_FOUND));
 
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));
     }

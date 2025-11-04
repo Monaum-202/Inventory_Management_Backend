@@ -14,7 +14,5 @@ public class UnitReqDto {
     @NotBlank(message = "Short name is required.")
     private String shortName;
 
-    private Boolean status = true;
-
     private Integer sqn;
 }

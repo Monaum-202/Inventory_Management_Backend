@@ -15,4 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface RepoPaymentMethod extends JpaRepository<PaymentMethod, Long> {
 
     Page<PaymentMethod> findAllByActive(Boolean status, Pageable pageable);
+
 }
