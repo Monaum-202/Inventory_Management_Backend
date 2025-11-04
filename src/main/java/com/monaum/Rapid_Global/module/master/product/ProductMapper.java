@@ -12,13 +12,13 @@ public interface ProductMapper {
 //    @Mapping(target = "id", ignore = true)
 //    @Mapping(target = "productType", expression = "java(com.monaum.Rapid_Global.module.master.product.ProductType.valueOf(dto.getProductType()))")
 //    Product toEntity(CreateProductReqDto dto, Unit unit, Company company);
-
-    // UpdateProductReqDto → existing Product
+//
+//     UpdateProductReqDto → existing Product
 //    @Mapping(target = "unit", source = "unit")
 //    @Mapping(target = "productType", expression = "java(com.monaum.Rapid_Global.module.master.product.ProductType.valueOf(dto.getProductType()))")
 //    void toEntity(UpdateProductReqDto dto, @MappingTarget Product product, Unit unit, Company company);
-
-    // Product → ProductResDto
+//
+//     Product → ProductResDto
 //    @Mapping(target = "unitId", source = "unit.id")
 //    @Mapping(target = "unitName", source = "unit.name")
 //    @Mapping(target = "productType", source = "productType")
