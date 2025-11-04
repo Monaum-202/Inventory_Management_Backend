@@ -17,7 +17,7 @@ public class CORSConfig implements WebMvcConfigurer {
 				registry.addMapping("/**")
 //				.allowedOrigins("http://localhost:4200", "http://localhost:8000")
 				.allowedOrigins("*")
-				.allowedMethods("GET", "POST", "PUT", "DELETE")
+				.allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
 				.allowedHeaders("*");
 			}
 		};
