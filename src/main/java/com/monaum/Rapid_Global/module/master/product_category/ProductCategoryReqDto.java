@@ -17,6 +17,7 @@ public class ProductCategoryReqDto {
     private String name;
 
     @NotBlank(message = "Code is required.")
+//    @UniqueCode(message = "Code already exists. Please use a different one.")
     private String code;
 
     @Size(max = 255, message = "Description cannot exceed 255 characters")

@@ -10,7 +10,7 @@ public interface ProductCategoryMapper {
 
     ProductCategoryResDto toDTO(ProductCategory entity);
 
-    void toEntity(UpdateProductCategoryReqDto dto, @MappingTarget ProductCategory productCategory);
+    void toEntity(ProductCategoryReqDto dto, @MappingTarget ProductCategory productCategory);
 
-    ProductCategoryResDto toDto(ProductCategory productCategory);
+
 }
