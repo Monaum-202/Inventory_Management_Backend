@@ -26,6 +26,7 @@ public class EmployeeResDto {
     private BigDecimal salary;
     private LocalDate joiningDate;
     private Boolean status;
+    private Integer sqn;
 
     private List<ExpenseResDto> lends;
 
