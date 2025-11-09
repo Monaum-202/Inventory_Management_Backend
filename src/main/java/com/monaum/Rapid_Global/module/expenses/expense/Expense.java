@@ -42,12 +42,12 @@ public class Expense extends AbstractModel {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
-    @Column(name = "paid_to", nullable = false)
+    @Column(name = "paid_to")
     private String paidTo;
-
 
     private LocalDate expenseDate;
 
+    @Column(name = "description")
     private String description;
 
     @JsonIgnore

@@ -17,6 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Monaum Hossain
@@ -40,6 +45,21 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
+        Page<EmployeeResDto> employees;
+
+        if (search != null && !search.isBlank()) {
+            employees = employeeRepo.search(search, pageable).map(employeeMapper::toDto);
+        } else {
+            employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
+        }
+
+        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
+
+
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, Pageable pageable) {
 
         Page<EmployeeResDto> employees = employeeRepo.findAllByStatus(status, pageable).map(employeeMapper::toDto);
@@ -58,6 +78,7 @@ public class EmployeeService {
     public ResponseEntity<BaseApiResponseDTO<?>> create(EmployeeReqDto dto) {
 
         Employee employee = employeeMapper.toEntity(dto);
+        employee.setEmployeeId(generateEmployeeId());
         employee = employeeRepo.save(employee);
 
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
@@ -88,5 +109,63 @@ public class EmployeeService {
 
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
     }
+
+
+    //large Import
+
+
+    private String generateEmployeeId() {
+        int year = LocalDate.now().getYear() % 100;
+        int serial = 1;
+
+        Optional<Employee> lastEmployee = employeeRepo.findLastEmployee();
+        if (lastEmployee.isPresent()) {
+            String lastId = lastEmployee.get().getEmployeeId();
+            if (lastId != null && lastId.length() >= 8) {
+                try {
+                    int lastSerial = Integer.parseInt(lastId.substring(5));
+                    serial = lastSerial + 1;
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        return String.format("EMP%02d%03d", year, serial);
+    }
+
+
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> importEmployees(List<EmployeeReqDto> employeeList) {
+        if (employeeList == null || employeeList.isEmpty()) {
+            return ResponseUtils.FailedResponse("No data provided for import");
+        }
+
+        // Get last employee to continue serial numbering
+        Optional<Employee> lastEmployeeOpt = employeeRepo.findLastEmployee();
+        int year = LocalDate.now().getYear() % 100; // last 2 digits of year
+        int serial = 0;
+
+        if (lastEmployeeOpt.isPresent()) {
+            String lastId = lastEmployeeOpt.get().getEmployeeId(); // e.g. EMP250012
+            if (lastId != null && lastId.length() >= 8) {
+                try {
+                    serial = Integer.parseInt(lastId.substring(5)); // "0012"
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        AtomicInteger counter = new AtomicInteger(serial);
+
+        List<Employee> employees = employeeList.stream()
+                .map(employeeMapper::toEntity)
+                .peek(emp -> {
+                    int nextSerial = counter.incrementAndGet();
+                    emp.setEmployeeId(String.format("EMP%02d%03d", year, nextSerial));
+                })
+                .collect(Collectors.toList());
+
+        employeeRepo.saveAll(employees);
+        return ResponseUtils.SuccessResponse("Employees imported successfully");
+    }
+
 
 }

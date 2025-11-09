@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -22,14 +24,24 @@ public class EmployeeController {
 
     @Autowired private EmployeeService employeeService;
 
+//    @GetMapping
+//    public ResponseEntity<BaseApiResponseDTO<?>> getAll(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+//
+//        return employeeService.getAll(pageable);
+//    }
+
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-
-        return employeeService.getAll(pageable);
+        return employeeService.getAll(search, pageable);
     }
 
     @GetMapping("/all-active")
@@ -38,7 +50,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").descending());
 
         return employeeService.getAllActive(status,pageable);
     }
@@ -78,4 +90,13 @@ public class EmployeeController {
    ) {
        return employeeService.statusUpdate(id);
    }
+
+   //for large import
+   @PostMapping("/import")
+   public ResponseEntity<BaseApiResponseDTO<?>> importEmployees(
+           @RequestBody List<EmployeeReqDto> employeeList
+   ) {
+       return employeeService.importEmployees(employeeList);
+   }
+
 }

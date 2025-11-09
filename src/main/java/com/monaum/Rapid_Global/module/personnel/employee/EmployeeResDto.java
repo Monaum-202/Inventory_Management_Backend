@@ -20,6 +20,7 @@ import java.util.List;
 public class EmployeeResDto {
 
     private Long id;
+    private String employeeId;
     private String name;
     private String email;
     private String phone;

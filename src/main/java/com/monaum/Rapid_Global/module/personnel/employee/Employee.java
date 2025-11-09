@@ -34,6 +34,9 @@ public class Employee extends AbstractModel {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "employee_id", unique = true)
+    private String employeeId;
+
     @Column(name = "name", length = 100)
     private String name;
 
@@ -55,7 +58,4 @@ public class Employee extends AbstractModel {
     @Column(name = "status")
     private Boolean status = true;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-    private List<Expense> lends;
 }

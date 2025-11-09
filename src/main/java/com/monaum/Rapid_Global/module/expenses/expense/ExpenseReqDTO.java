@@ -15,10 +15,10 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpenseCreateDTO {
+public class ExpenseReqDTO {
 
-    @NotNull(message = "Category ID is required")
-    private Long categoryId;
+    @NotNull(message = "Expense Category is required")
+    private Long expenseCategory;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than zero")
@@ -26,7 +26,6 @@ public class ExpenseCreateDTO {
 
     private Long paymentMethodId;
 
-    @NotBlank(message = "Paid To field cannot be blank")
     private String paidTo;
 
     @NotNull(message = "Expense date is required")
@@ -36,4 +35,5 @@ public class ExpenseCreateDTO {
     private String description;
 
     private Long employeeId;
+
 }
