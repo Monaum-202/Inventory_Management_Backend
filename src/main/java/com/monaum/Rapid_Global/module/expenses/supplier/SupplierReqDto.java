@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateSupplierReqDto {
+public class SupplierReqDto {
 
     @NotBlank(message = "Company name required.")
     private String name;

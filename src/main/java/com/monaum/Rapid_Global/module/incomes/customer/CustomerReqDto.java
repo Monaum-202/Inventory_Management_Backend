@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCustomerReqDto {
+public class CustomerReqDto {
 
     @NotBlank(message = "Company name is required.")
     private String name;

@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.incomes.customer;
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -8,20 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestApiController
-@RequestMapping("/api/customer")
-public class CustomerController {
+@RequestMapping("/api/supplier")
+public class SupplierController {
 
-    @Autowired private CustomerService service;
+    @Autowired private SupplierService service;
 
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
-            @Valid @RequestBody CustomerReqDto req
+            @Valid @RequestBody SupplierReqDto req
     ){
         return service.create(req);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseApiResponseDTO<?>> getById (
+    public ResponseEntity<BaseApiResponseDTO<?>> getById(
             @PathVariable Long id
     ){
         return service.getById(id);

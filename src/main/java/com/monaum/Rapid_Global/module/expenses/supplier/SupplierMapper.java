@@ -1,14 +1,17 @@
 package com.monaum.Rapid_Global.module.expenses.supplier;
 
+import com.monaum.Rapid_Global.module.master.unit.Unit;
+import com.monaum.Rapid_Global.module.master.unit.UnitResDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface SupplierMapper {
 
-    Supplier toEntity(CreateSupplierReqDto dto);
+    Supplier toEntity(SupplierReqDto dto);
 
-    void toEntity(UpdateSupplierReqDto dto, @MappingTarget Supplier supplier);
+    SupplierResDto toDTO(Supplier entity);
+    void toEntity(SupplierReqDto dto, @MappingTarget Supplier supplier);
 
-    SupplierResDto toDto(Supplier supplier);
+
 }

@@ -1,7 +1,7 @@
-package com.monaum.Rapid_Global.module.master.product_category;
-
+package com.monaum.Rapid_Global.module.expenses.supplier;
 
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.master.unit.Unit;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.transaction.Transactional;
@@ -11,24 +11,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ServiceProductCategory {
-    @Autowired private RepoProductCategory repo;
-    @Autowired private ProductCategoryMapper mapper;
+public class SupplierService {
+    @Autowired private SupplierRepo repo;
+    @Autowired private  SupplierMapper mapper;
 
     @Transactional
-    public ResponseEntity<BaseApiResponseDTO<?>> create(ProductCategoryReqDto dto){
-
-        ProductCategory entity = mapper.toEntity(dto);
+    public ResponseEntity<BaseApiResponseDTO<?>>create(SupplierReqDto dto ) {
+        Supplier entity = mapper.toEntity(dto);
         entity = repo.save(entity);
 
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(entity));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException{
-        ProductCategory productCategory =repo.findById(id).orElseThrow(()-> new CustomException("Product Category not found", HttpStatus.NOT_FOUND));
+            Supplier supplier = repo.findById(id).orElseThrow(()-> new CustomException("Supplier not found", HttpStatus.NOT_FOUND));
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(productCategory));
+            return ResponseUtils.SuccessResponseWithData(mapper.toDTO(supplier));
+
 
     }
-
 }

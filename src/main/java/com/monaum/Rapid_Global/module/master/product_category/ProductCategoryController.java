@@ -5,9 +5,7 @@ import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RestApiController
 @RequestMapping("/api/product-category")
@@ -20,5 +18,12 @@ public class ProductCategoryController {
             @Valid @RequestBody ProductCategoryReqDto req
     ){
         return service.create(req);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> getById(
+            @PathVariable Long id
+    ){
+        return  service.getById(id);
     }
 }

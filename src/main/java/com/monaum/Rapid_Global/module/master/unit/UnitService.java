@@ -1,9 +1,6 @@
 package com.monaum.Rapid_Global.module.master.unit;
 
 import com.monaum.Rapid_Global.exception.CustomException;
-import com.monaum.Rapid_Global.module.master.product_category.ProductCategory;
-import com.monaum.Rapid_Global.module.master.product_category.ProductCategoryReqDto;
-import com.monaum.Rapid_Global.module.master.product_category.RepoProductCategory;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.transaction.Transactional;
