@@ -55,7 +55,7 @@ public class Employee extends AbstractModel {
     @Column(name = "sqn")
     private Integer sqn;
 
-    @Column(name = "status")
-    private Boolean status = true;
+    @Column(name = "active")
+    private Boolean active = true;
 
 }

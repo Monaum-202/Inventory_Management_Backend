@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
-    Page<Employee> findAllByStatus(boolean status, Pageable pageable);
+    Page<Employee> findAllByActive(boolean active, Pageable pageable);
 
     @Query("""
         SELECT e FROM Employee e

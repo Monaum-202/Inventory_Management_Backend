@@ -60,9 +60,9 @@ public class EmployeeService {
     }
 
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, Pageable pageable) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean active, Pageable pageable) {
 
-        Page<EmployeeResDto> employees = employeeRepo.findAllByStatus(status, pageable).map(employeeMapper::toDto);
+        Page<EmployeeResDto> employees = employeeRepo.findAllByActive(active, pageable).map(employeeMapper::toDto);
         CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
@@ -101,10 +101,10 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponse("Employee deleted successfully", HttpStatus.OK);
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(Long id) throws CustomException {
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
-        employee.setStatus(!Boolean.TRUE.equals(employee.getStatus()));
+        employee.setActive(!Boolean.TRUE.equals(employee.getActive()));
         employeeRepo.save(employee);
 
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));

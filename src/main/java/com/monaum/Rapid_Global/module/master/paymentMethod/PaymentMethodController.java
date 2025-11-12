@@ -66,11 +66,11 @@ public class PaymentMethodController {
         return service.update(id, req);
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(
+    @PatchMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(
             @PathVariable Long id
     ){
-        return service.updateStatus(id);
+        return service.activeUpdate(id);
     }
 
 }

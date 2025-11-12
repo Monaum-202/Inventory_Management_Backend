@@ -46,13 +46,13 @@ public class EmployeeController {
 
     @GetMapping("/all-active")
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(
-            @RequestParam Boolean status,
+            @RequestParam Boolean active,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
         Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").descending());
 
-        return employeeService.getAllActive(status,pageable);
+        return employeeService.getAllActive(active,pageable);
     }
 
     @GetMapping("/{id}")
@@ -84,11 +84,11 @@ public class EmployeeController {
         return employeeService.delete(id);
     }
 
-   @PatchMapping("/{id}/status")
-   public ResponseEntity<BaseApiResponseDTO<?>> statusUpdate(
+   @PatchMapping("/{id}")
+   public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(
            @PathVariable Long id
    ) {
-       return employeeService.statusUpdate(id);
+       return employeeService.activeUpdate(id);
    }
 
    //for large import

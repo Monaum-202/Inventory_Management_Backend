@@ -12,7 +12,7 @@ import org.mapstruct.*;
 public interface EmployeeMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "true")
+    @Mapping(target = "active", constant = "true")
 //    @Mapping(target = "lends", ignore = true)
     Employee toEntity(EmployeeReqDto dto);
 

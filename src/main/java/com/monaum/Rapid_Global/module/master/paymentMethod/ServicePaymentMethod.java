@@ -70,7 +70,7 @@ public class ServicePaymentMethod {
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(Long id) throws CustomException {
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
         PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found", HttpStatus.NOT_FOUND));
 
         paymentMethod.setActive(!Boolean.TRUE.equals(paymentMethod.getActive()));
