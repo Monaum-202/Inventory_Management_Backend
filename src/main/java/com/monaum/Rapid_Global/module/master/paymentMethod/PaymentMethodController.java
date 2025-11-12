@@ -73,4 +73,11 @@ public class PaymentMethodController {
         return service.activeUpdate(id);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(
+            @PathVariable Long id
+    ){
+        return service.delete(id);
+    }
+
 }

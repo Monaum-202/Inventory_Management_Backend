@@ -79,4 +79,12 @@ public class ServicePaymentMethod {
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
+        PaymentMethod paymentMethod = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found", HttpStatus.NOT_FOUND));
+
+        repo.delete(paymentMethod);
+
+        return ResponseUtils.SuccessResponse("Payment Method has been deleted successfully", HttpStatus.OK);
+    }
+
 }
