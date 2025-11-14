@@ -78,7 +78,7 @@ public class EmployeeService {
     public ResponseEntity<BaseApiResponseDTO<?>> create(EmployeeReqDto dto) {
 
         Employee employee = employeeMapper.toEntity(dto);
-        employee.setEmployeeId(generateEmployeeId());
+        employee.setEmployeeId(generateCustomId());
         employee = employeeRepo.save(employee);
 
         return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
@@ -113,7 +113,7 @@ public class EmployeeService {
 
     //large Import
 
-    private String generateEmployeeId() {
+    private String generateCustomId() {
         int year = LocalDate.now().getYear() % 100;
         int serial = 1;
 

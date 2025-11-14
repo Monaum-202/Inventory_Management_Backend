@@ -22,7 +22,7 @@ public interface EmployeeRepo extends JpaRepository<Employee, Long> {
     @Query("""
         SELECT e FROM Employee e
         WHERE 
-            CAST(e.id AS string) LIKE CONCAT('%', :search, '%')
+            (e.employeeId) LIKE CONCAT('%', :search, '%')
             OR LOWER(e.name) LIKE LOWER(CONCAT('%', :search, '%'))
             OR e.phone LIKE CONCAT('%', :search, '%')
         """)

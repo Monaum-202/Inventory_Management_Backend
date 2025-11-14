@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class ExpenseResDto {
 
     private Long id;
+    private String expenseId;
     private Long categoryId;
     private String categoryName;
     private BigDecimal amount;

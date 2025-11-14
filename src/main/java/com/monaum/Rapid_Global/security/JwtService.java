@@ -27,9 +27,9 @@ public class JwtService {
 
 	@Value("${app.security.jwt.secret-key:nPeVKgv2NF4HvDi2q2PKqaU2Y+kSlY0OYcP+Evh3A8k=}")
 	private String secretKey;
-	@Value("${app.security.jwt.expiration:86400000}")
+	@Value("${app.security.jwt.expiration:10000000}")
 	private long jwtExpiration;
-	@Value("${app.security.jwt.refresh-token.expiration:604800000}")
+	@Value("${app.security.jwt.refresh-token.expiration:100000000}")
 	private long refreshExpiration;
 
 	public String extractUsername(String token) {

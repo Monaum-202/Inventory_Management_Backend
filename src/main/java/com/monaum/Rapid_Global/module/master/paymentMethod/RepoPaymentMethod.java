@@ -1,8 +1,11 @@
 package com.monaum.Rapid_Global.module.master.paymentMethod;
 
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -16,4 +19,9 @@ public interface RepoPaymentMethod extends JpaRepository<PaymentMethod, Long> {
 
     Page<PaymentMethod> findAllByActive(Boolean status, Pageable pageable);
 
+    @Query("""
+        SELECT p FROM PaymentMethod p
+        WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+        """)
+    Page<PaymentMethod> search(@Param("search") String search, Pageable pageable);
 }

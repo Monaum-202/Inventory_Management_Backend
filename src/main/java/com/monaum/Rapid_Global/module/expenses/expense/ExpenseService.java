@@ -1,12 +1,16 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
+import com.monaum.Rapid_Global.config.SecurityUtil;
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategory;
 import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategoryRepo;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategory;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategoryRepo;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
 import com.monaum.Rapid_Global.module.personnel.employee.EmployeeRepo;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -18,6 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * Monaum Hossain
@@ -31,13 +38,19 @@ public class ExpenseService {
     @Autowired private ExpenseRepo expenseRepo;
     @Autowired private ExpenseMapper expenseMapper;
 
-    @Autowired private ExpenseCategoryRepo expenseCategoryRepo;
+    @Autowired private TransectionCategoryRepo expenseCategoryRepo;
     @Autowired private RepoPaymentMethod paymentMethodRepo;
     @Autowired private EmployeeRepo employeeRepo;
+    @Autowired private SecurityUtil securityUtil;
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable){
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable){
+        Page<ExpenseResDto> expenses;
+        if (search != null && !search.isBlank()) {
+            expenses = expenseRepo.search(search, pageable).map(expenseMapper::toDto);
+        }else {
+            expenses = expenseRepo.findAll(pageable).map(expenseMapper::toDto);
+        }
 
-        Page<ExpenseResDto> expenses = expenseRepo.findAll(pageable).map(expenseMapper ::toDto);
         CustomPageResponseDTO<ExpenseResDto> paginatedResponse = PaginationUtil.buildPageResponse(expenses, pageable);
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
@@ -50,17 +63,40 @@ public class ExpenseService {
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> create(ExpenseReqDTO dto){
-        ExpenseCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
+        TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
-        Employee employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new  CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
+
+        Employee employee = null;
+        if (dto.getEmployeeId() != null) employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
+
+//        User user = null;
+//        if (securityUtil.)
 
         Expense expense = expenseMapper.toEntity(dto);
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);
         expense.setEmployee(employee);
+        expense.setExpenseId(generateCustomId());
         expenseRepo.save(expense);
 
         return  ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(expense));
     }
 
+    private String generateCustomId() {
+        int year = LocalDate.now().getYear() % 100;
+        int serial = 1;
+
+        Optional<Employee> lastEmployee = employeeRepo.findLastEmployee();
+        if (lastEmployee.isPresent()) {
+            String lastId = lastEmployee.get().getEmployeeId();
+            if (lastId != null && lastId.length() >= 8) {
+                try {
+                    int lastSerial = Integer.parseInt(lastId.substring(5));
+                    serial = lastSerial + 1;
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        return String.format("EXP%02d%03d", year, serial);
+    }
 }

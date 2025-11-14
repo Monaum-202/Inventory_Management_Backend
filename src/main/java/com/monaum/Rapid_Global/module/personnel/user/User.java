@@ -6,6 +6,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.master.company.Company;
+import com.monaum.Rapid_Global.module.personnel.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -62,5 +63,10 @@ public class User{
 	@Lob
 	@Column(name = "thumbnail")
 	private byte[] thumbnail;
+
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "role_id")
+	private Role role;
 
 }

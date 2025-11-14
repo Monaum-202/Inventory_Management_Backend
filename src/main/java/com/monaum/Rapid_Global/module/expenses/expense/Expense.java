@@ -1,9 +1,11 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategory;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategory;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
 import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
@@ -30,10 +32,13 @@ public class Expense extends AbstractModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, name ="expense_id", unique = true)
+    private String expenseId;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id",  nullable = false)
-    private ExpenseCategory expenseCategory;
+    private TransectionCategory expenseCategory;
 
     private BigDecimal amount;
 
@@ -61,5 +66,8 @@ public class Expense extends AbstractModel {
     @JoinColumn(name = "employee_id")
     @JsonIgnore
     private Employee employee;
+
+    @Column(name = "status")
+    private Status status = Status.PENDING;
 
 }
