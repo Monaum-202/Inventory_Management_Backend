@@ -1,21 +1,22 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
 import com.monaum.Rapid_Global.config.SecurityUtil;
+import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.exception.CustomException;
-import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategory;
-import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategoryRepo;
+
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategory;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategoryRepo;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
 import com.monaum.Rapid_Global.module.personnel.employee.EmployeeRepo;
+import com.monaum.Rapid_Global.module.expenses.expense.ExpenseReqDTO;
 import com.monaum.Rapid_Global.module.personnel.user.User;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import com.monaum.Rapid_Global.util.response.CustomPageResponseDTO;
-import org.mapstruct.Mapping;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,14 +70,16 @@ public class ExpenseService {
         Employee employee = null;
         if (dto.getEmployeeId() != null) employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
 
-//        User user = null;
-//        if (securityUtil.)
+
 
         Expense expense = expenseMapper.toEntity(dto);
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);
         expense.setEmployee(employee);
         expense.setExpenseId(generateCustomId());
+        if (securityUtil.getAuthenticatedUser().getRole().getId()==1){
+            expense.setStatus(Status.APPROVED);
+        }
         expenseRepo.save(expense);
 
         return  ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(expense));

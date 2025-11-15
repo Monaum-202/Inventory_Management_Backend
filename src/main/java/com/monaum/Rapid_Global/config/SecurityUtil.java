@@ -29,32 +29,62 @@ public class SecurityUtil {
         staticUserRepo = userRepo;
     }
 
+//    public Optional<User> getCurrentUser() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+//            return Optional.empty();
+//        }
+//
+//        Object principal = auth.getPrincipal();
+//        if (principal instanceof UserDetailsImpl userDetails) {
+//            return Optional.of(staticUserRepo.getReferenceById(userDetails.getId()));
+//        }
+//
+//        return Optional.empty();
+//    }
+
     public Optional<User> getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
             return Optional.empty();
         }
 
-        Object principal = auth.getPrincipal();
+        Object principal = authentication.getPrincipal();
+
         if (principal instanceof UserDetailsImpl userDetails) {
-            return Optional.of(staticUserRepo.getReferenceById(userDetails.getId()));
+            return userRepo.findById(userDetails.getId());
         }
 
         return Optional.empty();
     }
 
-    protected User getAuthenticatedUser() {
+
+//    protected User getAuthenticatedUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+//            throw new UsernameNotFoundException("User not authenticated");
+//        }
+//
+//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+//
+//        // Retrieve the user by their username (from the token)
+//        return userRepo.findByUserNameIgnoreCase(userDetails.getUsername())
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername()));
+//    }
+
+    public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl userDetails)) {
             throw new UsernameNotFoundException("User not authenticated");
         }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        // Retrieve the user by their username (from the token)
-        return userRepo.findByUserNameIgnoreCase(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername()));
+        return userRepo.findById(userDetails.getId())
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found with id: " + userDetails.getId()
+                ));
     }
 
 
