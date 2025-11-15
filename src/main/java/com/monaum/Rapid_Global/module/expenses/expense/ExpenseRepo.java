@@ -23,4 +23,8 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
             (e.expenseId) LIKE CONCAT('%', :search, '%')
         """)
     Page<Expense> search(@Param("search") String search, Pageable pageable);
+
+    @Query(value = "SELECT expense_id FROM expense ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    String findLastExpenseId();
+
 }
