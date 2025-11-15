@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
+import com.monaum.Rapid_Global.enums.Status;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,4 +31,5 @@ public class ExpenseResDto {
     private Long approvedById;
     private String approvedByName;
     private LocalDateTime approvedAt;
+    private Status status;
 }

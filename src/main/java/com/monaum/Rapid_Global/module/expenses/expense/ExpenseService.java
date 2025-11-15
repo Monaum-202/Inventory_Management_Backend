@@ -76,7 +76,7 @@ public class ExpenseService {
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);
         expense.setEmployee(employee);
-        expense.setExpenseId(generateCustomId());
+        expense.setExpenseId(generateExpenseId());
         if (securityUtil.getAuthenticatedUser().getRole().getId()==1){
             expense.setStatus(Status.APPROVED);
         }
@@ -85,21 +85,18 @@ public class ExpenseService {
         return  ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(expense));
     }
 
-    private String generateCustomId() {
-        int year = LocalDate.now().getYear() % 100;
-        int serial = 1;
+    public String generateExpenseId() {
+        String lastId = expenseRepo.findLastExpenseId(); // EXP25004
 
-        Optional<Employee> lastEmployee = employeeRepo.findLastEmployee();
-        if (lastEmployee.isPresent()) {
-            String lastId = lastEmployee.get().getEmployeeId();
-            if (lastId != null && lastId.length() >= 8) {
-                try {
-                    int lastSerial = Integer.parseInt(lastId.substring(5));
-                    serial = lastSerial + 1;
-                } catch (NumberFormatException ignored) {}
-            }
+        String year = String.valueOf(LocalDate.now().getYear()).substring(2); // 25
+
+        if (lastId == null) {
+            return "EXP" + year + "001";
         }
 
-        return String.format("EXP%02d%03d", year, serial);
+        int number = Integer.parseInt(lastId.substring(5)); // 004
+        number++;
+
+        return "EXP" + year + String.format("%03d", number);
     }
 }
