@@ -58,4 +58,6 @@ public class Employee extends AbstractModel {
     @Column(name = "active")
     private Boolean active = true;
 
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+    private List<Expense> lends;
 }

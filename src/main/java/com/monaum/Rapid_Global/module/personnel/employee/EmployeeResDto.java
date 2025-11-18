@@ -30,6 +30,7 @@ public class EmployeeResDto {
     private Integer sqn;
 
     private List<ExpenseResDto> lends;
+    private BigDecimal totalLend;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

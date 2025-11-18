@@ -1,6 +1,9 @@
 package com.monaum.Rapid_Global.module.personnel.employee;
 
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.expenses.expense.Expense;
+import com.monaum.Rapid_Global.module.expenses.expense.ExpenseMapper;
+import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -18,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -36,14 +41,16 @@ public class EmployeeService {
     private static final Logger log = LogManager.getLogger(EmployeeService.class);
     @Autowired private EmployeeRepo employeeRepo;
     @Autowired private EmployeeMapper employeeMapper;
+    @Autowired private ExpenseRepo expenseRepo;
+    @Autowired private ExpenseMapper expenseMapper;
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
-
-        Page<EmployeeResDto> employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
-        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
-
-        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
-    }
+//    public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
+//
+//        Page<EmployeeResDto> employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
+//        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
+//
+//        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+//    }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
         Page<EmployeeResDto> employees;
@@ -69,10 +76,24 @@ public class EmployeeService {
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
-        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+        Employee employee = employeeRepo.findById(id)
+                .orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
+
+        // Fetch lends & total
+        List<Expense> lends = expenseRepo.findByEmployeeId(id);
+        BigDecimal totalLend = expenseRepo.getTotalLends(id);
+
+        EmployeeResDto dto = employeeMapper.toDto(employee);
+
+        dto.setLends(
+                lends.stream().map(expenseMapper::toDto).toList()
+        );
+        dto.setTotalLend(totalLend);
+
+        return ResponseUtils.SuccessResponseWithData(dto);
     }
+
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(EmployeeReqDto dto) {
@@ -166,5 +187,104 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponse("Employees imported successfully");
     }
 
+
+
+    //test
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllTest(String search, Pageable pageable) {
+
+        // =======================
+        // 1. Get paginated employees
+        // =======================
+        Page<Employee> employeePage;
+
+        if (search != null && !search.isBlank()) {
+            employeePage = employeeRepo.search(search, pageable);
+        } else {
+            employeePage = employeeRepo.findAll(pageable);
+        }
+
+        List<Employee> employees = employeePage.getContent();
+
+        if (employees.isEmpty()) {
+            CustomPageResponseDTO<EmployeeResDto> emptyResponse =
+                    PaginationUtil.buildPageResponse(Page.empty(pageable), pageable);
+
+            return ResponseUtils.SuccessResponseWithData(emptyResponse);
+        }
+
+        // Extract employee IDs
+        List<Long> employeeIds = employees.stream().map(Employee::getId).toList();
+
+        // =======================
+        // 2. Fetch lends for all employees (1 query)
+        // =======================
+        List<Expense> allLends = expenseRepo.findByEmployeeIds(employeeIds);
+
+        // Group by employeeId
+        Map<Long, List<Expense>> lendsByEmpId =
+                allLends.stream().collect(Collectors.groupingBy(e -> e.getEmployee().getId()));
+
+        // =======================
+        // 3. Fetch total lends grouped (1 query)
+        // =======================
+        Map<Long, BigDecimal> totalLendMap = new HashMap<>();
+
+        List<Object[]> totalLendData = expenseRepo.getTotalLendsByEmployeeIds(employeeIds);
+        for (Object[] row : totalLendData) {
+            Long empId = (Long) row[0];
+            BigDecimal total = (BigDecimal) row[1];
+            totalLendMap.put(empId, total);
+        }
+
+        // =======================
+        // 4. Build final DTO page
+        // =======================
+        Page<EmployeeResDto> dtoPage = employeePage.map(emp -> {
+
+            EmployeeResDto dto = employeeMapper.toDto(emp);
+
+            // Set lends list
+            List<Expense> lends = lendsByEmpId.getOrDefault(emp.getId(), List.of());
+            dto.setLends(
+                    lends.stream().map(expenseMapper::toDto).toList()
+            );
+
+            // Set total lend
+            dto.setTotalLend(totalLendMap.getOrDefault(emp.getId(), BigDecimal.ZERO));
+
+            return dto;
+        });
+
+        CustomPageResponseDTO<EmployeeResDto> paginatedResponse =
+                PaginationUtil.buildPageResponse(dtoPage, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllTestLend(String search, Pageable pageable) {
+        Page<Employee> employees;
+        if (search != null && !search.isBlank()) {
+            employees = employeeRepo.search(search, pageable);
+        } else {
+            employees = employeeRepo.findAll(pageable);
+        }
+
+        Page<EmployeeResDto> dtoPage = employees.map(emp -> {
+            // Convert base fields using mapper
+            EmployeeResDto dto = employeeMapper.toDto(emp);
+            // Fetch lend list
+            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
+            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
+            // Fetch total lend
+            BigDecimal totalLend = expenseRepo.getTotalLends(emp.getId());
+            dto.setTotalLend(totalLend);
+            return dto;
+        });
+
+        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(dtoPage, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
 
 }
