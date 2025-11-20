@@ -70,8 +70,6 @@ public class ExpenseService {
         Employee employee = null;
         if (dto.getEmployeeId() != null) employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
 
-
-
         Expense expense = expenseMapper.toEntity(dto);
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);

@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * Monaum Hossain
- *
  * @since Oct 21, 2025
  */
 
@@ -27,11 +26,13 @@ public interface ExpenseMapper {
     @Mapping(target = "approvedAt", ignore = true)
     Expense toEntity(ExpenseReqDTO dto);
 
-    @Mapping(target = "categoryId", source = "expenseCategory.id")
+//    @Mapping(target = "categoryId", source = "expenseCategory.id")
     @Mapping(target = "categoryName", source = "expenseCategory.name")
-    @Mapping(target = "paymentMethodId", source = "paymentMethod.id")
+//    @Mapping(target = "paymentMethodId", source = "paymentMethod.id")
     @Mapping(target = "paymentMethodName", source = "paymentMethod.name")
-    @Mapping(target = "approvedById", source = "approvedBy.id")
+    @Mapping(target = "employeeId", source = "employee.employeeId")
+    @Mapping(target = "employeeName", source = "employee.name")
+//    @Mapping(target = "approvedById", source = "approvedBy.id")
     @Mapping(target = "approvedByName", source = "approvedBy.userName")
     @Mapping(target = "date", source = "expenseDate")
     ExpenseResDto toDto(Expense entity);
