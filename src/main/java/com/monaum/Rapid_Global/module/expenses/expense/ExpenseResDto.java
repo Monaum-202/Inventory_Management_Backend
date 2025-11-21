@@ -20,12 +20,12 @@ public class ExpenseResDto {
 
     private Long id;
     private String expenseId;
-//    private Long categoryId;
+    private Long categoryId;
     private String categoryName;
     private BigDecimal amount;
-//    private Long paymentMethodId;
+    private Long paymentMethodId;
     private String paymentMethodName;
-    private String employeeId;
+    private Long employeeId;
     private String employeeName;
     private String paidTo;
     private LocalDate date;

@@ -16,7 +16,7 @@ public interface EmployeeMapper {
 //    @Mapping(target = "lends", ignore = true)
     Employee toEntity(EmployeeReqDto dto);
 
-    @Mapping(target = "lends", ignore = true)
+//    @Mapping(target = "lends", ignore = true)
     EmployeeResDto toDto(Employee entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

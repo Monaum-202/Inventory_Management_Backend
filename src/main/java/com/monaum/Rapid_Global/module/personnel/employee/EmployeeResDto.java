@@ -30,7 +30,7 @@ public class EmployeeResDto {
     private Boolean active;
     private Integer sqn;
 
-    private CustomPageResponseDTO<ExpenseResDto> lends;
+    private List<ExpenseResDto> lends;
     private BigDecimal totalLend;
 
     private LocalDateTime createdAt;

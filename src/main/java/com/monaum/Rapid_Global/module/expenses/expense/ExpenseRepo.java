@@ -27,9 +27,9 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
         """)
     Page<Expense> search(@Param("search") String search, Pageable pageable);
 
-//    List<Expense> findByEmployeeId(Long employeeId);
-@Query("SELECT e FROM Expense e WHERE e.employee.id = :employeeId")
-Page<Expense> findByEmployeeId(@Param("employeeId") Long employeeId, Pageable pageable);
+    List<Expense> findByEmployeeId(Long employeeId);
+//@Query("SELECT e FROM Expense e WHERE e.employee.id = :employeeId")
+//Page<Expense> findByEmployeeId(@Param("employeeId") Long employeeId, Pageable pageable);
 
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.employee.id = :employeeId")
     BigDecimal getTotalLends(Long employeeId);
@@ -37,8 +37,12 @@ Page<Expense> findByEmployeeId(@Param("employeeId") Long employeeId, Pageable pa
 
     //test
 
-    @Query("SELECT e FROM Expense e WHERE e.employee.id IN :employeeIds")
-    List<Expense> findByEmployeeIds(List<Long> employeeIds);
+//    @Query("SELECT e FROM Expense e WHERE e.employee.id IN :employeeIds")
+//    List<Expense> findByEmployeeIds(List<Long> employeeIds);
+
+    @Query("SELECT e FROM Expense e WHERE e.employee.id IN :employeeIds ORDER BY e.id DESC")
+    Page<Expense> findLast15ByEmployeeIds(@Param("employeeIds") List<Long> employeeIds, Pageable pageable);
+
 
     @Query("SELECT e.employee.id, COALESCE(SUM(e.amount), 0) " +
             "FROM Expense e WHERE e.employee.id IN :employeeIds GROUP BY e.employee.id")

@@ -4,7 +4,6 @@ import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.expenses.expense.Expense;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseMapper;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
-import com.monaum.Rapid_Global.module.expenses.expense.ExpenseResDto;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -46,14 +45,6 @@ public class EmployeeService {
     @Autowired private ExpenseRepo expenseRepo;
     @Autowired private ExpenseMapper expenseMapper;
 
-//    public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
-//
-//        Page<EmployeeResDto> employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
-//        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
-//
-//        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
-//    }
-
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
         Page<EmployeeResDto> employees;
 
@@ -83,16 +74,14 @@ public class EmployeeService {
                 .orElseThrow(() -> new CustomException("Employee not found", HttpStatus.NOT_FOUND));
 
         // Fetch lends & total
-//        List<Expense> lends = expenseRepo.findByEmployeeId(id);
-        Page<Expense> lendPage = expenseRepo.findByEmployeeId(id, PageRequest.of(0, 10));
-
+        List<Expense> lends = expenseRepo.findByEmployeeId(id);
         BigDecimal totalLend = expenseRepo.getTotalLends(id);
 
         EmployeeResDto dto = employeeMapper.toDto(employee);
 
-        Page<ExpenseResDto> lendDtoPage = lendPage.map(expenseMapper::toDto);
-        dto.setLends(PaginationUtil.buildPageResponse(lendDtoPage, PageRequest.of(0, 10)));
-
+        dto.setLends(
+                lends.stream().map(expenseMapper::toDto).toList()
+        );
         dto.setTotalLend(totalLend);
 
         return ResponseUtils.SuccessResponseWithData(dto);
@@ -191,12 +180,13 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponse("Employees imported successfully");
     }
 
-
-
     //test
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAllTest(String search, Pageable pageable) {
 
+        // =======================
+        // 1. Get paginated employees
+        // =======================
         Page<Employee> employeePage;
 
         if (search != null && !search.isBlank()) {
@@ -217,35 +207,40 @@ public class EmployeeService {
         // Extract employee IDs
         List<Long> employeeIds = employees.stream().map(Employee::getId).toList();
 
-        // Get total lends grouped by employeeId (1 query)
-        Map<Long, BigDecimal> totalLendMap = new HashMap<>();
-        List<Object[]> totalLendData = expenseRepo.getTotalLendsByEmployeeIds(employeeIds);
+        // =======================
+        // 2. Fetch lends for all employees (1 query)
+        // =======================
+        Pageable limit = PageRequest.of(0, 15);
+        List<Expense> last15 = expenseRepo.findLast15ByEmployeeIds(employeeIds, limit).getContent();
 
+        // Group by employeeId
+        Map<Long, List<Expense>> lendsByEmpId =
+                last15.stream().collect(Collectors.groupingBy(e -> e.getEmployee().getId()));
+
+        // =======================
+        // 3. Fetch total lends grouped (1 query)
+        // =======================
+        Map<Long, BigDecimal> totalLendMap = new HashMap<>();
+
+        List<Object[]> totalLendData = expenseRepo.getTotalLendsByEmployeeIds(employeeIds);
         for (Object[] row : totalLendData) {
             Long empId = (Long) row[0];
             BigDecimal total = (BigDecimal) row[1];
             totalLendMap.put(empId, total);
         }
 
-        // Build DTO page
+        // =======================
+        // 4. Build final DTO page
+        // =======================
         Page<EmployeeResDto> dtoPage = employeePage.map(emp -> {
 
             EmployeeResDto dto = employeeMapper.toDto(emp);
 
-            // ================
-            // PAGINATED LENDS
-            // ================
-            Pageable lendsPageRequest = PageRequest.of(0, 10); // inner pagination size=10
-
-            Page<Expense> lendPage = expenseRepo.findByEmployeeId(emp.getId(), lendsPageRequest);
-
-            Page<ExpenseResDto> lendDtoPage = lendPage.map(expenseMapper::toDto);
-
-            // Convert to your custom pagination response
-            CustomPageResponseDTO<ExpenseResDto> lendPaginated =
-                    PaginationUtil.buildPageResponse(lendDtoPage, lendsPageRequest);
-
-            dto.setLends(lendPaginated);
+            // Set lends list
+            List<Expense> lends = lendsByEmpId.getOrDefault(emp.getId(), List.of());
+            dto.setLends(
+                    lends.stream().map(expenseMapper::toDto).toList()
+            );
 
             // Set total lend
             dto.setTotalLend(totalLendMap.getOrDefault(emp.getId(), BigDecimal.ZERO));
@@ -259,30 +254,29 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllTestLend(String search, Pageable pageable) {
+        Page<Employee> employees;
+        if (search != null && !search.isBlank()) {
+            employees = employeeRepo.search(search, pageable);
+        } else {
+            employees = employeeRepo.findAll(pageable);
+        }
 
-//    public ResponseEntity<BaseApiResponseDTO<?>> getAllTestLend(String search, Pageable pageable) {
-//        Page<Employee> employees;
-//        if (search != null && !search.isBlank()) {
-//            employees = employeeRepo.search(search, pageable);
-//        } else {
-//            employees = employeeRepo.findAll(pageable);
-//        }
-//
-//        Page<EmployeeResDto> dtoPage = employees.map(emp -> {
-//            // Convert base fields using mapper
-//            EmployeeResDto dto = employeeMapper.toDto(emp);
-//            // Fetch lend list
-//            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
-//            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
-//            // Fetch total lend
-//            BigDecimal totalLend = expenseRepo.getTotalLends(emp.getId());
-//            dto.setTotalLend(totalLend);
-//            return dto;
-//        });
-//
-//        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(dtoPage, pageable);
-//
-//        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
-//    }
+        Page<EmployeeResDto> dtoPage = employees.map(emp -> {
+            // Convert base fields using mapper
+            EmployeeResDto dto = employeeMapper.toDto(emp);
+            // Fetch lend list
+            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
+            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
+            // Fetch total lend
+            BigDecimal totalLend = expenseRepo.getTotalLends(emp.getId());
+            dto.setTotalLend(totalLend);
+            return dto;
+        });
+
+        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(dtoPage, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
 
 }
