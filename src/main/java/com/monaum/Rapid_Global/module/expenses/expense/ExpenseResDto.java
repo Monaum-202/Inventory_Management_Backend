@@ -30,8 +30,10 @@ public class ExpenseResDto {
     private String paidTo;
     private LocalDate date;
     private String description;
+    private String cancelReason;
 //    private Long approvedById;
     private String approvedByName;
     private LocalDateTime approvedAt;
     private Status status;
+    private Long createdBy;
 }
