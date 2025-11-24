@@ -37,14 +37,11 @@ public class User{
 	@Column(name = "password", length = 100, nullable = false)
 	private String password;
 
-	@Column(name = "first_name", length = 50)
-	private String firstName;
-
-	@Column(name = "last_name", length = 50)
-	private String lastName;
+	@Column(name = "full_name", length = 50)
+	private String fullName;
 
 	@Column(name = "is_active", length = 1, nullable = false, columnDefinition = "BIT DEFAULT 0")
-	private Boolean isActive;
+	private Boolean isActive = true;
 
 	@Column(name = "country", length = 25)
 	private String country;

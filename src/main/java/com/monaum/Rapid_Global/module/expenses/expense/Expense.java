@@ -70,4 +70,7 @@ public class Expense extends AbstractModel {
     @Column(name = "status")
     private Status status = Status.PENDING;
 
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
 }

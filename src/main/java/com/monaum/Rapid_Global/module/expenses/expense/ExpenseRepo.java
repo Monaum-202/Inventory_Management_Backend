@@ -28,6 +28,8 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
     Page<Expense> search(@Param("search") String search, Pageable pageable);
 
     List<Expense> findByEmployeeId(Long employeeId);
+//@Query("SELECT e FROM Expense e WHERE e.employee.id = :employeeId")
+//Page<Expense> findByEmployeeId(@Param("employeeId") Long employeeId, Pageable pageable);
 
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.employee.id = :employeeId")
     BigDecimal getTotalLends(Long employeeId);
@@ -35,8 +37,16 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
 
     //test
 
-    @Query("SELECT e FROM Expense e WHERE e.employee.id IN :employeeIds")
-    List<Expense> findByEmployeeIds(List<Long> employeeIds);
+    @Query(value = "SELECT expense_id FROM expense " +
+            "WHERE expense_id LIKE CONCAT('EXP', SUBSTRING(YEAR(CURDATE()),3,2), '%') " +
+            "ORDER BY CAST(SUBSTRING(expense_id, 6) AS UNSIGNED) DESC " +
+            "LIMIT 1 FOR UPDATE", nativeQuery = true)
+    String findLastExpenseIdForUpdate();
+
+
+    @Query("SELECT e FROM Expense e WHERE e.employee.id IN :employeeIds ORDER BY e.id DESC")
+    Page<Expense> findLast15ByEmployeeIds(@Param("employeeIds") List<Long> employeeIds, Pageable pageable);
+
 
     @Query("SELECT e.employee.id, COALESCE(SUM(e.amount), 0) " +
             "FROM Expense e WHERE e.employee.id IN :employeeIds GROUP BY e.employee.id")

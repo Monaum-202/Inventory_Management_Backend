@@ -18,16 +18,14 @@ public class CreateUsersReqDto {
 	private String email;
 	private String userName;
 	private String password;
-	private String firstName;
-	private String lastName;
+	private String fullName;
 
 	public User getBean() {
 		return User.builder()
 				.email(email)
 				.userName(userName)
 				.password(password)
-				.firstName(firstName)
-				.lastName(lastName)
+				.fullName(fullName)
 				.build();
 	}
 }

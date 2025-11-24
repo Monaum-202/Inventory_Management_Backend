@@ -4,6 +4,7 @@ import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategory;
 
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
+import com.monaum.Rapid_Global.module.personnel.employee.EmployeeReqDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -11,7 +12,6 @@ import java.util.List;
 
 /**
  * Monaum Hossain
- *
  * @since Oct 21, 2025
  */
 
@@ -31,12 +31,23 @@ public interface ExpenseMapper {
     @Mapping(target = "categoryName", source = "expenseCategory.name")
     @Mapping(target = "paymentMethodId", source = "paymentMethod.id")
     @Mapping(target = "paymentMethodName", source = "paymentMethod.name")
-    @Mapping(target = "approvedById", source = "approvedBy.id")
+    @Mapping(target = "employeeId", source = "employee.id")
+    @Mapping(target = "employeeName", source = "employee.name")
     @Mapping(target = "approvedByName", source = "approvedBy.userName")
     @Mapping(target = "date", source = "expenseDate")
     ExpenseResDto toDto(Expense entity);
 
     List<ExpenseResDto> toDtoList(List<Expense> expenses);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "expenseId", ignore = true)
+    @Mapping(target = "expenseCategory", ignore = true)
+    @Mapping(target = "paymentMethod", ignore = true)
+    @Mapping(target = "employee", ignore = true)
+    @Mapping(target = "approvedBy", ignore = true)
+    @Mapping(target = "approvedAt", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    void updateEntityFromDto(ExpenseReqDTO dto, @MappingTarget Expense entity);
 }
 
 //     * Optional — For partial updates (PATCH support)

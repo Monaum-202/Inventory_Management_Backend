@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -177,8 +178,6 @@ public class EmployeeService {
         return ResponseUtils.SuccessResponse("Employees imported successfully");
     }
 
-
-
     //test
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAllTest(String search, Pageable pageable) {
@@ -209,11 +208,12 @@ public class EmployeeService {
         // =======================
         // 2. Fetch lends for all employees (1 query)
         // =======================
-        List<Expense> allLends = expenseRepo.findByEmployeeIds(employeeIds);
+        Pageable limit = PageRequest.of(0, 15);
+        List<Expense> last15 = expenseRepo.findLast15ByEmployeeIds(employeeIds, limit).getContent();
 
         // Group by employeeId
         Map<Long, List<Expense>> lendsByEmpId =
-                allLends.stream().collect(Collectors.groupingBy(e -> e.getEmployee().getId()));
+                last15.stream().collect(Collectors.groupingBy(e -> e.getEmployee().getId()));
 
         // =======================
         // 3. Fetch total lends grouped (1 query)

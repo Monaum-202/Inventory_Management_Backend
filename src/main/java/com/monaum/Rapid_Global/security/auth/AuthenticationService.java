@@ -1,7 +1,9 @@
 package com.monaum.Rapid_Global.security.auth;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.monaum.Rapid_Global.enums.TokenType;
@@ -13,6 +15,7 @@ import com.monaum.Rapid_Global.module.personnel.user.User;
 import com.monaum.Rapid_Global.module.personnel.user.UserRepo;
 import com.monaum.Rapid_Global.module.personnel.user.UserService;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,19 +25,12 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
-/**
- * Monaum Hossain
- * @since jul 18, 2025
- */
-
 @Service
 public class AuthenticationService {
-
 
 	@Autowired private UserRepo userRepo;
 	@Autowired private JwtService jwtService;
@@ -42,47 +38,64 @@ public class AuthenticationService {
 	@Autowired private TokenRepo tokensRepo;
 	@Autowired private UserService userService;
 
+	// ===============================================================
+	// REGISTER
+	// ===============================================================
 	@Transactional
 	public AuthenticationResDto register(RegisterRequestDto request) {
-		// 1. Check if user already exists
 		if (userRepo.findByEmailIgnoreCase(request.getEmail()).isPresent()) {
 			throw new CustomException("Email is already registered.", HttpStatus.BAD_REQUEST);
-		}else if (userRepo.findByUserNameIgnoreCase(request.getUserName()).isPresent()) {
+		} else if (userRepo.findByUserNameIgnoreCase(request.getUserName()).isPresent()) {
 			throw new CustomException("Username is already registered.", HttpStatus.BAD_REQUEST);
 		}
 
 		// 2. Create user
 		User user = User.builder()
-				.firstName(request.getFirstName())
-				.lastName(request.getLastName())
+				.fullName(request.getFullName())
 				.email(request.getEmail())
 				.userName(request.getUserName())
 				.password(passwordEncoder.encode(request.getPassword()))
-				.isActive(Boolean.TRUE).build();
+				.isActive(Boolean.TRUE)
+				.build();
 
 		user = userRepo.save(user);
 
-		// 3. Generate JWT token and Refresh token
-		var jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
-		var refreshToken = jwtService.generateRefreshToken(new UserDetailsImpl(user));
+		// Wrap UserDetails
+		UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-		// 4. Save User Token
+		// 3. Add ROLE ID inside JWT (IMPORTANT)
+		Map<String, Object> extraClaims = new HashMap<>();
+		extraClaims.put("roleId", user.getRole().getId());
+		extraClaims.put("userId", user.getId());
+
+		// 4. Generate tokens
+		var jwtToken = jwtService.generateToken(extraClaims, userDetails);
+		var refreshToken = jwtService.generateRefreshToken(userDetails);
+
+		// 5. Save token
 		saveUserToken(user.getId(), jwtToken);
 
-		// 5. Return token
-		return AuthenticationResDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+		return AuthenticationResDto.builder()
+				.accessToken(jwtToken)
+				.refreshToken(refreshToken)
+				.build();
 	}
 
+	// ===============================================================
+	// AUTHENTICATE (LOGIN)
+	// ===============================================================
 	@Transactional
 	public AuthenticationResDto authenticate(AuthenticationReqDto request) {
+
 		// 1. Find user by username or email
 		Optional<User> userOp = userRepo.findByUserNameIgnoreCase(request.getLogin());
 		if (userOp.isEmpty()) userOp = userRepo.findByEmailIgnoreCase(request.getLogin());
 
-		System.out.println("User found: " + userOp.isPresent());
-		User user = userOp.orElseThrow(() -> new RuntimeException("User not found with provided username/email."));
+		User user = userOp.orElseThrow(() ->
+				new RuntimeException("User not found with provided username/email.")
+		);
 
-		// 2. Check if user is active
+		// 2. Check active status
 		if (Boolean.FALSE.equals(user.getIsActive())) {
 			throw new RuntimeException("User account is inactive.");
 		}
@@ -92,27 +105,35 @@ public class AuthenticationService {
 			throw new RuntimeException("Invalid credentials.");
 		}
 
-		// 4. Generate token
-		var jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
-		var refreshToken = jwtService.generateRefreshToken(new UserDetailsImpl(user));
+		// Convert to UserDetails
+		UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-		// 5. Revoke tokens and save new token
+		// 4. Add ROLE ID inside JWT (IMPORTANT)
+		Map<String, Object> extraClaims = new HashMap<>();
+		extraClaims.put("roleId", user.getRole().getId());
+		extraClaims.put("userId", user.getId());
+
+		// 5. Generate tokens
+		var jwtToken = jwtService.generateToken(extraClaims, userDetails);
+		var refreshToken = jwtService.generateRefreshToken(userDetails);
+
+		// 6. Revoke old tokens
 		revokeAllUserTokens(user.getId());
 		saveUserToken(user.getId(), jwtToken);
 
-		// 6. Return token
 		return AuthenticationResDto.builder()
 				.accessToken(jwtToken)
 				.refreshToken(refreshToken)
 				.build();
 	}
 
-
+	// ===============================================================
+	// TOKEN HELPERS
+	// ===============================================================
 	@Transactional
-	void revokeAllUserTokens(Long zuser) {
-		List<Token> validTokens = tokensRepo.findAllByUserIdAndRevokedAndExpired(zuser, false, false);
-		if (validTokens.isEmpty())
-			return;
+	void revokeAllUserTokens(Long userId) {
+		List<Token> validTokens = tokensRepo.findAllByUserIdAndRevokedAndExpired(userId, false, false);
+		if (validTokens.isEmpty()) return;
 
 		validTokens.forEach(t -> {
 			t.setRevoked(true);
@@ -123,9 +144,9 @@ public class AuthenticationService {
 	}
 
 	@Transactional
-	void saveUserToken(Long zuser, String jwtToken) {
+	void saveUserToken(Long userId, String jwtToken) {
 		Token xtoken = Token.builder()
-				.userId(zuser)
+				.userId(userId)
 				.token(jwtToken)
 				.revoked(false)
 				.expired(false)
@@ -135,23 +156,30 @@ public class AuthenticationService {
 		tokensRepo.save(xtoken);
 	}
 
+	// ===============================================================
+	// REFRESH TOKEN
+	// ===============================================================
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		final String refreshToken;
-		final String usernameOrEmail;
 
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			return;
 		}
 
-		refreshToken = authHeader.substring(7);
-		usernameOrEmail = jwtService.extractUsername(refreshToken); // contains either username or email
+		final String refreshToken = authHeader.substring(7);
+		final String usernameOrEmail = jwtService.extractUsername(refreshToken);
 
 		if (StringUtils.isNotBlank(usernameOrEmail)) {
-			UserDetailsImpl userDetails = (UserDetailsImpl) userService.loadUserByUsername(usernameOrEmail);
+			UserDetailsImpl userDetails =
+					(UserDetailsImpl) userService.loadUserByUsername(usernameOrEmail);
 
 			if (jwtService.isTokenValid(refreshToken, userDetails)) {
-				String accessToken = jwtService.generateToken(userDetails);
+
+				// IMPORTANT: when refreshing, also include role Id
+				Map<String, Object> extraClaims = new HashMap<>();
+				extraClaims.put("roleId", userDetails.getUser().getRole().getId());
+
+				String accessToken = jwtService.generateToken(extraClaims, userDetails);
 				Long userId = userDetails.getUser().getId();
 
 				revokeAllUserTokens(userId);
@@ -166,6 +194,5 @@ public class AuthenticationService {
 			}
 		}
 	}
-
 
 }

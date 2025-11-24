@@ -17,6 +17,7 @@ import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import com.monaum.Rapid_Global.util.response.CustomPageResponseDTO;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,40 +64,83 @@ public class ExpenseService {
         return ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(expense));
     }
 
+    @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(ExpenseReqDTO dto){
         TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
-
-        Employee employee = null;
-        if (dto.getEmployeeId() != null) employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
-
-
+        Employee employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
 
         Expense expense = expenseMapper.toEntity(dto);
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);
         expense.setEmployee(employee);
         expense.setExpenseId(generateExpenseId());
-        if (securityUtil.getAuthenticatedUser().getRole().getId()==1){
+        if (securityUtil.getAuthenticatedUser().getRole().getId()==1 || securityUtil.getAuthenticatedUser().getRole().getId()==2){
             expense.setStatus(Status.APPROVED);
+            expense.setApprovedBy(securityUtil.getAuthenticatedUser());
         }
         expenseRepo.save(expense);
 
         return  ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(expense));
     }
 
-    public String generateExpenseId() {
-        String lastId = expenseRepo.findLastExpenseId(); // EXP25004
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, ExpenseReqDTO dto) throws CustomException{
+        Expense expense = expenseRepo.findById(id).orElseThrow(() -> new CustomException("Expense not found with id: " + id, HttpStatus.NOT_FOUND));
+        TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
+        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        Employee  employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
 
-        String year = String.valueOf(LocalDate.now().getYear()).substring(2); // 25
+        expenseMapper.updateEntityFromDto(dto,expense);
+        expense.setExpenseCategory(expenseCategory);
+        expense.setPaymentMethod(paymentMethod);
+        expense.setEmployee(employee);
+        if (securityUtil.getAuthenticatedUser().getRole().getId()==1){
+            expense.setStatus(Status.APPROVED);
+            expense.setApprovedBy(securityUtil.getAuthenticatedUser());
+        }
+        Expense updated = expenseRepo.save(expense);
+
+        return ResponseUtils.SuccessResponseWithData(expenseMapper.toDto(updated));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(Long id, Status status, String cancelReason) {
+        Expense expense = expenseRepo.findById(id).orElseThrow(() -> new CustomException("Expense not found with id: " + id, HttpStatus.NOT_FOUND));
+
+        expense.setStatus(status);
+        expense.setApprovedBy(securityUtil.getAuthenticatedUser());
+        if (cancelReason!=null){expense.setCancelReason(cancelReason);}
+
+        expenseRepo.save(expense);
+
+        return ResponseUtils.SuccessResponse("Approved successfully!", HttpStatus.OK);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id){
+        Expense expense = expenseRepo.findById(id).orElseThrow(() -> new CustomException("Expense not found with id: " + id, HttpStatus.NOT_FOUND));
+
+        expenseRepo.delete(expense);
+
+        return ResponseUtils.SuccessResponse("Expense has been deleted", HttpStatus.OK);
+    }
+
+    @Transactional
+    public String generateExpenseId() {
+        String lastId = expenseRepo.findLastExpenseIdForUpdate();
+        System.out.println("lastId: " + lastId);
+
+        String year = String.valueOf(LocalDate.now().getYear()).substring(2);
 
         if (lastId == null) {
             return "EXP" + year + "001";
         }
 
-        int number = Integer.parseInt(lastId.substring(5)); // 004
+        int number = Integer.parseInt(lastId.substring(5));
         number++;
 
         return "EXP" + year + String.format("%03d", number);
     }
+
+
+
 }
