@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
- *
  * @since 29-Oct-25 9:49 PM
  */
 
@@ -43,14 +42,6 @@ public class EmployeeService {
     @Autowired private EmployeeMapper employeeMapper;
     @Autowired private ExpenseRepo expenseRepo;
     @Autowired private ExpenseMapper expenseMapper;
-
-//    public ResponseEntity<BaseApiResponseDTO<?>> getAll(Pageable pageable) {
-//
-//        Page<EmployeeResDto> employees = employeeRepo.findAll(pageable).map(employeeMapper::toDto);
-//        CustomPageResponseDTO<EmployeeResDto> paginatedResponse = PaginationUtil.buildPageResponse(employees, pageable);
-//
-//        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
-//    }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
         Page<EmployeeResDto> employees;
@@ -65,7 +56,6 @@ public class EmployeeService {
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
-
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean active, Pageable pageable) {
 
@@ -86,9 +76,9 @@ public class EmployeeService {
 
         EmployeeResDto dto = employeeMapper.toDto(employee);
 
-        dto.setLends(
-                lends.stream().map(expenseMapper::toDto).toList()
-        );
+//        dto.setLends(
+//                lends.stream().map(expenseMapper::toDto).toList()
+//        );
         dto.setTotalLend(totalLend);
 
         return ResponseUtils.SuccessResponseWithData(dto);
@@ -245,10 +235,10 @@ public class EmployeeService {
             EmployeeResDto dto = employeeMapper.toDto(emp);
 
             // Set lends list
-            List<Expense> lends = lendsByEmpId.getOrDefault(emp.getId(), List.of());
-            dto.setLends(
-                    lends.stream().map(expenseMapper::toDto).toList()
-            );
+//            List<Expense> lends = lendsByEmpId.getOrDefault(emp.getId(), List.of());
+//            dto.setLends(
+//                    lends.stream().map(expenseMapper::toDto).toList()
+//            );
 
             // Set total lend
             dto.setTotalLend(totalLendMap.getOrDefault(emp.getId(), BigDecimal.ZERO));
@@ -274,8 +264,8 @@ public class EmployeeService {
             // Convert base fields using mapper
             EmployeeResDto dto = employeeMapper.toDto(emp);
             // Fetch lend list
-            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
-            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
+//            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
+//            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
             // Fetch total lend
             BigDecimal totalLend = expenseRepo.getTotalLends(emp.getId());
             dto.setTotalLend(totalLend);
