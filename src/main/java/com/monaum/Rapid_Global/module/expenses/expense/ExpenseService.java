@@ -127,7 +127,6 @@ public class ExpenseService {
     @Transactional
     public String generateExpenseId() {
         String lastId = expenseRepo.findLastExpenseIdForUpdate();
-        System.out.println("lastId: " + lastId);
 
         String year = String.valueOf(LocalDate.now().getYear()).substring(2);
 
