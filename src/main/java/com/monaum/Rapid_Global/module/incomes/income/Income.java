@@ -1,0 +1,63 @@
+package com.monaum.Rapid_Global.module.incomes.income;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.monaum.Rapid_Global.enums.Status;
+import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategory;
+import com.monaum.Rapid_Global.module.personnel.user.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "Income")
+@EqualsAndHashCode(callSuper = false)
+public class Income extends AbstractModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, name ="income_id", unique = true)
+    private String incomeId;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id",  nullable = false)
+    private TransectionCategory incomeCategory;
+
+    private BigDecimal amount;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
+
+    @Column(name = "paid_to")
+    private String paidTo;
+
+    private LocalDate expenseDate;
+
+    @Column(name = "description")
+    private String description;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    private LocalDateTime approvedAt;
+
+    @Column(name = "status")
+    private Status status = Status.PENDING;
+
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+}
