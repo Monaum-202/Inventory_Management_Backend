@@ -17,18 +17,18 @@ import java.time.LocalDateTime;
 public class IncomeResDto {
 
     private Long id;
-    private String expenseId;
+    private String incomeId;
     private Long categoryId;
     private String categoryName;
     private BigDecimal amount;
     private Long paymentMethodId;
     private String paymentMethodName;
-    private String paidTo;
+    private String paidFrom;
     private LocalDate date;
     private String description;
     private String cancelReason;
     private String approvedByName;
     private LocalDateTime approvedAt;
     private Status status;
-    private Long createdBy;
+    private String createdBy;
 }

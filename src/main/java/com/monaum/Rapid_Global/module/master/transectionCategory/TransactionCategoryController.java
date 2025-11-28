@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestApiController
 @RequestMapping("/api/transection-category")
-public class TransectionCategoryController {
+public class TransactionCategoryController {
 
-    @Autowired private TransectionCategoryService service;
+    @Autowired private TransactionCategoryService service;
 
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
@@ -55,7 +55,7 @@ public class TransectionCategoryController {
 
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
-            @Valid @RequestBody TransectionCategoryReqDto req
+            @Valid @RequestBody TransactionCategoryReqDto req
     ){
         return service.create(req);
     }
@@ -63,7 +63,7 @@ public class TransectionCategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<BaseApiResponseDTO<?>> update(
             @PathVariable Long id,
-            @Valid @RequestBody TransectionCategoryReqDto req
+            @Valid @RequestBody TransactionCategoryReqDto req
     ){
         return service.update(id, req);
     }

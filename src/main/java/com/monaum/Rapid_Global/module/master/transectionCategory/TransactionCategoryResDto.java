@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class TransectionCategoryResDto {
+public class TransactionCategoryResDto {
 
     private Long id;
     private String name;

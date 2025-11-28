@@ -1,5 +1,7 @@
 package com.monaum.Rapid_Global.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,12 +23,16 @@ import java.time.LocalDateTime;
 public abstract class AbstractModel implements Serializable {
 
 	@CreatedBy
-	@Column(name = "created_by")
-	private Long createdBy;
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "created_by")
+	private User createdBy;
 
 	@LastModifiedBy
-	@Column(name = "updated_by")
-	private Long updatedBy;
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "updated_by")
+	private User updatedBy;
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)

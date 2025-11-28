@@ -22,15 +22,17 @@ public class IncomeReqDTO {
     @Positive(message = "Amount must be greater than zero")
     private BigDecimal amount;
 
+    @NotNull(message = "Payment Method is required")
     private Long paymentMethodId;
 
     private String paidFrom;
+
+    private String paidFromCompany;
 
     @NotNull(message = "Income date is required")
     private LocalDate incomeDate;
 
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
-
 
 }

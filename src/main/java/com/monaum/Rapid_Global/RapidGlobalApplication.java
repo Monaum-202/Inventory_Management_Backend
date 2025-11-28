@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global;
 
 import com.monaum.Rapid_Global.config.DataAuditorAware;
+import com.monaum.Rapid_Global.module.personnel.user.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -22,10 +23,10 @@ public class RapidGlobalApplication {
         SpringApplication.run(RapidGlobalApplication .class, args);
     }
 
-    @Bean
-    AuditorAware<Long> auditorAware() {
-        return new DataAuditorAware();
-    }
+//    @Bean
+//    AuditorAware<User> auditorAware() {
+//        return new DataAuditorAware();
+//    }
 
 //    @Bean
 //    PasswordEncoder passwordEncoder() {

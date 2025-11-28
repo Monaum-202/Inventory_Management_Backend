@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "transection_category")
-public class TransectionCategory {
+@Table(name = "transaction_category")
+public class TransactionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

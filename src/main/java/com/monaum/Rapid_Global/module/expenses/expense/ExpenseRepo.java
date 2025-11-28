@@ -21,11 +21,16 @@ import java.util.List;
 public interface ExpenseRepo extends JpaRepository<Expense, Long> {
 
     @Query("""
-        SELECT e FROM Expense e
-        WHERE 
-            (e.expenseId) LIKE CONCAT('%', :search, '%')
-        """)
+    SELECT e FROM Expense e
+    LEFT JOIN e.employee emp
+    WHERE 
+        LOWER(COALESCE(e.expenseId, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(COALESCE(e.paidTo, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(COALESCE(emp.name, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+""")
     Page<Expense> search(@Param("search") String search, Pageable pageable);
+
+
 
     List<Expense> findByEmployeeId(Long employeeId);
 

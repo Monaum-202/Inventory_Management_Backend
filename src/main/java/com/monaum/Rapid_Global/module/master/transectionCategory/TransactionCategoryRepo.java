@@ -16,13 +16,13 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface TransectionCategoryRepo extends JpaRepository<TransectionCategory,Long> {
+public interface TransactionCategoryRepo extends JpaRepository<TransactionCategory,Long> {
 
-    Page<TransectionCategory> findAllByActiveAndType(Boolean active, TransactionType type, Pageable pageable);
+    Page<TransactionCategory> findAllByActiveAndType(Boolean active, TransactionType type, Pageable pageable);
 
     @Query("""
-        SELECT tc FROM TransectionCategory tc
+        SELECT tc FROM TransactionCategory tc
         WHERE LOWER(tc.name) LIKE LOWER(CONCAT('%', :search, '%'))
         """)
-    Page<TransectionCategory> search(@Param("search") String search, Pageable pageable);
+    Page<TransactionCategory> search(@Param("search") String search, Pageable pageable);
 }

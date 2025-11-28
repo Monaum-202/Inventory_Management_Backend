@@ -1,41 +1,38 @@
 package com.monaum.Rapid_Global.config;
 
-import java.util.Optional;
-
+import com.monaum.Rapid_Global.module.personnel.user.User;
+import com.monaum.Rapid_Global.module.personnel.user.UserRepo;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 
-/**
- * Zubayer Ahamed
- * @since Jun 22, 2025
- */
-public class DataAuditorAware implements AuditorAware<Long> {
+@Component("auditorAware")
+public class DataAuditorAware implements AuditorAware<User> {
+
+	private final UserRepo userRepository;
+
+	public DataAuditorAware(UserRepo userRepository) {
+		this.userRepository = userRepository;
+	}
 
 	@Override
-	public @NonNull Optional<Long> getCurrentAuditor() {
-		try {
-			UserDetailsImpl user = getLoggedInUserDetails();
-			if (user != null && user.getId() != null) {
-				return Optional.of(user.getId());
-			}
-		} catch (Exception e) {
-
-		}
-		return Optional.of(0L); // fallback
+	public Optional<User> getCurrentAuditor() {
+		UserDetailsImpl user = getLoggedInUserDetails();
+		if (user == null) return Optional.empty();
+		return userRepository.findById(user.getId());
 	}
 
-
-	public UserDetailsImpl getLoggedInUserDetails() {
+	private UserDetailsImpl getLoggedInUserDetails() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(auth == null || !auth.isAuthenticated()) return null;
+		if (auth == null || !auth.isAuthenticated()) return null;
 
-		Object principal = auth.getPrincipal();
-		if(!(principal instanceof UserDetailsImpl)) return null;
-		return (UserDetailsImpl) principal;
+		if (!(auth.getPrincipal() instanceof UserDetailsImpl)) return null;
+
+		return (UserDetailsImpl) auth.getPrincipal();
 	}
 }
+

@@ -6,8 +6,8 @@ import com.monaum.Rapid_Global.exception.CustomException;
 
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
-import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategory;
-import com.monaum.Rapid_Global.module.master.transectionCategory.TransectionCategoryRepo;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryRepo;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
 import com.monaum.Rapid_Global.module.personnel.employee.EmployeeRepo;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseReqDTO;
@@ -40,7 +40,7 @@ public class ExpenseService {
     @Autowired private ExpenseRepo expenseRepo;
     @Autowired private ExpenseMapper expenseMapper;
 
-    @Autowired private TransectionCategoryRepo expenseCategoryRepo;
+    @Autowired private TransactionCategoryRepo expenseCategoryRepo;
     @Autowired private RepoPaymentMethod paymentMethodRepo;
     @Autowired private EmployeeRepo employeeRepo;
     @Autowired private SecurityUtil securityUtil;
@@ -66,7 +66,7 @@ public class ExpenseService {
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(ExpenseReqDTO dto){
-        TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
+        TransactionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
         Employee employee = null;
 
@@ -94,7 +94,7 @@ public class ExpenseService {
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, ExpenseReqDTO dto) throws CustomException{
         Expense expense = expenseRepo.findById(id).orElseThrow(() -> new CustomException("Expense not found with id: " + id, HttpStatus.NOT_FOUND));
-        TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
+        TransactionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
         Employee  employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
 

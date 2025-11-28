@@ -36,6 +36,8 @@ public interface ExpenseMapper {
     @Mapping(target = "employeeName", source = "employee.name")
     @Mapping(target = "approvedByName", source = "approvedBy.fullName")
     @Mapping(target = "date", source = "expenseDate")
+    @Mapping(target = "createdBy", source = "createdBy.id")
+    @Mapping(target = "createdByName", source = "createdBy.fullName")
     ExpenseResDto toDto(Expense entity);
 
     List<ExpenseResDto> toDtoList(List<Expense> expenses);

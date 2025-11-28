@@ -11,7 +11,7 @@ import lombok.Data;
  */
 
 @Data
-public class TransectionCategoryReqDto {
+public class TransactionCategoryReqDto {
 
     private String name;
     private String description;

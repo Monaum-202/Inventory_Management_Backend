@@ -12,12 +12,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  */
 
 @Mapper(componentModel = "spring")
-public interface TransectionCategoryMapper {
+public interface TransactionCategoryMapper {
 
-    TransectionCategory toEntity(TransectionCategoryReqDto dto);
+    TransactionCategory toEntity(TransactionCategoryReqDto dto);
 
-    TransectionCategoryResDto toDto(TransectionCategory entity);
+    TransactionCategoryResDto toDto(TransactionCategory entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void toEntityUpdate(TransectionCategoryReqDto dto, @MappingTarget TransectionCategory entity);
+    void toEntityUpdate(TransactionCategoryReqDto dto, @MappingTarget TransactionCategory entity);
 }
