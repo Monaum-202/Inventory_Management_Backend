@@ -31,6 +31,7 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
 
     @Query("SELECT e FROM Expense e " +
             "WHERE e.employee.id = :empId " +
+            "AND e.status = com.monaum.Rapid_Global.enums.Status.APPROVED " +  // ← space added here
             "ORDER BY e.expenseDate DESC, e.approvedAt DESC")
     List<Expense> findLastExpenses(@Param("empId") Long empId, Pageable pageable);
 

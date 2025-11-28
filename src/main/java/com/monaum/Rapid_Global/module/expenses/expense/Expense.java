@@ -47,8 +47,14 @@ public class Expense extends AbstractModel {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    @Column(name = "transection_id")
+    private String transectionId;
+
     @Column(name = "paid_to")
     private String paidTo;
+
+    @Column(name = "paid_to_company")
+    private String paidToCompany;
 
     private LocalDate expenseDate;
 

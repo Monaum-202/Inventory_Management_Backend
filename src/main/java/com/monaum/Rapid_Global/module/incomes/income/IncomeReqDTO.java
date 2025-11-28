@@ -24,7 +24,7 @@ public class IncomeReqDTO {
 
     private Long paymentMethodId;
 
-    private String paidTo;
+    private String paidFrom;
 
     @NotNull(message = "Income date is required")
     private LocalDate incomeDate;

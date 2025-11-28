@@ -24,14 +24,15 @@ public class ExpenseResDto {
     private String categoryName;
     private BigDecimal amount;
     private Long paymentMethodId;
+    private String transactionId;
     private String paymentMethodName;
     private Long employeeId;
     private String employeeName;
     private String paidTo;
+    private String paidToCompany;
     private LocalDate date;
     private String description;
     private String cancelReason;
-//    private Long approvedById;
     private String approvedByName;
     private LocalDateTime approvedAt;
     private Status status;

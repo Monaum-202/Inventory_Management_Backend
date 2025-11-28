@@ -24,9 +24,14 @@ public class ExpenseReqDTO {
     @Positive(message = "Amount must be greater than zero")
     private BigDecimal amount;
 
+    @NotNull(message = "Payment Method is required")
     private Long paymentMethodId;
 
+    private String transactionId;
+
     private String paidTo;
+
+    private String paidToCompany;
 
     @NotNull(message = "Expense date is required")
     private LocalDate expenseDate;
