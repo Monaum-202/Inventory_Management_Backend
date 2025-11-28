@@ -46,7 +46,7 @@ public class Income extends AbstractModel {
     @Column(name = "paid_from_company")
     private String paidFromCompany;
 
-    private LocalDate date;
+    private LocalDate incomeDate;
 
     @Column(name = "description")
     private String description;

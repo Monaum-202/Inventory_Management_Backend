@@ -24,7 +24,7 @@ public class IncomeResDto {
     private Long paymentMethodId;
     private String paymentMethodName;
     private String paidFrom;
-    private LocalDate date;
+    private LocalDate incomeDate;
     private String description;
     private String cancelReason;
     private String approvedByName;

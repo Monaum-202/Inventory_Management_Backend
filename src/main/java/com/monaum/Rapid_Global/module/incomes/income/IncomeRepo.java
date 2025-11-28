@@ -20,9 +20,11 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     Page<Income> search(@Param("search") String search, Pageable pageable);
 
     @Query(value = "SELECT income_id FROM income " +
-            "WHERE income_id LIKE CONCAT('EXP', SUBSTRING(YEAR(CURDATE()),3,2), '%') " +
-            "ORDER BY CAST(SUBSTRING(income_id, 6) AS UNSIGNED) DESC " +
-            "LIMIT 1 FOR UPDATE", nativeQuery = true)
+            "WHERE income_id LIKE CONCAT('INC', SUBSTRING(YEAR(CURDATE()),3,2), '%') " +
+            "ORDER BY CAST(SUBSTRING(income_id, 7) AS UNSIGNED) DESC " +
+            "LIMIT 1 FOR UPDATE",
+            nativeQuery = true)
     String findLastIncomeIdForUpdate();
+
 
 }

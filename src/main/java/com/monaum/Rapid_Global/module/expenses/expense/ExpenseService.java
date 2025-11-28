@@ -136,16 +136,28 @@ public class ExpenseService {
         String lastId = expenseRepo.findLastExpenseIdForUpdate();
 
         String year = String.valueOf(LocalDate.now().getYear()).substring(2);
+        String month = String.format("%02d", LocalDate.now().getMonthValue());
 
         if (lastId == null) {
-            return "EXP" + year + "001";
+            return "EXP" + year + month + "001";
         }
 
-        int number = Integer.parseInt(lastId.substring(5));
+        // Extract last ID's year and month
+        String lastYear = lastId.substring(3, 5);
+        String lastMonth = lastId.substring(5, 7);
+
+        // If month OR year changed → reset counter to 001
+        if (!lastYear.equals(year) || !lastMonth.equals(month)) {
+            return "EXP" + year + month + "001";
+        }
+
+        // Otherwise, increment existing number
+        int number = Integer.parseInt(lastId.substring(7));
         number++;
 
-        return "EXP" + year + String.format("%03d", number);
+        return "EXP" + year + month + String.format("%03d", number);
     }
+
 
 
 
