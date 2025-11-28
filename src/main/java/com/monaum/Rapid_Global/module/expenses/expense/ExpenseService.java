@@ -68,16 +68,23 @@ public class ExpenseService {
     public ResponseEntity<BaseApiResponseDTO<?>> create(ExpenseReqDTO dto){
         TransectionCategory expenseCategory = expenseCategoryRepo.findById(dto.getExpenseCategory()).orElseThrow(() -> new CustomException("Expense Category not found with id: " + dto.getExpenseCategory(), HttpStatus.NOT_FOUND));
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
-        Employee employee = employeeRepo.findById(dto.getEmployeeId()).orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
+        Employee employee = null;
 
-        Expense expense = expenseMapper.toEntity(dto);
+        if (dto.getEmployeeId() != null) {
+            employee = employeeRepo.findById(dto.getEmployeeId())
+                    .orElseThrow(() -> new CustomException("Employee not found with id: " + dto.getEmployeeId(), HttpStatus.NOT_FOUND));
+        }
+
+            Expense expense = expenseMapper.toEntity(dto);
         expense.setExpenseCategory(expenseCategory);
         expense.setPaymentMethod(paymentMethod);
-        expense.setEmployee(employee);
+        expense.setCreatedByName(securityUtil.getAuthenticatedUser().getFullName());
+        if (employee != null) expense.setEmployee(employee);
         expense.setExpenseId(generateExpenseId());
         if (securityUtil.getAuthenticatedUser().getRole().getId()==1 || securityUtil.getAuthenticatedUser().getRole().getId()==2){
             expense.setStatus(Status.APPROVED);
             expense.setApprovedBy(securityUtil.getAuthenticatedUser());
+
         }
         expenseRepo.save(expense);
 

@@ -25,6 +25,7 @@ public interface ExpenseMapper {
     @Mapping(target = "description", source = "dto.description")
     @Mapping(target = "approvedBy", ignore = true)
     @Mapping(target = "approvedAt", ignore = true)
+    @Mapping(target = "createdByName", ignore = true)
     Expense toEntity(ExpenseReqDTO dto);
 
     @Mapping(target = "categoryId", source = "expenseCategory.id")
@@ -33,7 +34,7 @@ public interface ExpenseMapper {
     @Mapping(target = "paymentMethodName", source = "paymentMethod.name")
     @Mapping(target = "employeeId", source = "employee.id")
     @Mapping(target = "employeeName", source = "employee.name")
-    @Mapping(target = "approvedByName", source = "approvedBy.userName")
+    @Mapping(target = "approvedByName", source = "approvedBy.fullName")
     @Mapping(target = "date", source = "expenseDate")
     ExpenseResDto toDto(Expense entity);
 

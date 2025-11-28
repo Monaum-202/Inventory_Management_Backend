@@ -36,4 +36,5 @@ public class ExpenseResDto {
     private LocalDateTime approvedAt;
     private Status status;
     private Long createdBy;
+    private String createdByName;
 }

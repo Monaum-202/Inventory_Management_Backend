@@ -28,8 +28,13 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
     Page<Expense> search(@Param("search") String search, Pageable pageable);
 
     List<Expense> findByEmployeeId(Long employeeId);
-//@Query("SELECT e FROM Expense e WHERE e.employee.id = :employeeId")
-//Page<Expense> findByEmployeeId(@Param("employeeId") Long employeeId, Pageable pageable);
+
+    @Query("SELECT e FROM Expense e " +
+            "WHERE e.employee.id = :empId " +
+            "ORDER BY e.expenseDate DESC, e.approvedAt DESC")
+    List<Expense> findLastExpenses(@Param("empId") Long empId, Pageable pageable);
+
+
 
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.employee.id = :employeeId")
     BigDecimal getTotalLends(Long employeeId);

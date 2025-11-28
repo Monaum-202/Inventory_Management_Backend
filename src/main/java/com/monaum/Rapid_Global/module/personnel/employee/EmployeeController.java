@@ -38,10 +38,11 @@ public class EmployeeController {
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-        return employeeService.getAllTest(search, pageable);
+
+        return employeeService.getAllTestLend(search, pageable);
     }
 
     @GetMapping("/all-active")

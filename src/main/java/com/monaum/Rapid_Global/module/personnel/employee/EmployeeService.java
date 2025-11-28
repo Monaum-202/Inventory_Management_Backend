@@ -264,8 +264,8 @@ public class EmployeeService {
             // Convert base fields using mapper
             EmployeeResDto dto = employeeMapper.toDto(emp);
             // Fetch lend list
-//            List<Expense> lends = expenseRepo.findByEmployeeId(emp.getId());
-//            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
+            List<Expense> lends = expenseRepo.findLastExpenses(emp.getId(),pageable);
+            dto.setLends(lends.stream().map(expenseMapper::toDto).toList());
             // Fetch total lend
             BigDecimal totalLend = expenseRepo.getTotalLends(emp.getId());
             dto.setTotalLend(totalLend);

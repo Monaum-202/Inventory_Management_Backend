@@ -73,4 +73,7 @@ public class Expense extends AbstractModel {
     @Column(name = "cancel_reason")
     private String cancelReason;
 
+    @Column(name = "created_by_name")
+    private String createdByName;
+
 }
