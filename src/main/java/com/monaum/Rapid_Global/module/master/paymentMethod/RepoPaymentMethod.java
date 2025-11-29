@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -17,11 +19,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RepoPaymentMethod extends JpaRepository<PaymentMethod, Long> {
 
-    Page<PaymentMethod> findAllByActive(Boolean status, Pageable pageable);
+    List<PaymentMethod> findAllByActive(Boolean status);
 
     @Query("""
         SELECT p FROM PaymentMethod p
         WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
         """)
-    Page<PaymentMethod> search(@Param("search") String search, Pageable pageable);
+    List<PaymentMethod> search(@Param("search") String search);
 }

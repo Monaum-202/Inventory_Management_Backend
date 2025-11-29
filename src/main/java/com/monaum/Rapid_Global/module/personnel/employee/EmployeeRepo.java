@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
-    Page<Employee> findAllByActive(boolean active, Pageable pageable);
+    List<Employee> findAllByActive(boolean active);
 
     @Query("""
         SELECT e FROM Employee e
@@ -26,7 +27,7 @@ public interface EmployeeRepo extends JpaRepository<Employee, Long> {
             OR LOWER(e.name) LIKE LOWER(CONCAT('%', :search, '%'))
             OR e.phone LIKE CONCAT('%', :search, '%')
         """)
-    Page<Employee> search(@Param("search") String search, Pageable pageable);
+    List<Employee> search(@Param("search") String search);
 
     @Query("SELECT e FROM Employee e ORDER BY e.id DESC LIMIT 1")
     Optional<Employee> findLastEmployee();

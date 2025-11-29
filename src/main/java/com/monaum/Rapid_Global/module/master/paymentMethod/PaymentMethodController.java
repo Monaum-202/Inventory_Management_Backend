@@ -25,23 +25,16 @@ public class PaymentMethodController {
 
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(required = false) String search
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-
-        return service.getAll(pageable);
+        return service.getAll(search);
     }
 
     @GetMapping("/all-active")
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(
-            @RequestParam Boolean status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam Boolean status
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-
-        return service.getAllActive(status,pageable);
+        return service.getAllActive(status);
     }
 
     @GetMapping("/{id}")

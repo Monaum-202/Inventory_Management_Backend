@@ -36,24 +36,17 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Pageable pageable
+            @RequestParam(required = false) String search
     ) {
 
-        return employeeService.getAllTestLend(search, pageable);
+        return employeeService.getAllWithLend(search);
     }
 
     @GetMapping("/all-active")
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(
-            @RequestParam Boolean active,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam Boolean status
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").descending());
-
-        return employeeService.getAllActive(active,pageable);
+        return employeeService.getAllActive(status);
     }
 
     @GetMapping("/{id}")
@@ -92,12 +85,5 @@ public class EmployeeController {
        return employeeService.activeUpdate(id);
    }
 
-   //for large import
-   @PostMapping("/import")
-   public ResponseEntity<BaseApiResponseDTO<?>> importEmployees(
-           @RequestBody List<EmployeeReqDto> employeeList
-   ) {
-       return employeeService.importEmployees(employeeList);
-   }
 
 }

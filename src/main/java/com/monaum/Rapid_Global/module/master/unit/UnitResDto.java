@@ -12,8 +12,8 @@ public class UnitResDto {
 
     private Long id;
     private String name;
-    private String shortName;
-    private Boolean status;
+    private String fullName;
+    private Boolean active;
     private Integer sqn;
 
     private LocalDateTime createdAt;

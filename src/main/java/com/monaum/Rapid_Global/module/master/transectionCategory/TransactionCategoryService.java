@@ -28,21 +28,22 @@ public class TransactionCategoryService {
     @Autowired private TransactionCategoryRepo repo;
     @Autowired private TransactionCategoryMapper mapper;
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
-        Page<TransactionCategoryResDto> transectionCates;
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search) {
+        List<TransactionCategory> transactionCategories;
 
         if (search != null && !search.isBlank()) {
-            transectionCates = repo.search(search, pageable).map(mapper::toDto);
+            transactionCategories = repo.search(search);
         } else {
-            transectionCates = repo.findAll(pageable).map(mapper::toDto);
+            transactionCategories = repo.findAll();
         }
 
-        CustomPageResponseDTO<TransactionCategoryResDto> paginatedResponse = PaginationUtil.buildPageResponse(transectionCates, pageable);
+        List<TransactionCategoryResDto> transactionCategoryResDtos = transactionCategories.stream().map(mapper::toDto).toList();
 
-        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", transactionCategoryResDtos);
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, TransactionType type, Pageable pageable) {
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, TransactionType type) {
 
         List<TransactionCategory> transactionCategories = repo.findAllByActiveAndType(status, type);
         List<TransactionCategoryResDto> transactionCategoryResDtos = transactionCategories.stream().map(mapper::toDto).toList();

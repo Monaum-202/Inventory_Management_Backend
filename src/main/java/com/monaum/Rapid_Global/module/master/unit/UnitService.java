@@ -1,6 +1,8 @@
 package com.monaum.Rapid_Global.module.master.unit;
 
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryResDto;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.transaction.Transactional;
@@ -17,13 +19,18 @@ public class UnitService {
     @Autowired private UnitRepo repo;
     @Autowired private UnitMapper mapper;
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll() {
-        List<Unit> units = repo.findAll();
-        List<UnitResDto> unitDtos = units.stream().map(mapper::toDTO).toList();
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search) {
+        List<Unit> units;
 
-        BaseApiResponseDTO<List<UnitResDto>> response = new BaseApiResponseDTO<>(true, "Units fetched successfully", unitDtos);
+        if (search != null && !search.isBlank()) {
+            units = repo.search(search);
+        } else {
+            units = repo.findAll();
+        }
 
-        return ResponseUtils.SuccessResponseWithData(response);
+        List<UnitResDto> unitResDtos = units.stream().map(mapper::toDTO).toList();
+
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", unitResDtos);
     }
 
     @Transactional

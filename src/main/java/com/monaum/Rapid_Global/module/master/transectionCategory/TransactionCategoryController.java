@@ -25,25 +25,17 @@ public class TransactionCategoryController {
 
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(required = false) String search
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-
-        return service.getAll(search, pageable);
+        return service.getAll(search);
     }
 
     @GetMapping("/all-active")
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(
             @RequestParam Boolean status,
-            @RequestParam TransactionType type,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam TransactionType type
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("sqn").ascending());
-
-        return service.getAllActive(status, type, pageable);
+        return service.getAllActive(status, type);
     }
 
     @GetMapping("/{id}")

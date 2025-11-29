@@ -23,8 +23,8 @@ public class Unit extends AbstractModel {
     @Column(name = "full_name", unique = true, length = 100)
     private String fullName;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status = true;
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 
     @Column(name = "sqn")
     private Integer sqn;
