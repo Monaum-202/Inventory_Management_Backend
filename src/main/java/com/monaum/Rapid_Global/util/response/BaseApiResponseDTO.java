@@ -14,6 +14,10 @@ public class BaseApiResponseDTO<T> {
     private String message;
     private T data;
 
+    public BaseApiResponseDTO(T data) {
+        this.data = data;
+    }
+
     public BaseApiResponseDTO(boolean success, String message, T data) {
         this.success = success;
         this.message = message;
@@ -24,6 +28,7 @@ public class BaseApiResponseDTO<T> {
         this.success = success;
         this.message = message;
     }
+
 
 }
 

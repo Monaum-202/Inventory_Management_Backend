@@ -40,6 +40,11 @@ public class Income extends AbstractModel {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "sales_id")
+//    private Sales sales;
+
     @Column(name = "paid_from")
     private String paidFrom;
 

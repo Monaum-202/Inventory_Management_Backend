@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionCategoryRepo extends JpaRepository<TransactionCategory,Long> {
 
-    Page<TransactionCategory> findAllByActiveAndType(Boolean active, TransactionType type, Pageable pageable);
+    List<TransactionCategory> findAllByActiveAndType(Boolean active, TransactionType type);
 
     @Query("""
         SELECT tc FROM TransactionCategory tc

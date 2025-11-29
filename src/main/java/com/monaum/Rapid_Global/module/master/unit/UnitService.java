@@ -9,11 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UnitService {
 
     @Autowired private UnitRepo repo;
     @Autowired private UnitMapper mapper;
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll() {
+        List<Unit> units = repo.findAll();
+        List<UnitResDto> unitDtos = units.stream().map(mapper::toDTO).toList();
+
+        BaseApiResponseDTO<List<UnitResDto>> response = new BaseApiResponseDTO<>(true, "Units fetched successfully", unitDtos);
+
+        return ResponseUtils.SuccessResponseWithData(response);
+    }
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(UnitReqDto dto){

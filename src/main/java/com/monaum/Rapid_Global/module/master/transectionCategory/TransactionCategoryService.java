@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -42,15 +44,12 @@ public class TransactionCategoryService {
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status, TransactionType type, Pageable pageable) {
 
-        Page<TransactionCategoryResDto> page =
-                repo.findAllByActiveAndType(status, type, pageable)
-                        .map(mapper::toDto);
+        List<TransactionCategory> transactionCategories = repo.findAllByActiveAndType(status, type);
+        List<TransactionCategoryResDto> transactionCategoryResDtos = transactionCategories.stream().map(mapper::toDto).toList();
 
-        CustomPageResponseDTO<TransactionCategoryResDto> paginatedResponse =
-                PaginationUtil.buildPageResponse(page, pageable);
-
-        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", transactionCategoryResDtos);
     }
+
 
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {

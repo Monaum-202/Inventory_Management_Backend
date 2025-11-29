@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductReqDto {
+public class ProductReqDto {
 
     @NotBlank(message = "Product name is required.")
     @Size(max = 50, message = "Product name can be at most 50 characters long.")
@@ -27,7 +27,5 @@ public class CreateProductReqDto {
 
     @DecimalMin(value = "0.00", inclusive = false, message = "Price must be greater than 0.")
     private BigDecimal pricePerUnit;
-
-    private Boolean status;
 }
 

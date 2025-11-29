@@ -11,8 +11,8 @@ public class UnitReqDto {
     @NotBlank(message = "Unit name is required.")
     private String name;
 
-    @NotBlank(message = "Short name is required.")
-    private String shortName;
+    @NotBlank(message = "Full name is required.")
+    private String fullName;
 
     private Integer sqn;
 }

@@ -8,10 +8,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
-//    // CreateProductReqDto → Product
+//    // ProductReqDto → Product
 //    @Mapping(target = "id", ignore = true)
 //    @Mapping(target = "productType", expression = "java(com.monaum.Rapid_Global.module.master.product.ProductType.valueOf(dto.getProductType()))")
-//    Product toEntity(CreateProductReqDto dto, Unit unit, Company company);
+//    Product toEntity(ProductReqDto dto, Unit unit, Company company);
 //
 //     UpdateProductReqDto → existing Product
 //    @Mapping(target = "unit", source = "unit")

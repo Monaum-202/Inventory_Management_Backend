@@ -14,16 +14,16 @@ public class Unit extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "NAME", length = 100, nullable = false)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "SHORT_NAME", unique = true, length = 20, nullable = false)
-    private String shortName;
+    @Column(name = "full_name", unique = true, length = 100)
+    private String fullName;
 
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status = true;
 
     @Column(name = "sqn")
