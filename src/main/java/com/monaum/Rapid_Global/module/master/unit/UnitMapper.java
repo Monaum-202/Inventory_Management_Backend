@@ -13,7 +13,7 @@ public interface UnitMapper {
 
     UnitResDto toDTO(Unit entity);
 
-    void toEntity(UnitReqDto dto, @MappingTarget Unit unit);
+    void toEntityUpdate(UnitReqDto dto, @MappingTarget Unit unit);
 
 
 

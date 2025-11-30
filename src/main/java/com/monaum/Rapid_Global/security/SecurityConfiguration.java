@@ -99,16 +99,28 @@ public class SecurityConfiguration {
 		return config.getAuthenticationManager();
 	}
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(List.of("http://localhost:4200")); // your Angular app
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-		config.setAllowCredentials(true);
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
+        // IMPORTANT: Use allowedOriginPatterns, NOT allowedOrigins
+        config.setAllowedOriginPatterns(List.of(
+                "*",                                // allow all (safe with JWT)
+                "http://localhost:4200",
+                "https://*.vercel.app",
+                "https://*.vercel.app/*",
+                "https://*.ngrok-free.dev",
+                "https://*.ngrok-free.app"
+        ));
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
 }

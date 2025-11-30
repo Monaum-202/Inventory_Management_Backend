@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.master.unit;
 
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryReqDto;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryResDto;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -42,10 +43,37 @@ public class UnitService {
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(entity));
     }
 
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, UnitReqDto dto) throws CustomException {
+        Unit unit = repo.findById(id).orElseThrow(() -> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
+
+        mapper.toEntityUpdate(dto, unit);
+        repo.save(unit);
+
+        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(unit));
+    }
+
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException{
         Unit unit = repo.findById(id).orElseThrow(()-> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
 
         return ResponseUtils.SuccessResponseWithData(mapper.toDTO(unit));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
+        Unit unit = repo.findById(id).orElseThrow(() -> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
+
+        unit.setActive(!Boolean.TRUE.equals(unit.getActive()));
+        repo.save(unit);
+
+        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(unit));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
+        Unit unit = repo.findById(id).orElseThrow(() -> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
+
+        repo.delete(unit);
+
+        return ResponseUtils.SuccessResponse("Unit has been deleted successfully", HttpStatus.OK);
     }
 
 }
