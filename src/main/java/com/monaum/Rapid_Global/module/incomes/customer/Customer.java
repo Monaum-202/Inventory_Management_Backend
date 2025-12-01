@@ -29,7 +29,7 @@ public class Customer extends AbstractModel {
     private String phone;
 
     @Column(name = "alt_phone", length = 20)
-    private Long altPhone;
+    private String altPhone;
 
     @Column(name = "Email", nullable = false, length = 20)
     private String email;
@@ -37,8 +37,8 @@ public class Customer extends AbstractModel {
     @Column(name = "Address", length = 100)
     private String address;
 
-    @Column(name = "business_address", length = 100)
-    private String businessAddress;
+    @Column(name = "business_name", length = 100)
+    private String businessName;
 
     @Column(name = "total_transaction", precision = 10, scale = 2)
     private BigDecimal totalTransaction;

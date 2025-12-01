@@ -26,4 +26,12 @@ public class CustomerController {
     ){
         return service.getById(id);
     }
+
+    @GetMapping("/{phone}")
+    public ResponseEntity<BaseApiResponseDTO<?>> getByPhone (
+            @PathVariable String phone
+    ){
+        return service.getByPhone(phone);
+    }
+
 }

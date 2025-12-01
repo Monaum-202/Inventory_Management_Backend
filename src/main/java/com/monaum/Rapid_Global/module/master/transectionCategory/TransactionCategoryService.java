@@ -51,8 +51,6 @@ public class TransactionCategoryService {
         return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", transactionCategoryResDtos);
     }
 
-
-
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException {
         TransactionCategory transectionCategory = repo.findById(id).orElseThrow(() -> new CustomException("Payment Method not found at "+ id , HttpStatus.NOT_FOUND));
 
