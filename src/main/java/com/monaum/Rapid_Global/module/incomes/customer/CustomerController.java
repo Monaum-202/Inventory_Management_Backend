@@ -4,6 +4,9 @@ import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,17 @@ public class CustomerController {
             @Valid @RequestBody CustomerReqDto req
     ){
         return service.create(req);
+    }
+
+    @GetMapping
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return service.getAll(search, pageable);
     }
 
     @GetMapping("/{id}")

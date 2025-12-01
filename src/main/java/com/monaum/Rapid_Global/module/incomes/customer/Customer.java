@@ -42,5 +42,4 @@ public class Customer extends AbstractModel {
 
     @Column(name = "total_transaction", precision = 10, scale = 2)
     private BigDecimal totalTransaction;
-
 }
