@@ -1,0 +1,64 @@
+package com.monaum.Rapid_Global.module.incomes.sales;
+
+
+import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemReqDto;
+import jakarta.validation.constraints.*;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
+/**
+ * Monaum Hossain
+ * monaum.202@gmail.com
+ * @since 01-Dec-25 10:52 PM
+ */
+
+@Data
+public class SalesReqDTO {
+
+    @NotBlank(message = "Invoice number is required")
+    private String invoiceNo;
+
+    @NotBlank(message = "Customer name is required")
+    @Size(max = 100, message = "Customer name cannot exceed 100 characters")
+    private String customerName;
+
+    @NotBlank(message = "Phone is required")
+    @Size(max = 20, message = "Phone cannot exceed 20 characters")
+    private String phone;
+
+    @Email(message = "Invalid email format")
+    @Size(max = 100, message = "Email cannot exceed 100 characters")
+    private String email;
+
+    @Size(max = 200, message = "Address cannot exceed 200 characters")
+    private String address;
+
+    @Size(max = 200, message = "Company name cannot exceed 200 characters")
+    private String companyName;
+
+    @NotNull(message = "Sell date is required")
+    private LocalDate sellDate;
+
+    private String notes;
+
+    @NotNull(message = "Total amount is required")
+    @PositiveOrZero(message = "Total amount must be positive")
+    private Double totalAmount;
+
+    @NotNull(message = "Paid amount is required")
+    @PositiveOrZero(message = "Paid amount must be positive")
+    private Double paidAmount;
+
+    @NotNull(message = "Due amount is required")
+    @PositiveOrZero(message = "Due amount must be positive")
+    private Double dueAmount;
+
+    @NotBlank(message = "Status is required")
+    private String status;
+
+    @NotEmpty(message = "Sales items cannot be empty")
+    private List<SalesItemReqDto> items;
+
+}
+
