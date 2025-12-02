@@ -16,9 +16,6 @@ import java.util.List;
 @Data
 public class SalesReqDTO {
 
-    @NotBlank(message = "Invoice number is required")
-    private String invoiceNo;
-
     @NotBlank(message = "Customer name is required")
     @Size(max = 100, message = "Customer name cannot exceed 100 characters")
     private String customerName;

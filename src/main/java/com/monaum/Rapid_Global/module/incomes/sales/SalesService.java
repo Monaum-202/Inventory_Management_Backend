@@ -1,6 +1,8 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 
+import com.monaum.Rapid_Global.module.incomes.customer.Customer;
+import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItem;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -24,23 +27,30 @@ import java.util.List;
 @Transactional
 public class SalesService {
 
-    @Autowired
-    private final SalesRepo salesRepository;
-    @Autowired
-    private final SalesMapper salesMapper;
+    @Autowired private SalesRepo salesRepository;
+    @Autowired private SalesMapper salesMapper;
+    @Autowired private CustomerRepo customerRepo;
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
 
         Sales sales = salesMapper.toEntity(dto);
+        sales.setInvoiceNo(generateInvoiceNo());
+
+        Customer customer =  new Customer();
+        customer.setName(dto.getCustomerName());
+        customer.setEmail(dto.getEmail());
+        customer.setAddress(dto.getAddress());
+        customer.setPhone(dto.getPhone());
+        customer.setBusinessName(dto.getCompanyName());
 
         for (SalesItem item : sales.getItems()) {
             item.setSales(sales);
         }
 
-        Sales saved = salesRepository.save(sales);
+        customerRepo.save(customer);
 
-        return  ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(saved));
+        return  ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(salesRepository.save(sales)));
     }
 
 
@@ -89,5 +99,33 @@ public class SalesService {
             throw new EntityNotFoundException("Sales not found");
         }
         salesRepository.deleteById(id);
+    }
+
+    @Transactional
+    public String generateInvoiceNo() {
+        String lastId = salesRepository.findLastInvoiceNoForUpdate();
+
+        String year = String.valueOf(LocalDate.now().getYear()).substring(2);  // YY
+        String month = String.format("%02d", LocalDate.now().getMonthValue()); // MM
+
+        // If no previous ID → start with 001
+        if (lastId == null) {
+            return "INV" + year + month + "001";
+        }
+
+        // Extract last ID's year and month
+        String lastYear = lastId.substring(3, 5);  // YY from EXPYYMM###
+        String lastMonth = lastId.substring(5, 7); // MM from EXPYYMM###
+
+        // If month OR year changed → reset counter to 001
+        if (!lastYear.equals(year) || !lastMonth.equals(month)) {
+            return "INV" + year + month + "001";
+        }
+
+        // Otherwise, increment existing number
+        int number = Integer.parseInt(lastId.substring(7)); // last 3 digits
+        number++;
+
+        return "INV" + year + month + String.format("%03d", number);
     }
 }
