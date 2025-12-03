@@ -41,7 +41,7 @@ public class CustomerController {
         return service.getById(id);
     }
 
-    @GetMapping("/{phone}")
+    @GetMapping("/phone/{phone}")
     public ResponseEntity<BaseApiResponseDTO<?>> getByPhone (
             @PathVariable String phone
     ){

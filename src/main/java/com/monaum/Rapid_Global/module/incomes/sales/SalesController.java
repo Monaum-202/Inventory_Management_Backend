@@ -30,7 +30,6 @@ public class SalesController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceNo").descending());
-
         return service.getAll(search, pageable);
     }
 }
