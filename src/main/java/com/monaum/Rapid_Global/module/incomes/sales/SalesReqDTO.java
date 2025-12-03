@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.incomes.sales;
 
 
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemReqDto;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -37,7 +38,20 @@ public class SalesReqDTO {
     @NotNull(message = "Sell date is required")
     private LocalDate sellDate;
 
+    @NotNull(message = "Sell date is required")
+    private LocalDate deliveryDate;
+
     private String notes;
+
+    @NotNull(message = "Sub Total is required")
+    @PositiveOrZero(message = "Sub Total must be positive")
+    private Double subTotal;
+
+    @PositiveOrZero(message = "Total amount must be positive")
+    private Double discount;
+
+    @PositiveOrZero(message = "Total amount must be positive")
+    private Double vat;
 
     @NotNull(message = "Total amount is required")
     @PositiveOrZero(message = "Total amount must be positive")

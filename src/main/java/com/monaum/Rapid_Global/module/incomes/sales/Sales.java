@@ -51,8 +51,20 @@ public class Sales extends AbstractModel {
     @Column(nullable = false)
     private LocalDate sellDate;
 
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
+
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @Column(nullable = false)
+    private Double subTotal;
+
+    @Column(name = "discount")
+    private Double discount;
+
+    @Column(name = "vat")
+    private Double vat;
 
     @Column(nullable = false)
     private Double totalAmount;
