@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.incomes.income;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.incomes.sales.Sales;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
 import com.monaum.Rapid_Global.module.personnel.user.User;
@@ -30,7 +31,7 @@ public class Income extends AbstractModel {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id",  nullable = false)
+    @JoinColumn(name = "category_id")
     private TransactionCategory incomeCategory;
 
     private BigDecimal amount;
@@ -40,10 +41,10 @@ public class Income extends AbstractModel {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
-//    @JsonIgnore
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "sales_id")
-//    private Sales sales;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sales_id")
+    private Sales sales;
 
     @Column(name = "paid_from")
     private String paidFrom;

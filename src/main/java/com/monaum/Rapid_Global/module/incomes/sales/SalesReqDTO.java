@@ -61,6 +61,9 @@ public class SalesReqDTO {
     @PositiveOrZero(message = "Paid amount must be positive")
     private Double paidAmount;
 
+    @NotNull(message = "Payment Method is required")
+    private Long paymentMethodId;
+
     @NotNull(message = "Due amount is required")
     @PositiveOrZero(message = "Due amount must be positive")
     private Double dueAmount;

@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.incomes.sales;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.incomes.income.Income;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,5 +83,9 @@ public class Sales extends AbstractModel {
     @JsonIgnore
     @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SalesItem> items;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
+    private List<Income> incomes = new ArrayList<>();
 
 }
