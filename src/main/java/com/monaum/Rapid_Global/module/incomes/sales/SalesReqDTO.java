@@ -38,7 +38,7 @@ public class SalesReqDTO {
     @NotNull(message = "Sell date is required")
     private LocalDate sellDate;
 
-    @NotNull(message = "Sell date is required")
+    @NotNull(message = "Delivery date is required")
     private LocalDate deliveryDate;
 
     private String notes;

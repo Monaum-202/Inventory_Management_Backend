@@ -10,6 +10,7 @@ public interface SalesMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "invoiceNo", ignore = true)
     @Mapping(target = "items", source = "items")
+    
     Sales toEntity(SalesReqDTO dto);
 
     SalesResDto toResDto(Sales entity);
