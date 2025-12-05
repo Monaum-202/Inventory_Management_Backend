@@ -15,12 +15,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class IncomeReqDTO {
 
-    @NotNull(message = "Income Category is required")
     private Long incomeCategory;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than zero")
-    private BigDecimal amount;
+    private Double amount;
 
     @NotNull(message = "Payment Method is required")
     private Long paymentMethodId;

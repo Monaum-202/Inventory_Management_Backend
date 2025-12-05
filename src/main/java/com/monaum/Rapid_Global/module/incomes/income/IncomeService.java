@@ -3,6 +3,8 @@ package com.monaum.Rapid_Global.module.incomes.income;
 import com.monaum.Rapid_Global.config.SecurityUtil;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.incomes.sales.Sales;
+import com.monaum.Rapid_Global.module.incomes.sales.SalesRepo;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
@@ -29,7 +31,7 @@ public class IncomeService {
 
     @Autowired private TransactionCategoryRepo incomeCategoryRepo;
     @Autowired private RepoPaymentMethod paymentMethodRepo;
-
+    @Autowired private SalesRepo salesRepo;
     @Autowired private SecurityUtil securityUtil;
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable){
@@ -57,6 +59,22 @@ public class IncomeService {
         income.setStatus(Status.APPROVED);
         income.setApprovedBy(securityUtil.getAuthenticatedUser());
 
+        incomeRepo.save(income);
+
+        return  ResponseUtils.SuccessResponseWithData(incomeMapper.toDto(income));
+    }
+
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> createForSales(IncomeReqDTO dto, Long saleId){
+        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        Sales sales = salesRepo.findById(saleId).orElseThrow(() -> new CustomException("Sales not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+
+        Income income = incomeMapper.toEntity(dto);
+        income.setPaymentMethod(paymentMethod);
+        income.setIncomeId(generateIncomeId());
+        income.setStatus(Status.APPROVED);
+        income.setApprovedBy(securityUtil.getAuthenticatedUser());
+        income.setSales(sales);
         incomeRepo.save(income);
 
         return  ResponseUtils.SuccessResponseWithData(incomeMapper.toDto(income));
@@ -106,7 +124,6 @@ public class IncomeService {
         String year = String.valueOf(LocalDate.now().getYear()).substring(2);  // YY
         String month = String.format("%02d", LocalDate.now().getMonthValue()); // MM
 
-        // If no previous ID → start with 001
         if (lastId == null) {
             return "INC" + year + month + "001";
         }

@@ -18,9 +18,7 @@ public class CustomerResDto {
 
     private String address;
 
-    private String businessName;
-
-    private String businessAddress;
+    private String companyName;
 
     private BigDecimal totalTransaction;
 

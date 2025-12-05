@@ -20,7 +20,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
         SELECT c FROM Customer c
         WHERE 
             LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(c.businessName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(c.companyName) LIKE LOWER(CONCAT('%', :search, '%'))
             OR c.phone LIKE CONCAT('%', :search, '%')
         """)
     Page<Customer> search(@Param("search") String search,  Pageable pageable);

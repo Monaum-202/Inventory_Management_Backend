@@ -34,6 +34,13 @@ public class IncomeController {
     ){
         return   service.create(dto);
     }
+    @PutMapping("/{saleId}/payments")
+    public ResponseEntity<BaseApiResponseDTO<?>> createForSales(
+            @PathVariable Long saleId,
+            @Valid @RequestBody IncomeReqDTO dto
+    ){
+        return   service.createForSales(dto,saleId);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<BaseApiResponseDTO<?>> update(

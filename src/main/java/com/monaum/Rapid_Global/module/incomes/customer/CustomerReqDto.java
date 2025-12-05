@@ -34,8 +34,6 @@ public class CustomerReqDto {
     private String address;
 
     @Size(max = 150, message = "Business name can be at most 150 characters.")
-    private String businessName;
+    private String companyName;
 
-    @Size(max = 200, message = "Business address can be at most 200 characters.")
-    private String businessAddress;
 }

@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 
+import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -32,4 +33,5 @@ public class SalesResDto {
     private String status;
 
     private List<SalesItemResDto> items;
+    private List<IncomeResDto> payments;
 }

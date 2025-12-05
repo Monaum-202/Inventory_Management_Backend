@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Monaum Hossain
@@ -27,4 +28,5 @@ public interface TransactionCategoryRepo extends JpaRepository<TransactionCatego
         WHERE LOWER(tc.name) LIKE LOWER(CONCAT('%', :search, '%'))
         """)
     List<TransactionCategory> search(@Param("search") String search);
+    Optional<TransactionCategory> findByName(String name);
 }

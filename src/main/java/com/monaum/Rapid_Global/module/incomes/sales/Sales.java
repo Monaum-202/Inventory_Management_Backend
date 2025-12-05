@@ -82,10 +82,10 @@ public class Sales extends AbstractModel {
 
     @JsonIgnore
     @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SalesItem> items;
+    private List<SalesItem> items = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
-    private List<Income> incomes = new ArrayList<>();
+    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Income> payments = new ArrayList<>();
 
 }

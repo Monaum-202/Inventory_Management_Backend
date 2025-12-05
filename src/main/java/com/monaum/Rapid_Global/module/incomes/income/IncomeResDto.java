@@ -20,7 +20,7 @@ public class IncomeResDto {
     private String incomeId;
     private Long categoryId;
     private String categoryName;
-    private BigDecimal amount;
+    private Double amount;
     private Long paymentMethodId;
     private String paymentMethodName;
     private String paidFrom;

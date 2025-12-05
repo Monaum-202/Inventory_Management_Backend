@@ -34,7 +34,7 @@ public class Income extends AbstractModel {
     @JoinColumn(name = "category_id")
     private TransactionCategory incomeCategory;
 
-    private BigDecimal amount;
+    private Double amount;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

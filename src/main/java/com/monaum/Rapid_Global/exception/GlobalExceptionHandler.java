@@ -22,16 +22,22 @@ import org.springframework.web.context.request.WebRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
-		ErrorResponse error = ErrorResponse.builder()
-				.status(ex.getStatus().value())
-				.error(ex.getStatus().getReasonPhrase())
-				.message(ex.getMessage())
-				.build();
+//	@ExceptionHandler(CustomException.class)
+//	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, WebRequest request) {
+//		ErrorResponse error = ErrorResponse.builder()
+//				.status(ex.getStatus().value())
+//				.error(ex.getStatus().getReasonPhrase())
+//				.message(ex.getMessage())
+//				.build();
+//
+//		return new ResponseEntity<>(error, ex.getStatus());
+//	}
 
-		return new ResponseEntity<>(error, ex.getStatus());
+	@ExceptionHandler(CustomException.class)
+	public ResponseEntity<BaseApiResponseDTO<?>> handleCustomException(CustomException ex) {
+		return ResponseUtils.FailedResponse(ex.getMessage(), ex.getStatus());
 	}
+
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, WebRequest request) {

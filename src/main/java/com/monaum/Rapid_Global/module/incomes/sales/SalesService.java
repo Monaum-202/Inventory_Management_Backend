@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 
+import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.incomes.customer.Customer;
 import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
@@ -12,6 +13,8 @@ import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItem;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryRepo;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -28,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +46,7 @@ public class SalesService {
     @Autowired private IncomeRepo incomeRepo;
     @Autowired private IncomeService  incomeService;
     @Autowired private RepoPaymentMethod paymentMethodRepo;
+    @Autowired private TransactionCategoryRepo transactionCategoryRepo;
 
 //    @Transactional
 //    public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
@@ -67,40 +73,66 @@ public class SalesService {
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
 
-        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        // 1. Fetch payment method
+        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId())
+                .orElseThrow(() -> new CustomException(
+                        "Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
 
+        // 2. Map DTO to Sales entity
         Sales sales = salesMapper.toEntity(dto);
         sales.setInvoiceNo(generateInvoiceNo());
 
-        Customer customer = new Customer();
-        customer.setName(dto.getCustomerName());
-        customer.setEmail(dto.getEmail());
-        customer.setAddress(dto.getAddress());
-        customer.setPhone(dto.getPhone());
-        customer.setBusinessName(dto.getCompanyName());
+        // Initialize payments list to avoid null issues
+        if (sales.getPayments() == null) {
+            sales.setPayments(new ArrayList<>());
+        }
 
-        // set sale reference for child items
+        // Set sale reference for each child item
         for (SalesItem item : sales.getItems()) {
             item.setSales(sales);
         }
 
+        // 3. Fetch or create customer
+        Customer customer = customerRepo.findByPhone(dto.getPhone())
+                .orElse(new Customer());
+
+        customer.setName(dto.getCustomerName());
+        customer.setEmail(dto.getEmail());
+        customer.setAddress(dto.getAddress());
+        customer.setPhone(dto.getPhone());
+        customer.setCompanyName(dto.getCompanyName());
+
         customerRepo.save(customer);
 
-        Income income = new Income();
-        income.setIncomeId(incomeService.generateIncomeId());
-        income.setAmount(BigDecimal.valueOf(sales.getPaidAmount()));
-        income.setIncomeDate(LocalDate.now());
-        income.setDescription("Income from Sales Invoice: " + sales.getInvoiceNo());
-        income.setSales(sales);
-        income.setPaymentMethod(paymentMethod);
-        income.setIncomeCategory(null);
-
-        incomeRepo.save(income);
-
+        // 4. Save Sales first
         Sales savedSales = salesRepository.save(sales);
 
+            Income income = new Income();
+            income.setIncomeId(incomeService.generateIncomeId());
+            income.setAmount(savedSales.getPaidAmount());
+            income.setIncomeDate(LocalDate.now());
+            income.setDescription("Income from Sales Invoice: " + savedSales.getInvoiceNo());
+            income.setSales(savedSales);
+            income.setPaymentMethod(paymentMethod);
+
+            // Optionally assign a default category if required
+            TransactionCategory defaultCategory = transactionCategoryRepo.findByName("Sales").orElse(null);
+            income.setIncomeCategory(defaultCategory);
+
+            income.setStatus(Status.APPROVED);
+            income.setApprovedAt(LocalDateTime.now());
+
+            incomeRepo.save(income);
+
+            // Add income to Sales payments list
+            savedSales.getPayments().add(income);
+            salesRepository.save(savedSales); // update sales with payment
+
+
+        // 6. Return response
         return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(savedSales));
     }
+
 
 
     public SalesResDto update(Long id, SalesReqDTO dto) {

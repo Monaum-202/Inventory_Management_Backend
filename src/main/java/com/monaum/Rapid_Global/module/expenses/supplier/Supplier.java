@@ -42,7 +42,6 @@ public class Supplier extends AbstractModel {
     @Column(name = "business_address", length = 255)
     private String businessAddress;
 
-
     @Column(name = "total_transanction", precision = 10, scale = 2)
     private BigDecimal totalTransaction;
 
