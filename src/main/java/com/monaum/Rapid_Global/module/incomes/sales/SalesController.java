@@ -23,6 +23,14 @@ public class SalesController {
         return   service.create(dto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody SalesReqUpdateDTO dto
+    ){
+        return   service.update(id, dto);
+    }
+
     @GetMapping
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(required = false) String search,

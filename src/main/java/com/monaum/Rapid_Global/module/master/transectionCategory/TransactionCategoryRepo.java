@@ -28,5 +28,5 @@ public interface TransactionCategoryRepo extends JpaRepository<TransactionCatego
         WHERE LOWER(tc.name) LIKE LOWER(CONCAT('%', :search, '%'))
         """)
     List<TransactionCategory> search(@Param("search") String search);
-    Optional<TransactionCategory> findByName(String name);
+    Optional<TransactionCategory> findByNameIgnoreCase(String name);
 }

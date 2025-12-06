@@ -10,6 +10,7 @@ import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeService;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItem;
+import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemMapper;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.paymentMethod.RepoPaymentMethod;
@@ -42,6 +43,7 @@ public class SalesService {
 
     @Autowired private SalesRepo salesRepository;
     @Autowired private SalesMapper salesMapper;
+    @Autowired private SalesItemMapper salesItemMapper;
     @Autowired private CustomerRepo customerRepo;
     @Autowired private IncomeRepo incomeRepo;
     @Autowired private IncomeService  incomeService;
@@ -74,28 +76,18 @@ public class SalesService {
     public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
 
         // 1. Fetch payment method
-        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId())
-                .orElseThrow(() -> new CustomException(
-                        "Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
 
-        // 2. Map DTO to Sales entity
         Sales sales = salesMapper.toEntity(dto);
         sales.setInvoiceNo(generateInvoiceNo());
 
-        // Initialize payments list to avoid null issues
-        if (sales.getPayments() == null) {
-            sales.setPayments(new ArrayList<>());
-        }
+        if (sales.getPayments() == null) sales.setPayments(new ArrayList<>());
 
-        // Set sale reference for each child item
-        for (SalesItem item : sales.getItems()) {
-            item.setSales(sales);
-        }
 
-        // 3. Fetch or create customer
-        Customer customer = customerRepo.findByPhone(dto.getPhone())
-                .orElse(new Customer());
+        for (SalesItem item : sales.getItems()) item.setSales(sales);
 
+
+        Customer customer = customerRepo.findByPhone(dto.getPhone()).orElse(new Customer());
         customer.setName(dto.getCustomerName());
         customer.setEmail(dto.getEmail());
         customer.setAddress(dto.getAddress());
@@ -104,19 +96,17 @@ public class SalesService {
 
         customerRepo.save(customer);
 
-        // 4. Save Sales first
         Sales savedSales = salesRepository.save(sales);
 
             Income income = new Income();
             income.setIncomeId(incomeService.generateIncomeId());
             income.setAmount(savedSales.getPaidAmount());
             income.setIncomeDate(LocalDate.now());
-            income.setDescription("Income from Sales Invoice: " + savedSales.getInvoiceNo());
+            income.setDescription("Income from Sales. Invoice: " + savedSales.getInvoiceNo());
             income.setSales(savedSales);
             income.setPaymentMethod(paymentMethod);
 
-            // Optionally assign a default category if required
-            TransactionCategory defaultCategory = transactionCategoryRepo.findByName("Sales").orElse(null);
+            TransactionCategory defaultCategory = transactionCategoryRepo.findByNameIgnoreCase("sales").orElse(null);
             income.setIncomeCategory(defaultCategory);
 
             income.setStatus(Status.APPROVED);
@@ -124,39 +114,55 @@ public class SalesService {
 
             incomeRepo.save(income);
 
-            // Add income to Sales payments list
             savedSales.getPayments().add(income);
-            salesRepository.save(savedSales); // update sales with payment
+            salesRepository.save(savedSales);
 
-
-        // 6. Return response
         return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(savedSales));
     }
 
+    @Transactional
+    public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, SalesReqUpdateDTO dto) {
 
-
-    public SalesResDto update(Long id, SalesReqDTO dto) {
         Sales existing = salesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sales not found"));
+                .orElseThrow(() -> new CustomException("Sales not found", HttpStatus.NOT_FOUND));
 
-        // Clear old items (because orphanRemoval=true)
+        salesMapper.updateEntityFromDto(dto, existing);
+
         existing.getItems().clear();
 
-        // Map new values
-        Sales updated = salesMapper.toEntity(dto);
+        dto.getItems().forEach(itemDto -> {
+            SalesItem item = salesItemMapper.toEntity(itemDto);
+            item.setSales(existing);
+            existing.getItems().add(item);
+        });
 
-        updated.setId(existing.getId());
-        updated.setCreatedAt(existing.getCreatedAt());
-        updated.setCreatedBy(existing.getCreatedBy());
+        Sales updated = salesRepository.save(existing);
 
-        // Re-link items
-        for (SalesItem item : updated.getItems()) {
-            item.setSales(updated);
-        }
-
-        Sales saved = salesRepository.save(updated);
-        return salesMapper.toResDto(saved);
+        return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(updated));
     }
+
+//    public SalesResDto update(Long id, SalesReqDTO dto) {
+//        Sales existing = salesRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Sales not found"));
+//
+//        // Clear old items (because orphanRemoval=true)
+//        existing.getItems().clear();
+//
+//        // Map new values
+//        Sales updated = salesMapper.toEntity(dto);
+//
+//        updated.setId(existing.getId());
+//        updated.setCreatedAt(existing.getCreatedAt());
+//        updated.setCreatedBy(existing.getCreatedBy());
+//
+//        // Re-link items
+//        for (SalesItem item : updated.getItems()) {
+//            item.setSales(updated);
+//        }
+//
+//        Sales saved = salesRepository.save(updated);
+//        return salesMapper.toResDto(saved);
+//    }
 
 
     @Transactional(readOnly = true)
