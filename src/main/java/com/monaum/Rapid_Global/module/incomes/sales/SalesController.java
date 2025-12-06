@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class SalesController {
 
     @Autowired private SalesService service;
+    @Autowired private SalesInvoiceReportService reportService;
 
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
@@ -39,5 +41,37 @@ public class SalesController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceNo").descending());
         return service.getAll(search, pageable);
+    }
+
+
+    @GetMapping("/{id}/invoice")
+    public ResponseEntity<byte[]> downloadInvoice(@PathVariable Long id) {
+
+        SalesResDto sales = service.getById(id);
+
+        SalesInvoiceJasperDto dto = new SalesInvoiceJasperDto(
+                sales.getInvoiceNo(),
+                sales.getCustomerName(),
+                sales.getPhone(),
+                sales.getAddress(),
+                sales.getSellDate().toString(),
+                sales.getTotalAmount(),
+                sales.getPaidAmount(),
+                sales.getDueAmount(),
+                convertNumberToWords(sales.getTotalAmount()),
+                sales.getItems()
+        );
+
+        byte[] pdf = reportService.generateInvoice(dto);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=invoice_" + sales.getInvoiceNo() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    // simple words converter
+    private String convertNumberToWords(Double amount) {
+        return amount.intValue() + " Taka Only";
     }
 }
