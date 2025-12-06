@@ -24,8 +24,10 @@ public class SalesInvoiceReportService {
             Map<String, Object> params = new HashMap<>();
             params.put("slNo", dto.getInvoiceNo());
             params.put("customerName", dto.getCustomerName());
+            params.put("phone" , dto.getPhone());
             params.put("customerAddress", dto.getAddress());
             params.put("date", dto.getSellDate());
+            params.put("deliveryDate", dto.getDeliveryDate());
             params.put("totalAmount", dto.getTotalAmount());
             params.put("advance", dto.getPaidAmount());
             params.put("dueAmount", dto.getDueAmount());

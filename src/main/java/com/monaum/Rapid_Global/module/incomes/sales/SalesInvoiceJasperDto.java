@@ -14,6 +14,7 @@ public class SalesInvoiceJasperDto {
     private String phone;
     private String address;
     private String sellDate;
+    private String deliveryDate;
 
     private Double totalAmount;
     private Double paidAmount;

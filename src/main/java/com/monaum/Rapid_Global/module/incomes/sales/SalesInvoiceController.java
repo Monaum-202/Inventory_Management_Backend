@@ -27,6 +27,7 @@ public class SalesInvoiceController {
                 sales.getPhone(),
                 sales.getAddress(),
                 sales.getSellDate().toString(),
+                sales.getDeliveryDate().toString(),
                 sales.getTotalAmount(),
                 sales.getPaidAmount(),
                 sales.getDueAmount(),
