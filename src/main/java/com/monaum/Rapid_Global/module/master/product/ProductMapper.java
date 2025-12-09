@@ -8,20 +8,19 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
-//    // ProductReqDto → Product
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "productType", expression = "java(com.monaum.Rapid_Global.module.master.product.ProductType.valueOf(dto.getProductType()))")
-//    Product toEntity(ProductReqDto dto, Unit unit, Company company);
-//
-//     UpdateProductReqDto → existing Product
-//    @Mapping(target = "unit", source = "unit")
-//    @Mapping(target = "productType", expression = "java(com.monaum.Rapid_Global.module.master.product.ProductType.valueOf(dto.getProductType()))")
-//    void toEntity(UpdateProductReqDto dto, @MappingTarget Product product, Unit unit, Company company);
-//
-//     Product → ProductResDto
-//    @Mapping(target = "unitId", source = "unit.id")
-//    @Mapping(target = "unitName", source = "unit.name")
-//    @Mapping(target = "productType", source = "productType")
-//    ProductResDto toDto(Product product);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "unit", ignore = true)
+    @Mapping(target = "active", constant = "true")
+    Product toEntity(ProductReqDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "unit", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(@MappingTarget Product entity, ProductReqDto dto);
+
+    @Mapping(target = "unitId", source = "unit.id")
+    @Mapping(target = "unitName", source = "unit.name")
+    @Mapping(target = "status", source = "active")
+    ProductResDto toDto(Product product);
 
 }

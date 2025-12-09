@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.master.product;
 
+import com.monaum.Rapid_Global.enums.ProductType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ public class ProductReqDto {
     private String name;
 
     @NotBlank(message = "Product type is required.")
-    private String productType;
+    private ProductType productType;
 
     @Size(max = 255, message = "Description can be at most 255 characters long.")
     private String description;

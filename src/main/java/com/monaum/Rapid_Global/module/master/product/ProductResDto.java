@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.master.product;
 
+import com.monaum.Rapid_Global.enums.ProductType;
 import lombok.*;
 import java.math.BigDecimal;
 
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 public class ProductResDto {
 
     private String name;
-    private String productType;
+    private ProductType productType;
     private String description;
     private Long unitId;
     private String unitName;
