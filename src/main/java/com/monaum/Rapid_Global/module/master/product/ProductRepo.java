@@ -16,10 +16,20 @@ import java.util.List;
 @Repository
 public interface ProductRepo extends JpaRepository<Product,Long> {
 
+    List<Product> findAllByActive(Boolean status);
+
     @Query("""
     SELECT u FROM Product u
     WHERE 
         LOWER(COALESCE(u.name, '')) LIKE LOWER(CONCAT('%', :search, '%'))
 """)
     List<Product> search(@Param("search") String search);
-}
+
+
+        @Query("""
+        SELECT p FROM Product p
+        WHERE (:search IS NULL OR LOWER(COALESCE(p.name, '')) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (:status IS NULL OR p.active = :status)
+    """)
+        List<Product> searchAndFilter(@Param("search") String search, @Param("status") Boolean status);
+    }

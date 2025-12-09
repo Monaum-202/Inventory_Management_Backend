@@ -31,6 +31,13 @@ public class UnitController {
 //        return service.getAllActive(status, type);
 //    }
 
+    @GetMapping("/all-active")
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(
+            @RequestParam Boolean status
+    ){
+        return service.getAllActive(status);
+    }
+
     @PostMapping
     public ResponseEntity<BaseApiResponseDTO<?>> create(
             @Valid @RequestBody UnitReqDto req

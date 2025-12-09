@@ -1,6 +1,8 @@
 package com.monaum.Rapid_Global.module.master.unit;
 
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
+import com.monaum.Rapid_Global.module.master.paymentMethod.ResPaymentMethodDTO;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryReqDto;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategoryResDto;
@@ -29,6 +31,14 @@ public class UnitService {
             units = repo.findAll();
         }
 
+        List<UnitResDto> unitResDtos = units.stream().map(mapper::toDTO).toList();
+
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", unitResDtos);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status) {
+
+        List<Unit> units = repo.findAllByActive(status);
         List<UnitResDto> unitResDtos = units.stream().map(mapper::toDTO).toList();
 
         return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", unitResDtos);

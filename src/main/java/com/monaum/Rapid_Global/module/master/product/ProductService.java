@@ -46,6 +46,23 @@ public class ProductService {
 
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status) {
+
+        List<Product> products = repo.findAllByActive(status);
+        List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
+
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", productResDtos);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Boolean status) {
+        List<Product> products = repo.searchAndFilter((search != null && !search.isBlank()) ? search : null, status);
+
+        List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
+
+        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", productResDtos);
+    }
+
+
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(ProductReqDto dto) {
         Unit unit = unitRepo.findById(dto.getUnitId()).orElseThrow(()->new EntityNotFoundException("Unit not found"));
@@ -60,15 +77,9 @@ public class ProductService {
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, ProductReqDto dto) {
 
-        // ----- 2. Existing product -----
-        Product product = repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        Product product = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        Unit newUnit = unitRepo.findById(dto.getUnitId()).orElseThrow(() -> new EntityNotFoundException("Unit not found"));
 
-        // ----- 3. New Unit -----
-        Unit newUnit = unitRepo.findById(dto.getUnitId())
-                .orElseThrow(() -> new EntityNotFoundException("Unit not found"));
-
-        // ----- 4. Build ProductLog (old values first) -----
         ProductLog log = ProductLog.builder()
                 .product(product)
                 .changedBy(securityUtil.getAuthenticatedUser().getId())
@@ -82,24 +93,19 @@ public class ProductService {
                 .changedAt(LocalDateTime.now())
                 .build();
 
-        // ----- 5. Update product fields using MapStruct -----
         mapper.updateEntity(product, dto);
         product.setUnit(newUnit);
 
-        // ----- 6. Save updated product -----
         product = repo.save(product);
 
-        // ----- 7. Set NEW values inside log -----
         log.setNewName(product.getName());
         log.setNewDescription(product.getDescription());
         log.setNewUnitId(product.getUnit() != null ? product.getUnit().getId() : null);
         log.setNewPricePerUnit(product.getPricePerUnit());
         log.setNewStatus(product.getActive() != null && product.getActive() ? 1 : 0);
 
-        // ----- 8. Save ProductLog -----
         productLogRepo.save(log);
 
-        // ----- 9. Return updated Product DTO -----
         return ResponseUtils.SuccessResponseWithData(mapper.toDto(product));
     }
 

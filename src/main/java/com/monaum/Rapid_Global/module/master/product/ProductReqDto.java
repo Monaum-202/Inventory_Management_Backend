@@ -6,7 +6,6 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductReqDto {
@@ -15,7 +14,6 @@ public class ProductReqDto {
     @Size(max = 50, message = "Product name can be at most 50 characters long.")
     private String name;
 
-    @NotBlank(message = "Product type is required.")
     private ProductType productType;
 
     @Size(max = 255, message = "Description can be at most 255 characters long.")
