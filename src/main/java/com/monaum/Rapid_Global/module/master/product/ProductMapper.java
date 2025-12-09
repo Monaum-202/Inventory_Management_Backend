@@ -23,6 +23,5 @@ public interface ProductMapper {
 //    @Mapping(target = "unitName", source = "unit.name")
 //    @Mapping(target = "productType", source = "productType")
 //    ProductResDto toDto(Product product);
-//
-//    List<ProductResDto> toDtoList(List<Product> products);
+
 }
