@@ -9,6 +9,8 @@ public class SalesItemReqDto {
     @NotBlank(message = "Item name is required")
     private String itemName;
 
+    private String unitName;
+
     @NotNull(message = "Quantity is required")
     @Positive(message = "Quantity must be greater than zero")
     private Integer quantity;

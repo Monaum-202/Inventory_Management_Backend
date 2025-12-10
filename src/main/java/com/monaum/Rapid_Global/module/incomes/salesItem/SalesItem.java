@@ -29,6 +29,9 @@ public class SalesItem extends AbstractModel {
     @Column(nullable = false)
     private String itemName;
 
+    @Column(name = "unit_name")
+    private  String unitName;
+
     @Column(nullable = false)
     private Integer quantity;
 
@@ -36,7 +39,7 @@ public class SalesItem extends AbstractModel {
     private Double unitPrice;
 
     @Column(nullable = false)
-    private Double totalPrice; // quantity * unitPrice
+    private Double totalPrice;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
