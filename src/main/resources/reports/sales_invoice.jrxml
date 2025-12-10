@@ -255,14 +255,14 @@
     <columnHeader>
         <band height="32" splitType="Stretch">
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="32" backcolor="#000000" mode="Opaque"/>
+                <reportElement x="0" y="0" width="555" height="32" backcolor="#dbdbdb" mode="Opaque"/>
                 <graphicElement>
                     <pen lineWidth="0.0"/>
                 </graphicElement>
             </rectangle>
 
             <staticText>
-                <reportElement x="5" y="0" width="35" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="5" y="0" width="35" height="32" />
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
@@ -270,15 +270,15 @@
             </staticText>
 
             <staticText>
-                <reportElement x="40" y="0" width="200" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="40" y="0" width="200" height="32" />
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
-                <text><![CDATA[ITEM DESCRIPTION]]></text>
+                <text><![CDATA[ITEM NAME]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="240" y="0" width="65" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="240" y="0" width="65" height="32" />
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
@@ -286,7 +286,7 @@
             </staticText>
 
             <staticText>
-                <reportElement x="305" y="0" width="75" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="305" y="0" width="75" height="32"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
@@ -294,7 +294,7 @@
             </staticText>
 
             <staticText>
-                <reportElement x="380" y="0" width="60" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="380" y="0" width="60" height="32"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
@@ -302,7 +302,7 @@
             </staticText>
 
             <staticText>
-                <reportElement x="440" y="0" width="115" height="32" forecolor="#FFFFFF"/>
+                <reportElement x="440" y="0" width="115" height="32" />
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
@@ -317,7 +317,7 @@
         <band height="26" splitType="Stretch">
 
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="26" backcolor="#ffffff" mode="Opaque">
+                <reportElement x="0" y="0" width="555" height="26" mode="Opaque">
                     <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
                 </reportElement>
                 <graphicElement>
@@ -326,7 +326,7 @@
             </rectangle>
 
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="26" backcolor="#f5f5f5" mode="Opaque">
+                <reportElement x="0" y="0" width="555" height="26"  mode="Opaque">
                     <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
                 </reportElement>
                 <graphicElement>
@@ -509,19 +509,15 @@
                 </graphicElement>
             </line>
 
-            <!-- Due Amount - HIGHLIGHTED -->
-            <rectangle>
-                <reportElement x="300" y="155" width="255" height="28" backcolor="#000000" mode="Opaque"/>
-            </rectangle>
             <staticText>
-                <reportElement x="310" y="157" width="120" height="24" forecolor="#FFFFFF"/>
+                <reportElement x="310" y="157" width="120" height="24"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
                     <font isBold="true" size="13"/>
                 </textElement>
                 <text><![CDATA[DUE AMOUNT:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight" pattern="#,##0.00">
-                <reportElement x="435" y="157" width="110" height="24" forecolor="#FFFFFF"/>
+                <reportElement x="435" y="157" width="110" height="24"/>
                 <box rightPadding="10"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font isBold="true" size="14"/>

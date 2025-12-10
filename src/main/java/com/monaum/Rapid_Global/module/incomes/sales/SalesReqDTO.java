@@ -50,9 +50,6 @@ public class SalesReqDTO {
     @PositiveOrZero(message = "Total amount must be positive")
     private Double vat;
 
-    @NotNull(message = "Payment Method is required")
-    private Long paymentMethodId;
-
     @NotBlank(message = "Status is required")
     private String status;
 
