@@ -17,9 +17,15 @@
     <parameter name="date" class="java.lang.String"/>
     <parameter name="deliveryDate" class="java.lang.String"/>
     <parameter name="amountInWords" class="java.lang.String"/>
+
+    <!-- NEW FINANCIAL FIELDS -->
+    <parameter name="subTotal" class="java.lang.Double"/>
+    <parameter name="discount" class="java.lang.Double"/>
+    <parameter name="vat" class="java.lang.Double"/>
     <parameter name="totalAmount" class="java.lang.Double"/>
-    <parameter name="advance" class="java.lang.Double"/>
+    <parameter name="paidAmount" class="java.lang.Double"/>
     <parameter name="dueAmount" class="java.lang.Double"/>
+    <parameter name="status" class="java.lang.String"/>
 
     <!-- ==================== FIELD DECLARATIONS ==================== -->
     <field name="itemName" class="java.lang.String"/>
@@ -30,261 +36,275 @@
 
     <!-- ==================== PAGE HEADER ==================== -->
     <pageHeader>
-        <band height="165">
+        <band height="185" splitType="Stretch">
 
             <!-- Top Border Line -->
             <line>
                 <reportElement x="0" y="0" width="555" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="2.0" lineColor="#1a1a1a"/>
+                    <pen lineWidth="3.0" lineColor="#000000"/>
                 </graphicElement>
             </line>
 
-            <!-- RAPID GLOBAL TEXT LOGO -->
+            <!-- RAPID GLOBAL TEXT LOGO - BOLDER -->
             <staticText>
-                <reportElement x="0" y="10" width="300" height="32"/>
+                <reportElement x="0" y="10" width="320" height="38"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font size="24" isBold="true" fontName="SansSerif"/>
+                    <font size="28" isBold="true" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[RAPID GLOBAL]]></text>
             </staticText>
 
-            <!-- TAGLINE under logo -->
+            <!-- TAGLINE under logo - BOLDER -->
             <staticText>
-                <reportElement x="0" y="42" width="300" height="12"/>
+                <reportElement x="0" y="48" width="320" height="14"/>
                 <textElement textAlignment="Left">
-                    <font size="8" isItalic="true" fontName="SansSerif"/>
+                    <font size="9" isBold="true" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[OUR HONESTY IS YOUR CONFIDENCE SPACE]]></text>
             </staticText>
 
-            <!-- BILL Box - CENTERED -->
+            <!-- INVOICE Box - CENTERED & BOLDER -->
             <rectangle>
-                <reportElement x="227" y="10" width="100" height="35" backcolor="#1a1a1a" mode="Opaque"/>
+                <reportElement x="215" y="10" width="125" height="42" backcolor="#000000" mode="Opaque"/>
                 <graphicElement>
                     <pen lineWidth="0.0"/>
                 </graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="227" y="10" width="100" height="35" forecolor="#FFFFFF"/>
+                <reportElement x="215" y="10" width="125" height="42" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="18" isBold="true" fontName="SansSerif"/>
+                    <font size="22" isBold="true" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[INVOICE]]></text>
             </staticText>
 
-            <!-- TOP RIGHT ADDRESS SECTION with background -->
-            <rectangle>
-                <reportElement x="340" y="5" width="215" height="55" backcolor="#f5f5f5" mode="Opaque"/>
-                <graphicElement>
-                    <pen lineWidth="0.5" lineColor="#d0d0d0"/>
-                </graphicElement>
-            </rectangle>
+            <!-- TOP RIGHT ADDRESS SECTION - BOLDER -->
+            <staticText>
+                <reportElement x="385" y="8" width="170" height="11"/>
+                <textElement textAlignment="Left">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[683, West Shewrapara Busstand,]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="385" y="19" width="170" height="11"/>
+                <textElement textAlignment="Left">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[📍 Begum Rokeya Sharani,]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="385" y="30" width="170" height="11"/>
+                <textElement textAlignment="Left">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Mirpur, Dhaka-1216]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="385" y="45" width="170" height="11"/>
+                <textElement textAlignment="Left">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[✉ rapidglobal1971@gmail.com]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="385" y="56" width="170" height="11"/>
+                <textElement textAlignment="Left">
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[☎ +8801718343943 | +8801675414022]]></text>
+            </staticText>
 
-            <staticText>
-                <reportElement x="345" y="8" width="205" height="10"/>
-                <textElement textAlignment="Right">
-                    <font size="7" isBold="true"/>
-                </textElement>
-                <text><![CDATA[683 West Shewrapara Busstand,]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="345" y="18" width="205" height="10"/>
-                <textElement textAlignment="Right">
-                    <font size="7" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Begum Rokeya Sharani, Mirpur, Dhaka-1216]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="345" y="32" width="205" height="10"/>
-                <textElement textAlignment="Right">
-                    <font size="7"/>
-                </textElement>
-                <text><![CDATA[rapidglobal1971@gmail.com]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="345" y="42" width="205" height="10"/>
-                <textElement textAlignment="Right">
-                    <font size="7" isBold="true"/>
-                </textElement>
-                <text><![CDATA[+8801718343943 | +8801675414022]]></text>
-            </staticText>
-
-            <!-- Divider Line -->
+            <!-- Divider Line - THICKER -->
             <line>
-                <reportElement x="0" y="70" width="555" height="1"/>
+                <reportElement x="0" y="75" width="555" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="1.0" lineColor="#cccccc"/>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
                 </graphicElement>
             </line>
 
-            <!-- Customer Information Section with subtle background -->
-            <rectangle>
-                <reportElement x="0" y="80" width="555" height="75" backcolor="#fafafa" mode="Opaque"/>
-                <graphicElement>
-                    <pen lineWidth="0.0"/>
-                </graphicElement>
-            </rectangle>
+            <!-- Customer Information Section - BOLDER FONTS -->
 
-            <!-- Invoice Number -->
+            <!-- Invoice Number & Status -->
             <staticText>
-                <reportElement x="10" y="85" width="75" height="18"/>
+                <reportElement x="10" y="90" width="80" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Invoice No:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="85" y="85" width="180" height="18"/>
+                <reportElement x="90" y="90" width="150" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{slNo}]]></textFieldExpression>
             </textField>
 
+            <!-- Status Badge -->
+            <textField textAdjust="StretchHeight">
+                <reportElement x="250" y="90" width="90" height="20"/>
+                <box>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{status} != null ? $P{status}.toUpperCase() : "PENDING"]]></textFieldExpression>
+            </textField>
+
             <!-- Date -->
             <staticText>
-                <reportElement x="370" y="85" width="50" height="18"/>
+                <reportElement x="370" y="90" width="50" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Date:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="420" y="85" width="125" height="18"/>
+                <reportElement x="420" y="90" width="135" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{date} != null ? $P{date} : ""]]></textFieldExpression>
             </textField>
 
             <!-- Customer Name -->
             <staticText>
-                <reportElement x="10" y="108" width="75" height="18"/>
+                <reportElement x="10" y="115" width="80" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Customer:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="85" y="108" width="250" height="18"/>
+                <reportElement x="90" y="115" width="250" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9" isBold="true"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{customerName}]]></textFieldExpression>
             </textField>
 
             <!-- Phone -->
             <staticText>
-                <reportElement x="370" y="108" width="50" height="18"/>
+                <reportElement x="370" y="115" width="50" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Phone:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="420" y="108" width="125" height="18"/>
+                <reportElement x="420" y="115" width="135" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{phone} != null ? $P{phone} : ""]]></textFieldExpression>
             </textField>
 
             <!-- Address -->
             <staticText>
-                <reportElement x="10" y="131" width="75" height="18"/>
+                <reportElement x="10" y="140" width="80" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Address:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="85" y="131" width="250" height="18"/>
+                <reportElement x="90" y="140" width="250" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="9" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{customerAddress} != null ? $P{customerAddress} : ""]]></textFieldExpression>
             </textField>
 
             <!-- Delivery Date -->
             <staticText>
-                <reportElement x="370" y="131" width="50" height="18"/>
+                <reportElement x="370" y="140" width="50" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font isBold="true" size="10"/>
                 </textElement>
                 <text><![CDATA[Delivery:]]></text>
             </staticText>
             <textField textAdjust="StretchHeight">
-                <reportElement x="420" y="131" width="125" height="18"/>
+                <reportElement x="420" y="140" width="135" height="20"/>
                 <box leftPadding="5"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{deliveryDate} != null ? $P{deliveryDate} : ""]]></textFieldExpression>
             </textField>
+
+            <!-- Bottom Border -->
+            <line>
+                <reportElement x="0" y="170" width="555" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
+                </graphicElement>
+            </line>
 
         </band>
     </pageHeader>
 
     <!-- ==================== COLUMN HEADER (TABLE HEADER) ==================== -->
     <columnHeader>
-        <band height="28">
+        <band height="32" splitType="Stretch">
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="28" backcolor="#2c3e50" mode="Opaque"/>
+                <reportElement x="0" y="0" width="555" height="32" backcolor="#000000" mode="Opaque"/>
                 <graphicElement>
                     <pen lineWidth="0.0"/>
                 </graphicElement>
             </rectangle>
 
             <staticText>
-                <reportElement x="5" y="0" width="35" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="5" y="0" width="35" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[SL]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="40" y="0" width="200" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="40" y="0" width="200" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[ITEM DESCRIPTION]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="240" y="0" width="65" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="240" y="0" width="65" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[UNIT]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="305" y="0" width="75" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="305" y="0" width="75" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[UNIT PRICE]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="380" y="0" width="60" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="380" y="0" width="60" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[QTY]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="440" y="0" width="115" height="28" forecolor="#FFFFFF"/>
+                <reportElement x="440" y="0" width="115" height="32" forecolor="#FFFFFF"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true" size="9" fontName="SansSerif"/>
+                    <font isBold="true" size="11" fontName="SansSerif"/>
                 </textElement>
                 <text><![CDATA[AMOUNT]]></text>
             </staticText>
@@ -294,10 +314,10 @@
 
     <!-- ==================== DETAIL (TABLE ROWS) ==================== -->
     <detail>
-        <band height="22">
+        <band height="26" splitType="Stretch">
 
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="22" backcolor="#ffffff" mode="Opaque">
+                <reportElement x="0" y="0" width="555" height="26" backcolor="#ffffff" mode="Opaque">
                     <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
                 </reportElement>
                 <graphicElement>
@@ -306,7 +326,7 @@
             </rectangle>
 
             <rectangle>
-                <reportElement x="0" y="0" width="555" height="22" backcolor="#f9f9f9" mode="Opaque">
+                <reportElement x="0" y="0" width="555" height="26" backcolor="#f5f5f5" mode="Opaque">
                     <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
                 </reportElement>
                 <graphicElement>
@@ -315,61 +335,61 @@
             </rectangle>
 
             <textField textAdjust="StretchHeight">
-                <reportElement x="5" y="0" width="35" height="22"/>
+                <reportElement x="5" y="0" width="35" height="26"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
             </textField>
 
             <textField textAdjust="StretchHeight">
-                <reportElement x="40" y="0" width="200" height="22"/>
+                <reportElement x="40" y="0" width="200" height="26"/>
                 <box leftPadding="8"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{itemName}]]></textFieldExpression>
             </textField>
 
             <textField textAdjust="StretchHeight">
-                <reportElement x="240" y="0" width="65" height="22"/>
+                <reportElement x="240" y="0" width="65" height="26"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{unitName}]]></textFieldExpression>
             </textField>
 
             <textField textAdjust="StretchHeight" pattern="#,##0.00">
-                <reportElement x="305" y="0" width="75" height="22"/>
+                <reportElement x="305" y="0" width="75" height="26"/>
                 <box rightPadding="8"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{unitPrice}]]></textFieldExpression>
             </textField>
 
             <textField textAdjust="StretchHeight" pattern="#,##0">
-                <reportElement x="380" y="0" width="60" height="22"/>
+                <reportElement x="380" y="0" width="60" height="26"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
             </textField>
 
             <textField textAdjust="StretchHeight" pattern="#,##0.00">
-                <reportElement x="440" y="0" width="115" height="22"/>
+                <reportElement x="440" y="0" width="115" height="26"/>
                 <box rightPadding="8"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="9" isBold="true"/>
+                    <font size="11" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{totalPrice}]]></textFieldExpression>
             </textField>
 
-            <!-- Subtle bottom border for each row -->
+            <!-- Row border -->
             <line>
-                <reportElement x="0" y="21" width="555" height="1"/>
+                <reportElement x="0" y="25" width="555" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="0.25" lineColor="#e0e0e0"/>
+                    <pen lineWidth="0.5" lineColor="#cccccc"/>
                 </graphicElement>
             </line>
 
@@ -378,140 +398,215 @@
 
     <!-- ==================== SUMMARY / TOTALS ==================== -->
     <summary>
-        <band height="210">
+        <band height="260" splitType="Stretch">
 
             <!-- Summary Section Background -->
             <rectangle>
-                <reportElement x="320" y="15" width="235" height="85" backcolor="#f5f5f5" mode="Opaque"/>
+                <reportElement x="300" y="15" width="255" height="165" backcolor="#f8f8f8" mode="Opaque"/>
                 <graphicElement>
-                    <pen lineWidth="1.0" lineColor="#d0d0d0"/>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
                 </graphicElement>
             </rectangle>
 
-            <!-- Total Amount -->
+            <!-- Sub Total -->
             <staticText>
-                <reportElement x="330" y="25" width="100" height="22"/>
+                <reportElement x="310" y="25" width="120" height="22"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font isBold="true" size="10"/>
+                    <font isBold="true" size="11"/>
                 </textElement>
-                <text><![CDATA[Total Amount:]]></text>
+                <text><![CDATA[Sub Total:]]></text>
             </staticText>
-            <textField pattern="#,##0.00">
-                <reportElement x="440" y="25" width="105" height="22"/>
-                <box rightPadding="8"/>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="25" width="110" height="22"/>
+                <box rightPadding="10"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font isBold="true" size="11"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{subTotal}]]></textFieldExpression>
             </textField>
 
-            <!-- Advance -->
+            <!-- Discount -->
             <staticText>
-                <reportElement x="330" y="47" width="100" height="22"/>
+                <reportElement x="310" y="47" width="120" height="22"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font size="9"/>
+                    <font isBold="true" size="11"/>
                 </textElement>
-                <text><![CDATA[Advance:]]></text>
+                <text><![CDATA[Discount (-):]]></text>
             </staticText>
-            <textField pattern="#,##0.00">
-                <reportElement x="440" y="47" width="105" height="22"/>
-                <box rightPadding="8"/>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="47" width="110" height="22"/>
+                <box rightPadding="10"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="10"/>
+                    <font size="11" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$P{advance}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{discount}]]></textFieldExpression>
+            </textField>
+
+            <!-- VAT -->
+            <staticText>
+                <reportElement x="310" y="69" width="120" height="22"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true" size="11"/>
+                </textElement>
+                <text><![CDATA[VAT (+):]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="69" width="110" height="22"/>
+                <box rightPadding="10"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{vat}]]></textFieldExpression>
             </textField>
 
             <!-- Separator line -->
             <line>
-                <reportElement x="330" y="72" width="215" height="1"/>
+                <reportElement x="310" y="95" width="235" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="1.0" lineColor="#2c3e50"/>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
                 </graphicElement>
             </line>
 
-            <!-- Due Amount -->
-            <rectangle>
-                <reportElement x="330" y="75" width="215" height="22" backcolor="#2c3e50" mode="Opaque"/>
-                <graphicElement>
-                    <pen lineWidth="0.0"/>
-                </graphicElement>
-            </rectangle>
+            <!-- Total Amount -->
             <staticText>
-                <reportElement x="330" y="75" width="100" height="22" forecolor="#FFFFFF"/>
+                <reportElement x="310" y="100" width="120" height="24"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true" size="13"/>
+                </textElement>
+                <text><![CDATA[Total Amount:]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="100" width="110" height="24"/>
+                <box rightPadding="10"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font isBold="true" size="13"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+            </textField>
+
+            <!-- Paid Amount -->
+            <staticText>
+                <reportElement x="310" y="126" width="120" height="22"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
                     <font isBold="true" size="11"/>
                 </textElement>
-                <text><![CDATA[Due Amount:]]></text>
+                <text><![CDATA[Paid Amount:]]></text>
             </staticText>
-            <textField pattern="#,##0.00">
-                <reportElement x="440" y="75" width="105" height="22" forecolor="#FFFFFF"/>
-                <box rightPadding="8"/>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="126" width="110" height="22"/>
+                <box rightPadding="10"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font isBold="true" size="12"/>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{paidAmount}]]></textFieldExpression>
+            </textField>
+
+            <!-- Separator line -->
+            <line>
+                <reportElement x="310" y="152" width="235" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="2.0" lineColor="#000000"/>
+                </graphicElement>
+            </line>
+
+            <!-- Due Amount - HIGHLIGHTED -->
+            <rectangle>
+                <reportElement x="300" y="155" width="255" height="28" backcolor="#000000" mode="Opaque"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="310" y="157" width="120" height="24" forecolor="#FFFFFF"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true" size="13"/>
+                </textElement>
+                <text><![CDATA[DUE AMOUNT:]]></text>
+            </staticText>
+            <textField textAdjust="StretchHeight" pattern="#,##0.00">
+                <reportElement x="435" y="157" width="110" height="24" forecolor="#FFFFFF"/>
+                <box rightPadding="10"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font isBold="true" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{dueAmount}]]></textFieldExpression>
             </textField>
 
-            <!-- Amount in words section -->
-            <rectangle>
-                <reportElement x="0" y="115" width="555" height="50" backcolor="#fafafa" mode="Opaque"/>
-                <graphicElement>
-                    <pen lineWidth="0.5" lineColor="#d0d0d0"/>
-                </graphicElement>
-            </rectangle>
-
+            <!-- Amount in Words -->
             <staticText>
-                <reportElement x="10" y="120" width="120" height="15"/>
+                <reportElement x="10" y="25" width="130" height="18"/>
                 <textElement verticalAlignment="Middle">
-                    <font isBold="true" size="9"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
-                <text><![CDATA[Amount In Words:]]></text>
+                <text><![CDATA[Amount in Words:]]></text>
             </staticText>
-
             <textField textAdjust="StretchHeight">
-                <reportElement x="10" y="137" width="535" height="22"/>
-                <box leftPadding="2"/>
-                <textElement verticalAlignment="Middle">
-                    <font isItalic="true" size="9" isBold="true"/>
+                <reportElement x="10" y="43" width="280" height="40"/>
+                <box>
+                    <pen lineWidth="1.5" lineColor="#000000"/>
+                    <topPen lineWidth="1.5"/>
+                    <leftPen lineWidth="1.5"/>
+                    <bottomPen lineWidth="1.5"/>
+                    <rightPen lineWidth="1.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true" isItalic="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$P{amountInWords}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{amountInWords} != null ? $P{amountInWords}.toUpperCase() : ""]]></textFieldExpression>
             </textField>
+
+            <!-- Terms & Conditions -->
+            <staticText>
+                <reportElement x="10" y="100" width="280" height="14"/>
+                <textElement>
+                    <font size="9" isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[Terms & Conditions:]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="10" y="115" width="280" height="50"/>
+                <textElement>
+                    <font size="8" isBold="true"/>
+                </textElement>
+                <text><![CDATA[1. Payment must be made as per agreed terms.
+2. Goods once sold will not be taken back.
+3. Delivery charges are extra if applicable.
+4. Subject to Dhaka jurisdiction only.]]></text>
+            </staticText>
 
             <!-- Signatures Section -->
             <line>
-                <reportElement x="0" y="175" width="555" height="1"/>
+                <reportElement x="40" y="215" width="130" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="0.5" lineColor="#cccccc"/>
-                </graphicElement>
-            </line>
-
-            <line>
-                <reportElement x="40" y="193" width="130" height="1"/>
-                <graphicElement>
-                    <pen lineWidth="1.0" lineColor="#2c3e50"/>
+                    <pen lineWidth="1.5" lineColor="#000000"/>
                 </graphicElement>
             </line>
             <staticText>
-                <reportElement x="10" y="195" width="190" height="12"/>
+                <reportElement x="10" y="220" width="190" height="14"/>
                 <textElement textAlignment="Center">
-                    <font size="8" isBold="true"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Receiver's Signature]]></text>
             </staticText>
 
             <line>
-                <reportElement x="385" y="193" width="130" height="1"/>
+                <reportElement x="385" y="215" width="130" height="1"/>
                 <graphicElement>
-                    <pen lineWidth="1.0" lineColor="#2c3e50"/>
+                    <pen lineWidth="1.5" lineColor="#000000"/>
                 </graphicElement>
             </line>
             <staticText>
-                <reportElement x="355" y="195" width="190" height="12"/>
+                <reportElement x="355" y="220" width="190" height="14"/>
                 <textElement textAlignment="Center">
-                    <font size="8" isBold="true"/>
+                    <font size="10" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Authorized Signature]]></text>
+            </staticText>
+
+            <!-- Footer Note -->
+            <staticText>
+                <reportElement x="0" y="245" width="555" height="12"/>
+                <textElement textAlignment="Center">
+                    <font size="8" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Thank you for your business! | For queries contact: +8801718343943]]></text>
             </staticText>
 
         </band>

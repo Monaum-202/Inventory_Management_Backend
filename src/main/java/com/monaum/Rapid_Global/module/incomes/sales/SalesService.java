@@ -5,10 +5,7 @@ import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.incomes.customer.Customer;
 import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
-import com.monaum.Rapid_Global.module.incomes.income.Income;
-import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
-import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
-import com.monaum.Rapid_Global.module.incomes.income.IncomeService;
+import com.monaum.Rapid_Global.module.incomes.income.*;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItem;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemMapper;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
@@ -75,50 +72,62 @@ public class SalesService {
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
 
-        // 1. Fetch payment method
-        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        // 1. Fetch Payment Method
+        PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId())
+                .orElseThrow(() -> new CustomException(
+                        "Payment Method not found with id: " + dto.getPaymentMethodId(),
+                        HttpStatus.NOT_FOUND
+                ));
 
+        // 2. Map DTO to Entity
         Sales sales = salesMapper.toEntity(dto);
         sales.setInvoiceNo(generateInvoiceNo());
 
-        if (sales.getPayments() == null) sales.setPayments(new ArrayList<>());
+        // 3. Set back-references for items
+        for (SalesItem item : sales.getItems()) {
+            item.setSales(sales);
+        }
 
-
-        for (SalesItem item : sales.getItems()) item.setSales(sales);
-
-
+        // 4. Prepare Customer
         Customer customer = customerRepo.findByPhone(dto.getPhone()).orElse(new Customer());
         customer.setName(dto.getCustomerName());
         customer.setEmail(dto.getEmail());
         customer.setAddress(dto.getAddress());
         customer.setPhone(dto.getPhone());
         customer.setCompanyName(dto.getCompanyName());
-
         customerRepo.save(customer);
 
+        // 5. Prepare Payments (from DTO)
+        List<Income> paymentList = new ArrayList<>();
+        if (dto.getPayments() != null) {
+            for (IncomeReqDTO req : dto.getPayments()) {
+                Income income = new Income();
+                income.setIncomeId(incomeService.generateIncomeId());
+                income.setAmount(req.getAmount());
+                income.setIncomeDate(LocalDate.now());
+                income.setDescription("Income from Sales. Invoice: " + sales.getInvoiceNo());
+                income.setSales(sales);
+                income.setPaymentMethod(paymentMethod);
+
+                TransactionCategory defaultCategory =
+                        transactionCategoryRepo.findByNameIgnoreCase("sales").orElse(null);
+                income.setIncomeCategory(defaultCategory);
+
+                income.setStatus(Status.APPROVED);
+                income.setApprovedAt(LocalDateTime.now());
+
+                paymentList.add(income);
+            }
+        }
+
+        sales.setPayments(paymentList);
+
+        // 6. Save Sales (items + payments cascade automatically)
         Sales savedSales = salesRepository.save(sales);
-
-            Income income = new Income();
-            income.setIncomeId(incomeService.generateIncomeId());
-            income.setAmount(savedSales.getPaidAmount());
-            income.setIncomeDate(LocalDate.now());
-            income.setDescription("Income from Sales. Invoice: " + savedSales.getInvoiceNo());
-            income.setSales(savedSales);
-            income.setPaymentMethod(paymentMethod);
-
-            TransactionCategory defaultCategory = transactionCategoryRepo.findByNameIgnoreCase("sales").orElse(null);
-            income.setIncomeCategory(defaultCategory);
-
-            income.setStatus(Status.APPROVED);
-            income.setApprovedAt(LocalDateTime.now());
-
-            incomeRepo.save(income);
-
-            savedSales.getPayments().add(income);
-            salesRepository.save(savedSales);
 
         return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(savedSales));
     }
+
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, SalesReqUpdateDTO dto) {

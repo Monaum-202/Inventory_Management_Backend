@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 
+import com.monaum.Rapid_Global.module.incomes.income.IncomeReqDTO;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemReqDto;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
@@ -43,33 +44,19 @@ public class SalesReqDTO {
 
     private String notes;
 
-    @NotNull(message = "Sub Total is required")
-    @PositiveOrZero(message = "Sub Total must be positive")
-    private Double subTotal;
-
     @PositiveOrZero(message = "Total amount must be positive")
     private Double discount;
 
     @PositiveOrZero(message = "Total amount must be positive")
     private Double vat;
 
-    @NotNull(message = "Total amount is required")
-    @PositiveOrZero(message = "Total amount must be positive")
-    private Double totalAmount;
-
-    @NotNull(message = "Paid amount is required")
-    @PositiveOrZero(message = "Paid amount must be positive")
-    private Double paidAmount;
-
     @NotNull(message = "Payment Method is required")
     private Long paymentMethodId;
 
-    @NotNull(message = "Due amount is required")
-    @PositiveOrZero(message = "Due amount must be positive")
-    private Double dueAmount;
-
     @NotBlank(message = "Status is required")
     private String status;
+
+    private List<IncomeReqDTO> payments;
 
     @NotEmpty(message = "Sales items cannot be empty")
     private List<SalesItemReqDto> items;

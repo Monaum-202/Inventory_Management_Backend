@@ -59,23 +59,11 @@ public class Sales extends AbstractModel {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @Column(nullable = false)
-    private Double subTotal;
-
     @Column(name = "discount")
     private Double discount;
 
     @Column(name = "vat")
     private Double vat;
-
-    @Column(nullable = false)
-    private Double totalAmount;
-
-    @Column(nullable = false)
-    private Double paidAmount;
-
-    @Column(nullable = false)
-    private Double dueAmount;
 
     @Column(nullable = false)
     private String status;
