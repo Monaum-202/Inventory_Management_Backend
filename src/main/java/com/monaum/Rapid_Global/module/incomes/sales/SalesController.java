@@ -1,6 +1,8 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
+import com.monaum.Rapid_Global.enums.OrderStatus;
+import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.model.NumberToWordsUtil;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
@@ -51,6 +53,19 @@ public class SalesController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceNo").descending());
         return service.getAll(search, pageable);
+    }
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<BaseApiResponseDTO<?>> approve(@PathVariable Long id) {
+        return service.updateStatus(id, OrderStatus.COMPLETED,null);
+    }
+
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<BaseApiResponseDTO<?>> cancel(
+            @PathVariable Long id,
+            @RequestBody String reason
+    ) {
+        return service.updateStatus(id, OrderStatus.CANCELLED, reason);
     }
 
 

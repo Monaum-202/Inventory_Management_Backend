@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
+import com.monaum.Rapid_Global.module.master.unit.UnitReqDto;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,27 @@ public class ProductController {
             @Valid @RequestBody ProductReqDto dto
     ){
         return service.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductReqDto req
+    ){
+        return service.update(id, req);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(
+            @PathVariable Long id
+    ){
+        return service.activeUpdate(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(
+            @PathVariable Long id
+    ){
+        return service.delete(id);
     }
 }

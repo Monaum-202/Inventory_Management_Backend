@@ -1,8 +1,10 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
 
+import com.monaum.Rapid_Global.enums.OrderStatus;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.model.SalesTimerService;
 import com.monaum.Rapid_Global.module.incomes.customer.Customer;
 import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
 import com.monaum.Rapid_Global.module.incomes.income.*;
@@ -42,7 +44,7 @@ public class SalesService {
     @Autowired private SalesMapper salesMapper;
     @Autowired private SalesItemMapper salesItemMapper;
     @Autowired private CustomerRepo customerRepo;
-    @Autowired private IncomeRepo incomeRepo;
+    @Autowired private SalesTimerService salesTimerService;
     @Autowired private IncomeService  incomeService;
     @Autowired private RepoPaymentMethod paymentMethodRepo;
     @Autowired private TransactionCategoryRepo transactionCategoryRepo;
@@ -105,15 +107,13 @@ public class SalesService {
 
         sales.setPayments(incomeList);
 
-        // 5. Save Sales + items + payments
         Sales savedSales = salesRepository.save(sales);
+        salesTimerService.startProcessingTimer(savedSales.getId());
 
         return ResponseUtils.SuccessResponseWithData(
                 salesMapper.toResDto(savedSales)
         );
     }
-
-
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, SalesReqUpdateDTO dto) {
@@ -181,6 +181,17 @@ public class SalesService {
             throw new EntityNotFoundException("Sales not found");
         }
         salesRepository.deleteById(id);
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> updateStatus(Long id, OrderStatus status, String cancelReason) {
+        Sales sales = salesRepository.findById(id).orElseThrow(() -> new CustomException("Income not found with id: " + id, HttpStatus.NOT_FOUND));
+
+        sales.setStatus(status);
+        if (cancelReason!=null){sales.setCancelReason(cancelReason);}
+
+        salesRepository.save(sales);
+
+        return ResponseUtils.SuccessResponse("Approved successfully!", HttpStatus.OK);
     }
 
     @Transactional

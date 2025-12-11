@@ -11,7 +11,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "product")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product extends AbstractModel {

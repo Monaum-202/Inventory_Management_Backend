@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.config.SecurityUtil;
+import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.master.product_log.ProductLog;
 import com.monaum.Rapid_Global.module.master.product_log.ProductLogRepo;
 import com.monaum.Rapid_Global.module.master.unit.Unit;
@@ -11,6 +12,7 @@ import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +109,23 @@ public class ProductService {
         productLogRepo.save(log);
 
         return ResponseUtils.SuccessResponseWithData(mapper.toDto(product));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
+        Product product = repo.findById(id).orElseThrow(() -> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
+
+        product.setActive(!Boolean.TRUE.equals(product.getActive()));
+        repo.save(product);
+
+        return ResponseUtils.SuccessResponseWithData(mapper.toDto(product));
+    }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) {
+        Product product = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        repo.delete(product);
+
+        return ResponseUtils.SuccessResponse("Product deleted successfully");
     }
 
 }
