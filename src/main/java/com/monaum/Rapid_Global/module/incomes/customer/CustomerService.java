@@ -26,7 +26,6 @@ public class CustomerService {
     @Autowired private CustomerRepo repo;
     @Autowired private CustomerMapper mapper;
     @Autowired private IncomeRepo incomeRepo;
-    @Autowired private IncomeMapper incomeMapper;
     @Autowired private SalesRepo salesRepo;
 
 
