@@ -40,6 +40,9 @@ public class Sales extends AbstractModel {
     @Column(nullable = false, length = 100)
     private String customerName;
 
+    @Column(name = "customer_id")
+    private Long customerId;
+
     @Column(nullable = false, length = 20)
     private String phone;
 

@@ -107,6 +107,7 @@ public class SalesService {
             }
         }
 
+        sales.setCustomerId(customer.getId());
         sales.setPayments(incomeList);
 
         Sales savedSales = salesRepository.save(sales);

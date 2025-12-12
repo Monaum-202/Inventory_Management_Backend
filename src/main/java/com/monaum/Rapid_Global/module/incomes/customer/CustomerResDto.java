@@ -27,4 +27,5 @@ public class CustomerResDto {
     private String updatedAt;
 
     private Double totalTransaction;
+    private Double totalDue;
 }

@@ -29,4 +29,5 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     @Query("SELECT SUM(i.amount) FROM Income i WHERE i.paidFromId = :customerId")
     Double getTotalTransaction(Long customerId);
 
+
 }

@@ -2,7 +2,10 @@ package com.monaum.Rapid_Global.module.incomes.sales;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface SalesRepo extends JpaRepository<Sales, Long> {
@@ -13,4 +16,19 @@ public interface SalesRepo extends JpaRepository<Sales, Long> {
             "LIMIT 1 FOR UPDATE",
             nativeQuery = true)
     String findLastInvoiceNoForUpdate();
+
+    @Query("""
+    SELECT 
+      (SUM(i.totalPrice) 
+       - COALESCE(s.discount, 0)
+       + (SUM(i.totalPrice) * (COALESCE(s.vat, 0) / 100))
+      )
+    FROM Sales s
+    JOIN s.items i
+    WHERE s.customerId = :customerId
+    GROUP BY s.id
+""")
+    List<Double> calculatePerSaleTotalsByCustomer(Long customerId);
+
+
 }
