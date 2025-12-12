@@ -40,6 +40,5 @@ public class Customer extends AbstractModel {
     @Column(name = "company_name", length = 100)
     private String companyName;
 
-    @Column(name = "total_transaction", precision = 10, scale = 2)
-    private BigDecimal totalTransaction;
+
 }

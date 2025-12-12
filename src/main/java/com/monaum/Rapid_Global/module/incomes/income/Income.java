@@ -49,6 +49,9 @@ public class Income extends AbstractModel {
     @Column(name = "paid_from")
     private String paidFrom;
 
+    @Column(name= "paid_from_id")
+    private Long paidFromId;
+
     @Column(name = "paid_from_company")
     private String paidFromCompany;
 

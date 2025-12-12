@@ -1,7 +1,9 @@
 package com.monaum.Rapid_Global.module.incomes.customer;
 
+import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
 import lombok.Data;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class CustomerResDto {
@@ -20,9 +22,9 @@ public class CustomerResDto {
 
     private String companyName;
 
-    private BigDecimal totalTransaction;
-
     private String createdAt;
 
     private String updatedAt;
+
+    private Double totalTransaction;
 }

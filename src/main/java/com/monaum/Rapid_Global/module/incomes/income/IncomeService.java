@@ -75,6 +75,8 @@ public class IncomeService {
         income.setStatus(Status.APPROVED);
         income.setApprovedBy(securityUtil.getAuthenticatedUser());
         income.setSales(sales);
+        income.setPaidFrom(sales.getCustomerName());
+        income.setPaidFromId(sales.getPayments().get(0).getPaidFromId());
         incomeRepo.save(income);
 
         return  ResponseUtils.SuccessResponseWithData(incomeMapper.toDto(income));

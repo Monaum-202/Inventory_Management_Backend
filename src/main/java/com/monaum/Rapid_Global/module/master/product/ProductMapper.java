@@ -20,7 +20,6 @@ public interface ProductMapper {
 
     @Mapping(target = "unitId", source = "unit.id")
     @Mapping(target = "unitName", source = "unit.name")
-    @Mapping(target = "status", source = "active")
     ProductResDto toDto(Product product);
 
 }

@@ -26,5 +26,7 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
             nativeQuery = true)
     String findLastIncomeIdForUpdate();
 
+    @Query("SELECT SUM(i.amount) FROM Income i WHERE i.paidFromId = :customerId")
+    Double getTotalTransaction(Long customerId);
 
 }

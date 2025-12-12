@@ -48,4 +48,11 @@ public class CustomerController {
         return service.getByPhone(phone);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseApiResponseDTO<?>> delete (
+            @PathVariable Long id
+    ){
+        return service.delete(id);
+    }
+
 }

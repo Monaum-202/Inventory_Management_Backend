@@ -97,6 +97,8 @@ public class SalesService {
                 income.setPaymentMethod(paymentMethod);
                 income.setIncomeCategory(category);
                 income.setSales(sales);
+                income.setPaidFrom(customer.getName());
+                income.setPaidFromId(customer.getId());
 
                 income.setStatus(Status.APPROVED);
                 income.setApprovedAt(LocalDateTime.now());
@@ -135,29 +137,6 @@ public class SalesService {
 
         return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(updated));
     }
-
-//    public SalesResDto update(Long id, SalesReqDTO dto) {
-//        Sales existing = salesRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Sales not found"));
-//
-//        // Clear old items (because orphanRemoval=true)
-//        existing.getItems().clear();
-//
-//        // Map new values
-//        Sales updated = salesMapper.toEntity(dto);
-//
-//        updated.setId(existing.getId());
-//        updated.setCreatedAt(existing.getCreatedAt());
-//        updated.setCreatedBy(existing.getCreatedBy());
-//
-//        // Re-link items
-//        for (SalesItem item : updated.getItems()) {
-//            item.setSales(updated);
-//        }
-//
-//        Sales saved = salesRepository.save(updated);
-//        return salesMapper.toResDto(saved);
-//    }
 
 
     @Transactional(readOnly = true)
