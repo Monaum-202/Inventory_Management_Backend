@@ -148,13 +148,19 @@ public class SalesService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search,Pageable pageable) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
 
-        Page<SalesResDto> sales = salesRepository.findAll(pageable).map(salesMapper::toResDto);
+        Page<SalesResDto> sales =
+                (search != null && !search.trim().isEmpty())
+                        ? salesRepository.search(search.trim(), pageable).map(salesMapper::toResDto)
+                        : salesRepository.findAll(pageable).map(salesMapper::toResDto);
 
-        CustomPageResponseDTO<SalesResDto> paginatedResponse = PaginationUtil.buildPageResponse(sales, pageable);
-        return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+        CustomPageResponseDTO<SalesResDto> response =
+                PaginationUtil.buildPageResponse(sales, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(response);
     }
+
 
     public void delete(Long id) {
         if (!salesRepository.existsById(id)) {

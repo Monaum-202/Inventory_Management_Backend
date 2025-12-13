@@ -23,7 +23,7 @@ public class SalesInvoiceReportService {
                 throw new RuntimeException("Report template not found at /reports/sales_invoice.jrxml");
             }
 
-            // Compile the report
+            // Compile the incomeReport
             JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
 
             // Prepare parameters map
@@ -50,7 +50,7 @@ public class SalesInvoiceReportService {
             JRBeanCollectionDataSource itemsDataSource =
                     new JRBeanCollectionDataSource(dto.getItems());
 
-            // Fill the report
+            // Fill the incomeReport
             JasperPrint jasperPrint = JasperFillManager.fillReport(
                     jasperReport,
                     params,

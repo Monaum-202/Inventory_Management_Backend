@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
+import com.monaum.Rapid_Global.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -67,4 +69,101 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
     @Query(value = "SELECT expense_id FROM expense ORDER BY id DESC LIMIT 1", nativeQuery = true)
     String findLastExpenseId();
 
+    @Query("SELECT e FROM Expense e " +
+            "WHERE (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate) " +
+            "AND (:categoryId IS NULL OR e.expenseCategory.id = :categoryId) " +
+            "AND (:paymentMethodId IS NULL OR e.paymentMethod.id = :paymentMethodId) " +
+            "AND (:status IS NULL OR e.status = :status) " +
+            "AND (:paidTo IS NULL OR LOWER(e.paidTo) LIKE LOWER(CONCAT('%', :paidTo, '%'))) " +
+            "AND (:minAmount IS NULL OR e.amount >= :minAmount) " +
+            "AND (:maxAmount IS NULL OR e.amount <= :maxAmount) " +
+            "ORDER BY e.expenseDate DESC, e.id DESC")
+    Page<Expense> findExpenseReport(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("categoryId") Long categoryId,
+            @Param("paymentMethodId") Long paymentMethodId,
+            @Param("status") Status status,
+            @Param("paidTo") String paidTo,
+            @Param("minAmount") Double minAmount,
+            @Param("maxAmount") Double maxAmount,
+            Pageable pageable
+    );
+
+    /**
+     * Get total expense by status
+     */
+    @Query("SELECT COALESCE(SUM(e.amount), 0.0) FROM Expense e " +
+            "WHERE e.status = :status " +
+            "AND (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate)")
+    Double getTotalByStatus(
+            @Param("status") Status status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /**
+     * Get count by status
+     */
+    @Query("SELECT COUNT(e) FROM Expense e " +
+            "WHERE e.status = :status " +
+            "AND (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate)")
+    Long getCountByStatus(
+            @Param("status") Status status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /**
+     * Get breakdown by category
+     */
+    @Query("SELECT e.expenseCategory.name as categoryName, " +
+            "COALESCE(SUM(e.amount), 0.0) as totalAmount, " +
+            "COUNT(e) as transactionCount " +
+            "FROM Expense e " +
+            "WHERE e.status = com.monaum.Rapid_Global.enums.Status.APPROVED " +
+            "AND (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate) " +
+            "GROUP BY e.expenseCategory.id, e.expenseCategory.name " +
+            "ORDER BY totalAmount DESC")
+    List<Object[]> getCategoryBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /**
+     * Get breakdown by payment method
+     */
+    @Query("SELECT e.paymentMethod.name as paymentMethodName, " +
+            "COALESCE(SUM(e.amount), 0.0) as totalAmount, " +
+            "COUNT(e) as transactionCount " +
+            "FROM Expense e " +
+            "WHERE e.status = com.monaum.Rapid_Global.enums.Status.APPROVED " +
+            "AND (:startDate IS NULL OR e.expenseDate >= :startDate) " +
+            "AND (:endDate IS NULL OR e.expenseDate <= :endDate) " +
+            "GROUP BY e.paymentMethod.id, e.paymentMethod.name " +
+            "ORDER BY totalAmount DESC")
+    List<Object[]> getPaymentMethodBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    /**
+     * Get daily expense trend
+     */
+    @Query("SELECT e.expenseDate as date, " +
+            "COALESCE(SUM(e.amount), 0.0) as totalAmount, " +
+            "COUNT(e) as transactionCount " +
+            "FROM Expense e " +
+            "WHERE e.status = com.monaum.Rapid_Global.enums.Status.APPROVED " +
+            "AND e.expenseDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY e.expenseDate " +
+            "ORDER BY e.expenseDate")
+    List<Object[]> getDailyExpenseTrend(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

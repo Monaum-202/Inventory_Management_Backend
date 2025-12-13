@@ -126,11 +126,6 @@ public class EstimateService {
             throw new CustomException("This estimate has already been converted to sale", HttpStatus.BAD_REQUEST);
         }
 
-        // 3. Check if estimate is approved
-        if (estimate.getStatus() != OrderStatus.COMPLETED) {
-            throw new CustomException("Only approved estimates can be converted to sales", HttpStatus.BAD_REQUEST);
-        }
-
         // 4. Create new Sales entity
         Sales sales = new Sales();
         sales.setInvoiceNo(generateInvoiceNo());
