@@ -1,5 +1,6 @@
-package com.monaum.Rapid_Global.module.incomes.sales;
+package com.monaum.Rapid_Global.module.incomes.sales.pdf;
 
+import com.monaum.Rapid_Global.module.incomes.sales.SalesInvoiceJasperDto;
 import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -64,4 +65,6 @@ public class SalesInvoiceReportService {
             throw new RuntimeException("Error generating invoice PDF: " + e.getMessage(), e);
         }
     }
+
+
 }
