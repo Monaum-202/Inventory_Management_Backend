@@ -50,7 +50,7 @@ public class UnitService {
         Unit entity = mapper.toEntity(dto);
         entity = repo.save(entity);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(entity));
+        return ResponseUtils.SuccessResponseWithData("Created Successfully!",mapper.toDTO(entity));
     }
 
     @Transactional
@@ -60,7 +60,7 @@ public class UnitService {
         mapper.toEntityUpdate(dto, unit);
         repo.save(unit);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(unit));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDTO(unit));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> getById(Long id) throws CustomException{
@@ -75,7 +75,7 @@ public class UnitService {
         unit.setActive(!Boolean.TRUE.equals(unit.getActive()));
         repo.save(unit);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(unit));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDTO(unit));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {

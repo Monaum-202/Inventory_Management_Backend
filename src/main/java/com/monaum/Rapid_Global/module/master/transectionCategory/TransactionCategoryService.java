@@ -63,7 +63,7 @@ public class TransactionCategoryService {
         TransactionCategory entity = mapper.toEntity(dto);
         entity = repo.save(entity);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDto(entity));
+        return ResponseUtils.SuccessResponseWithData("Created Successfully!",mapper.toDto(entity));
     }
 
     @Transactional
@@ -73,7 +73,7 @@ public class TransactionCategoryService {
         mapper.toEntityUpdate(dto, transectionCategory);
         repo.save(transectionCategory);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDto(transectionCategory));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDto(transectionCategory));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
@@ -82,7 +82,7 @@ public class TransactionCategoryService {
         transectionCategory.setActive(!Boolean.TRUE.equals(transectionCategory.getActive()));
         repo.save(transectionCategory);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDto(transectionCategory));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDto(transectionCategory));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {

@@ -63,7 +63,7 @@ public class ServicePaymentMethod {
         PaymentMethod entity = mapper.toEntity(dto);
         entity = repo.save(entity);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(entity));
+        return ResponseUtils.SuccessResponseWithData("Created Successfully!",mapper.toDTO(entity));
     }
 
     @Transactional
@@ -73,7 +73,7 @@ public class ServicePaymentMethod {
         mapper.toEntityUpdate(dto, paymentMethod);
         repo.save(paymentMethod);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDTO(paymentMethod));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> activeUpdate(Long id) throws CustomException {
@@ -82,7 +82,7 @@ public class ServicePaymentMethod {
         paymentMethod.setActive(!Boolean.TRUE.equals(paymentMethod.getActive()));
         repo.save(paymentMethod);
 
-        return ResponseUtils.SuccessResponseWithData(mapper.toDTO(paymentMethod));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",mapper.toDTO(paymentMethod));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
