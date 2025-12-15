@@ -68,6 +68,9 @@ public class IncomeService {
     public ResponseEntity<BaseApiResponseDTO<?>> createForSales(IncomeReqDTO dto, Long saleId){
         PaymentMethod paymentMethod = paymentMethodRepo.findById(dto.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment Method not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
         Sales sales = salesRepo.findById(saleId).orElseThrow(() -> new CustomException("Sales not found with id: " + dto.getPaymentMethodId(), HttpStatus.NOT_FOUND));
+        TransactionCategory category =
+                incomeCategoryRepo.findByNameIgnoreCase("sales")
+                        .orElse(null);
 
         Income income = incomeMapper.toEntity(dto);
         income.setPaymentMethod(paymentMethod);
@@ -75,6 +78,7 @@ public class IncomeService {
         income.setStatus(Status.APPROVED);
         income.setApprovedBy(securityUtil.getAuthenticatedUser());
         income.setSales(sales);
+        income.setIncomeCategory(category);
         income.setPaidFrom(sales.getCustomerName());
         income.setPaidFromId(sales.getPayments().get(0).getPaidFromId());
         incomeRepo.save(income);

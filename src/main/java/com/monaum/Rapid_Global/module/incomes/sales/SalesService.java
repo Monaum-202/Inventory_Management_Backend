@@ -113,9 +113,7 @@ public class SalesService {
         Sales savedSales = salesRepository.save(sales);
         salesTimerService.startProcessingTimer(savedSales.getId());
 
-        return ResponseUtils.SuccessResponseWithData(
-                salesMapper.toResDto(savedSales)
-        );
+        return ResponseUtils.SuccessResponseWithData("Sales created successfully!", salesMapper.toResDto(savedSales));
     }
 
     @Transactional
@@ -136,7 +134,7 @@ public class SalesService {
 
         Sales updated = salesRepository.save(existing);
 
-        return ResponseUtils.SuccessResponseWithData(salesMapper.toResDto(updated));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully",salesMapper.toResDto(updated));
     }
 
 
@@ -193,8 +191,8 @@ public class SalesService {
         }
 
         // Extract last ID's year and month
-        String lastYear = lastId.substring(3, 5);  // YY from EXPYYMM###
-        String lastMonth = lastId.substring(5, 7); // MM from EXPYYMM###
+        String lastYear = lastId.substring(3, 5);
+        String lastMonth = lastId.substring(5, 7);
 
         // If month OR year changed → reset counter to 001
         if (!lastYear.equals(year) || !lastMonth.equals(month)) {
@@ -202,7 +200,7 @@ public class SalesService {
         }
 
         // Otherwise, increment existing number
-        int number = Integer.parseInt(lastId.substring(7)); // last 3 digits
+        int number = Integer.parseInt(lastId.substring(7));
         number++;
 
         return "INV" + year + month + String.format("%03d", number);

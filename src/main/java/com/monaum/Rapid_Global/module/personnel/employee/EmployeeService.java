@@ -128,7 +128,7 @@ public class EmployeeService {
         employeeMapper.toEntityUpdate(dto, employee);
         Employee updated = employeeRepo.save(employee);
 
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(updated));
+        return ResponseUtils.SuccessResponseWithData("Updated Successfully!",employeeMapper.toDto(updated));
     }
 
     public ResponseEntity<BaseApiResponseDTO<?>> delete(Long id) throws CustomException {
@@ -145,7 +145,7 @@ public class EmployeeService {
         employee.setActive(!Boolean.TRUE.equals(employee.getActive()));
         employeeRepo.save(employee);
 
-        return ResponseUtils.SuccessResponseWithData(employeeMapper.toDto(employee));
+        return ResponseUtils.SuccessResponseWithData("Employee deleted successfully",employeeMapper.toDto(employee));
     }
 
 
