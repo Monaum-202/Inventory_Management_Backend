@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -36,10 +38,10 @@ public class SalesItem extends AbstractModel {
     private Integer quantity;
 
     @Column(nullable = false)
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
     @Column(nullable = false)
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

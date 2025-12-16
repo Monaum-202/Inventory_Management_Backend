@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,10 +66,10 @@ public class Sales extends AbstractModel {
     private String notes;
 
     @Column(name = "discount")
-    private Double discount;
+    private BigDecimal discount;
 
     @Column(name = "vat")
-    private Double vat;
+    private BigDecimal vat;
 
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING;

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
- *
  * @since 23-Nov-25 10:08 PM
  */
 
@@ -26,9 +25,26 @@ public class RoleService {
     public ResponseEntity<BaseApiResponseDTO<?>> getAll( Pageable pageable) {
         Page<Role> roles = repo.findAllExcept(pageable);
 
-
         CustomPageResponseDTO<Role> paginatedResponse = PaginationUtil.buildPageResponse(roles, pageable);
 
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
+    }
+
+    public void initializeSystemRoles() {
+        createRole(1L, "ROLE_ADMIN", "System Administrator");
+        createRole(2L, "ROLE_SUPER_ADMIN", "Super Administrator");
+    }
+
+    private void createRole(Long id, String name, String description) {
+        if (repo.existsByName(name)) {
+            return;
+        }
+
+        Role role = new Role();
+        role.setId(id);
+        role.setName(name);
+        role.setDescription(description);
+
+        repo.save(role);
     }
 }

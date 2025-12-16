@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -16,7 +17,7 @@ public class IncomeReportResDto {
     
     private String incomeId;
     private String categoryName;
-    private Double amount;
+    private BigDecimal amount;
     private String paymentMethodName;
     private String paidFrom;
     private String paidFromCompany;

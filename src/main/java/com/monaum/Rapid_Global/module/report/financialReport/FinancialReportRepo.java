@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -206,7 +207,7 @@ public class FinancialReportRepo {
         dto.setTransactionId(expense.getExpenseId());
         dto.setTransactionType("EXPENSE");
         dto.setCategoryName(expense.getExpenseCategory() != null ? expense.getExpenseCategory().getName() : null);
-        dto.setAmount(expense.getAmount() != null ? expense.getAmount().doubleValue() : 0.0);
+        dto.setAmount(BigDecimal.valueOf(expense.getAmount() != null ? expense.getAmount().doubleValue() : 0.0));
         dto.setPaymentMethodName(expense.getPaymentMethod() != null ? expense.getPaymentMethod().getName() : null);
         dto.setCounterparty(expense.getPaidTo());
         dto.setCounterpartyCompany(expense.getPaidToCompany());

@@ -3,6 +3,7 @@ package com.monaum.Rapid_Global.module.incomes.sales;
 import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -16,12 +17,12 @@ public class SalesInvoiceJasperDto {
     private String sellDate;
     private String deliveryDate;
 
-    private Double subTotal;
-    private Double discount;
-    private Double vat;
-    private Double totalAmount;
-    private Double paidAmount;
-    private Double dueAmount;
+    private BigDecimal subTotal;
+    private BigDecimal discount;
+    private BigDecimal vat;
+    private BigDecimal totalAmount;
+    private BigDecimal paidAmount;
+    private BigDecimal dueAmount;
     private String amountInWords;
 
     private List<SalesInvoiceItemDto> items;
@@ -33,7 +34,7 @@ public class SalesInvoiceJasperDto {
         private String itemName;
         private String unitName;
         private Integer quantity;
-        private Double unitPrice;
-        private Double totalPrice;
+        private BigDecimal unitPrice;
+        private BigDecimal totalPrice;
     }
 }

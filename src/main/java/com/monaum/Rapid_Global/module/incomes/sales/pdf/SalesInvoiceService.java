@@ -6,6 +6,7 @@ import com.monaum.Rapid_Global.module.incomes.sales.SalesResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class SalesInvoiceService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     /**
-     * Generate PDF bytes from a SalesResDto
+     * Generate PDF bytes from a PurchaseResDto
      */
     public byte[] generateInvoicePdf(SalesResDto sales) {
         SalesInvoiceJasperDto dto = mapToDto(sales);
@@ -27,7 +28,7 @@ public class SalesInvoiceService {
     }
 
     /**
-     * Map SalesResDto to SalesInvoiceJasperDto
+     * Map PurchaseResDto to SalesInvoiceJasperDto
      */
     private SalesInvoiceJasperDto mapToDto(SalesResDto sales) {
         SalesInvoiceJasperDto dto = new SalesInvoiceJasperDto();
@@ -40,8 +41,8 @@ public class SalesInvoiceService {
         dto.setDeliveryDate(sales.getDeliveryDate() != null ? sales.getDeliveryDate().format(DATE_FORMATTER) : "");
 
         dto.setSubTotal(sales.getSubTotal());
-        dto.setDiscount(sales.getDiscount() != null ? sales.getDiscount() : 0.0);
-        dto.setVat(sales.getVat() != null ? sales.getVat() : 0.0);
+        dto.setDiscount(sales.getDiscount() != null ? sales.getDiscount() : BigDecimal.valueOf(0.0));
+        dto.setVat(sales.getVat() != null ? sales.getVat() : BigDecimal.valueOf(0.0));
         dto.setTotalAmount(sales.getTotalAmount());
         dto.setPaidAmount(sales.getPaidAmount());
         dto.setDueAmount(sales.getDueAmount());

@@ -1,8 +1,7 @@
-package com.monaum.Rapid_Global.module.incomes.sales;
+package com.monaum.Rapid_Global.module.expenses.purchase;
 
-
-import com.monaum.Rapid_Global.module.incomes.income.IncomeResDto;
-import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemResDto;
+import com.monaum.Rapid_Global.module.expenses.expense.ExpenseResDto;
+import com.monaum.Rapid_Global.module.expenses.purchaseItem.PurchaseItemResDto;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,11 +9,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class SalesResDto {
+public class PurchaseResDto {
 
     private Long id;
     private String invoiceNo;
-    private String customerName;
+    private String supplierName;
     private String phone;
     private String email;
     private String address;
@@ -31,6 +30,6 @@ public class SalesResDto {
     private BigDecimal dueAmount;
     private String status;
 
-    private List<SalesItemResDto> items;
-    private List<IncomeResDto> payments;
+    private List<PurchaseItemResDto> items;
+    private List<ExpenseResDto> payments;
 }

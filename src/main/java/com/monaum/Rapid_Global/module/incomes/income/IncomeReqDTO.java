@@ -19,7 +19,7 @@ public class IncomeReqDTO {
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than zero")
-    private Double amount;
+    private BigDecimal amount;
 
     @NotNull(message = "Payment Method is required")
     private Long paymentMethodId;

@@ -159,7 +159,6 @@ public class SalesService {
         return ResponseUtils.SuccessResponseWithData(response);
     }
 
-
     public void delete(Long id) {
         if (!salesRepository.existsById(id)) {
             throw new EntityNotFoundException("Sales not found");

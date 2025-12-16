@@ -1,15 +1,15 @@
-package com.monaum.Rapid_Global.module.incomes.sales;
+package com.monaum.Rapid_Global.module.expenses.purchase;
 
 
-import com.monaum.Rapid_Global.module.incomes.income.IncomeReqDTO;
-import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemReqDto;
-import jakarta.persistence.Column;
+import com.monaum.Rapid_Global.module.expenses.expense.ExpenseReqDTO;
+import com.monaum.Rapid_Global.module.expenses.purchaseItem.PurchaseItemReqDto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -17,11 +17,11 @@ import java.util.List;
  */
 
 @Data
-public class SalesReqDTO {
+public class PurchaseReqDTO {
 
-    @NotBlank(message = "Customer name is required")
-    @Size(max = 100, message = "Customer name cannot exceed 100 characters")
-    private String customerName;
+    @NotBlank(message = "Supplier name is required")
+    @Size(max = 100, message = "Supplier name cannot exceed 100 characters")
+    private String supplierName;
 
     @NotBlank(message = "Phone is required")
     @Size(max = 20, message = "Phone cannot exceed 20 characters")
@@ -54,10 +54,9 @@ public class SalesReqDTO {
     @NotBlank(message = "Status is required")
     private String status;
 
-    private List<IncomeReqDTO> payments;
+    private List<ExpenseReqDTO> payments;
 
     @NotEmpty(message = "Sales items cannot be empty")
-    private List<SalesItemReqDto> items;
+    private List<PurchaseItemReqDto> items;
 
 }
-

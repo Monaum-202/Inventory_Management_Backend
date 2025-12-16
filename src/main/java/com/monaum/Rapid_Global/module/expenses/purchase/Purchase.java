@@ -1,8 +1,10 @@
-package com.monaum.Rapid_Global.module.incomes.estimate;
+package com.monaum.Rapid_Global.module.expenses.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.enums.OrderStatus;
 import com.monaum.Rapid_Global.model.AbstractModel;
+import com.monaum.Rapid_Global.module.expenses.expense.Expense;
+import com.monaum.Rapid_Global.module.expenses.purchaseItem.PurchaseItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,31 +19,31 @@ import java.util.List;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
- * @since 12-Dec-25
+ * @since 01-Dec-25 10:52 PM
  */
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Estimate")
+@Table(name = "purchase")
 @EqualsAndHashCode(callSuper = false)
-public class Estimate extends AbstractModel {
+public class Purchase extends AbstractModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "estimate_no", unique = true, nullable = false)
-    private String estimateNo;
+    @Column(name = "invoice_no", unique = true, nullable = false)
+    private String invoiceNo;
 
-    @Column(length = 100)
-    private String customerName;
+    @Column(nullable = false, length = 100)
+    private String supplierName;
 
-    @Column(name = "customer_id")
-    private Long customerId;
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String phone;
 
     @Column(length = 100)
@@ -54,10 +56,10 @@ public class Estimate extends AbstractModel {
     private String companyName;
 
     @Column(nullable = false)
-    private LocalDate estimateDate;
+    private LocalDate purchaseDate;
 
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+    @Column(name = "delivery_date")
+    private LocalDate deliveryDate;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
@@ -72,12 +74,14 @@ public class Estimate extends AbstractModel {
     private OrderStatus status = OrderStatus.PENDING;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "estimate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EstimateItem> items = new ArrayList<>();
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseItem> items = new ArrayList<>();
 
-    @Column(name = "converted_to_sale")
-    private Boolean convertedToSale = false;
+    @JsonIgnore
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Expense> payments = new ArrayList<>();
 
-    @Column(name = "sale_id")
-    private Long saleId;
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
 }

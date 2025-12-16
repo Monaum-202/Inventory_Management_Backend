@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 public interface SalesItemMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "sales", ignore = true) // Prevent circular reference
+    @Mapping(target = "sales", ignore = true)
     SalesItem toEntity(SalesItemReqDto dto);
 
     SalesItemResDto toResDto(SalesItem entity);

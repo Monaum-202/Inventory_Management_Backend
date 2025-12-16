@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.expenses.expense_category.ExpenseCategory;
+import com.monaum.Rapid_Global.module.expenses.purchase.Purchase;
+import com.monaum.Rapid_Global.module.incomes.sales.Sales;
 import com.monaum.Rapid_Global.module.master.paymentMethod.PaymentMethod;
 import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
 import com.monaum.Rapid_Global.module.personnel.employee.Employee;
@@ -82,4 +84,8 @@ public class Expense extends AbstractModel {
     @Column(name = "created_by_name")
     private String createdByName;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_id")
+    private Purchase purchase;
 }

@@ -17,4 +17,6 @@ public interface RoleRepo extends JpaRepository<Role, Long> {
 
     @Query("SELECT r FROM Role r WHERE r.id <> 1")
     Page<Role> findAllExcept(Pageable pageable);
+
+    boolean existsByName(String name);
 }

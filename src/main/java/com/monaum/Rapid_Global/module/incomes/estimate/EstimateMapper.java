@@ -7,6 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
@@ -42,25 +45,35 @@ public interface EstimateMapper {
     @AfterMapping
     default void computeTotals(Estimate estimate, @MappingTarget EstimateResDto dto) {
 
-        // 1. Calculate Sub Total
-        double subTotalAmount = 0.0;
+        // 1. Sub Total
+        BigDecimal subTotal = BigDecimal.ZERO;
+
         if (estimate.getItems() != null) {
-            subTotalAmount = estimate.getItems().stream()
-                    .mapToDouble(EstimateItem::getTotalPrice)
-                    .sum();
-            dto.setSubTotal(subTotalAmount);
+            subTotal = estimate.getItems().stream()
+                    .map(EstimateItem::getTotalPrice) // BigDecimal
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
-        // 2. Calculate VAT safely (handle null)
-        Double vatPercent = dto.getVat();
-        double vatAmount = 0.0;
-        if (vatPercent != null) {
-            vatAmount = subTotalAmount * (vatPercent / 100);
+        dto.setSubTotal(subTotal.doubleValue()); // or change DTO to BigDecimal
+
+        // 2. VAT
+        BigDecimal vatAmount = BigDecimal.ZERO;
+        if (dto.getVat() != null) {
+            vatAmount = subTotal.multiply(
+                    BigDecimal.valueOf(dto.getVat()).divide(BigDecimal.valueOf(100))
+            );
         }
 
-        // 3. Calculate Total safely
-        double discount = dto.getDiscount() != null ? dto.getDiscount() : 0.0;
-        double totalAmount = subTotalAmount - discount + vatAmount;
-        dto.setTotalAmount(totalAmount);
+        // 3. Discount
+        BigDecimal discount = dto.getDiscount() != null
+                ? BigDecimal.valueOf(dto.getDiscount())
+                : BigDecimal.ZERO;
+
+        // 4. Total
+        BigDecimal totalAmount = subTotal.subtract(discount).add(vatAmount);
+
+        dto.setTotalAmount(totalAmount.doubleValue());
     }
+
 }
