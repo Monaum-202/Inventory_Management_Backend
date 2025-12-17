@@ -166,4 +166,7 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("SELECT SUM(i.amount) FROM Expense i WHERE i.paidToId = :supplierId")
+    Double getTotalTransaction(Long supplierId);
 }

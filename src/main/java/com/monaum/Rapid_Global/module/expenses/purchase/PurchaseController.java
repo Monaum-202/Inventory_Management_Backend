@@ -1,16 +1,15 @@
 package com.monaum.Rapid_Global.module.expenses.purchase;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
+import com.monaum.Rapid_Global.module.incomes.sales.SalesReqDTO;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Monaum Hossain
@@ -33,5 +32,12 @@ public class PurchaseController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("invoiceNo").descending());
         return service.getAll(search, pageable);
+    }
+
+    @PostMapping
+    public ResponseEntity<BaseApiResponseDTO<?>> create(
+            @Valid @RequestBody PurchaseReqDTO dto
+    ){
+        return   service.create(dto);
     }
 }

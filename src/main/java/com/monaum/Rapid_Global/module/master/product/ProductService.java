@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.config.SecurityUtil;
+import com.monaum.Rapid_Global.enums.ProductType;
 import com.monaum.Rapid_Global.exception.CustomException;
 import com.monaum.Rapid_Global.module.master.product_log.ProductLog;
 import com.monaum.Rapid_Global.module.master.product_log.ProductLogRepo;
@@ -48,16 +49,16 @@ public class ProductService {
 
     }
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status) {
+//    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status) {
+//
+//        List<Product> products = repo.findAllByActive(status);
+//        List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
+//
+//        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", productResDtos);
+//    }
 
-        List<Product> products = repo.findAllByActive(status);
-        List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
-
-        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", productResDtos);
-    }
-
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Boolean status) {
-        List<Product> products = repo.searchAndFilter((search != null && !search.isBlank()) ? search : null, status);
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Boolean status, ProductType type) {
+        List<Product> products = repo.searchAndFilter((search != null && !search.isBlank()) ? search : null, status,type);
 
         List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
 

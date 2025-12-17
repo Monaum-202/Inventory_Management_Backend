@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -81,25 +82,25 @@ public class CustomerService {
     private CustomerResDto buildCustomerResponse(Customer customer) {
         CustomerResDto dto = mapper.toDTO(customer);
 
-        double paid = Optional.ofNullable(
-                incomeRepo.getTotalTransaction(customer.getId())
-        ).orElse(0.0);
+        BigDecimal paid = BigDecimal.valueOf(
+                Optional.ofNullable(
+                        incomeRepo.getTotalTransaction(customer.getId())
+                ).orElse(0.0)
+        );
         dto.setTotalTransaction(paid);
 
-        List<Double> perSaleTotals =
+        List<BigDecimal> perSaleTotals =
                 Optional.ofNullable(
                         salesRepo.calculatePerSaleTotalsByCustomer(customer.getId())
                 ).orElse(List.of());
 
-        double totalOrder = perSaleTotals.stream()
-                .filter(Objects::nonNull)
-                .mapToDouble(Double::doubleValue)
-                .sum();
-
-        dto.setTotalDue(totalOrder - paid);
-
+        BigDecimal totalOrder = BigDecimal.valueOf(
+                perSaleTotals.stream()
+                        .filter(Objects::nonNull)
+                        .mapToDouble(BigDecimal::doubleValue)
+                        .sum()
+        );
+        dto.setTotalDue(totalOrder.subtract(paid));
         return dto;
     }
-
-
 }

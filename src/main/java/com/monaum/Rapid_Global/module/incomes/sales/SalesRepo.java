@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -40,7 +41,7 @@ public interface SalesRepo extends JpaRepository<Sales, Long> {
     WHERE s.customerId = :customerId
     GROUP BY s.id
 """)
-    List<Double> calculatePerSaleTotalsByCustomer(Long customerId);
+    List<BigDecimal> calculatePerSaleTotalsByCustomer(Long customerId);
 
 
 }

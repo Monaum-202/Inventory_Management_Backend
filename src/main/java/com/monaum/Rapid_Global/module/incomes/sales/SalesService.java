@@ -49,6 +49,19 @@ public class SalesService {
     @Autowired private RepoPaymentMethod paymentMethodRepo;
     @Autowired private TransactionCategoryRepo transactionCategoryRepo;
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
+
+        Page<SalesResDto> sales =
+                (search != null && !search.trim().isEmpty())
+                        ? salesRepository.search(search.trim(), pageable).map(salesMapper::toResDto)
+                        : salesRepository.findAll(pageable).map(salesMapper::toResDto);
+
+        CustomPageResponseDTO<SalesResDto> response =
+                PaginationUtil.buildPageResponse(sales, pageable);
+
+        return ResponseUtils.SuccessResponseWithData(response);
+    }
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(SalesReqDTO dto) {
@@ -143,20 +156,6 @@ public class SalesService {
         Sales sales = salesRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sales not found"));
         return salesMapper.toResDto(sales);
-    }
-
-    @Transactional(readOnly = true)
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
-
-        Page<SalesResDto> sales =
-                (search != null && !search.trim().isEmpty())
-                        ? salesRepository.search(search.trim(), pageable).map(salesMapper::toResDto)
-                        : salesRepository.findAll(pageable).map(salesMapper::toResDto);
-
-        CustomPageResponseDTO<SalesResDto> response =
-                PaginationUtil.buildPageResponse(sales, pageable);
-
-        return ResponseUtils.SuccessResponseWithData(response);
     }
 
     public void delete(Long id) {

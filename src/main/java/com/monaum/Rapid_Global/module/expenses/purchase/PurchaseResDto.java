@@ -18,7 +18,7 @@ public class PurchaseResDto {
     private String email;
     private String address;
     private String companyName;
-    private LocalDate sellDate;
+    private LocalDate purchaseDate;
     private LocalDate deliveryDate;
     private String notes;
 

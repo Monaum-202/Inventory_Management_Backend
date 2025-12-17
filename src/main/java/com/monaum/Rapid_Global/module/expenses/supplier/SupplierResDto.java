@@ -23,7 +23,7 @@ public class SupplierResDto {
     private String address;
     private String businessAddress;
     private BigDecimal totalTransaction;
-    private BigDecimal due;
+    private BigDecimal totalDue;
     private Long companyId;
     private LocalDateTime createdAt;
 

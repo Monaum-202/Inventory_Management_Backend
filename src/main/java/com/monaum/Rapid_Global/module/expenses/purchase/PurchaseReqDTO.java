@@ -37,8 +37,8 @@ public class PurchaseReqDTO {
     @Size(max = 200, message = "Company name cannot exceed 200 characters")
     private String companyName;
 
-    @NotNull(message = "Sell date is required")
-    private LocalDate sellDate;
+    @NotNull(message = "purchase date is required")
+    private LocalDate purchaseDate;
 
     @NotNull(message = "Delivery date is required")
     private LocalDate deliveryDate;

@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
+import com.monaum.Rapid_Global.enums.ProductType;
 import com.monaum.Rapid_Global.module.master.unit.UnitReqDto;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
@@ -37,9 +38,10 @@ public class ProductController {
     @GetMapping("/all-active")
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Boolean status
-    ) {
-        return service.getAll(search, status);
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(required = false) ProductType type
+            ) {
+        return service.getAll(search, status, type);
     }
 
     @PostMapping

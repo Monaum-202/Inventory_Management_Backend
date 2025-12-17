@@ -39,6 +39,9 @@ public class Supplier extends AbstractModel {
     @Column(name = "address", length = 255)
     private String address;
 
+    @Column(name = "company_name", length = 100)
+    private String companyName;
+
     @Column(name = "business_address", length = 255)
     private String businessAddress;
 

@@ -55,6 +55,9 @@ public class Expense extends AbstractModel {
     @Column(name = "paid_to")
     private String paidTo;
 
+    @Column(name= "paid_to_id")
+    private Long paidToId;
+
     @Column(name = "paid_to_company")
     private String paidToCompany;
 
