@@ -42,14 +42,5 @@ public class Product extends AbstractModel {
     @Column(name = "active")
     private Boolean active = true;
 
-//    // --- Stock Tracking Fields ---
-//    @Column(name = "stock_quantity", nullable = false)
-//    private Integer stockQuantity = 0;
-//
-//    @Column(name = "reorder_level")
-//    private Integer reorderLevel = 0;
-//
-//    @Column(name = "is_stock_tracked")
-//    private Boolean isStockTracked = true;
 }
 

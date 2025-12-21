@@ -6,12 +6,17 @@ import com.monaum.Rapid_Global.module.expenses.purchase.Purchase;
 import com.monaum.Rapid_Global.module.expenses.purchaseItem.PurchaseItem;
 import com.monaum.Rapid_Global.module.master.product.Product;
 import com.monaum.Rapid_Global.module.master.product.ProductRepo;
+import com.monaum.Rapid_Global.module.master.product.ProductResDto;
 import com.monaum.Rapid_Global.module.stockManagement.stockTransaction.StockTransaction;
 import com.monaum.Rapid_Global.module.stockManagement.stockTransaction.StockTransactionRepo;
+import com.monaum.Rapid_Global.util.ResponseUtils;
+import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +38,13 @@ public class StockService {
     @Autowired private StockRepo stockRepo;
     @Autowired private StockTransactionRepo transactionRepo;
     @Autowired private ProductRepo productRepo;
+    @Autowired private StockMapper mapper;
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(){
+        List<Stock>  stocks = stockRepo.findAll();
+        List<StockDTO> stockDTOS = stocks.stream().map(mapper::toDto).toList();
+        return ResponseUtils.SuccessResponseWithData(stockDTOS);
+    }
     
     // Add stock when purchase is completed
     public void addFromPurchase(Purchase purchase) {
