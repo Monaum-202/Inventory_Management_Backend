@@ -74,17 +74,14 @@ public class PurchaseService {
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(PurchaseReqDTO dto) {
 
-        // 1. Convert DTO → Entity
         Purchase purchase = mapper.toEntity(dto);
         purchase.setInvoiceNo(generateInvoiceNo());
         purchase.setStatus(OrderStatus.PENDING);
 
-        // 2. Set back-reference for items
         for (PurchaseItem item : purchase.getItems()) {
             item.setPurchase(purchase);
         }
 
-        // 3. Create or update Customer
         Supplier supplier = supplierRepo.findByPhone(dto.getPhone())
                 .orElse(new Supplier());
 
@@ -96,17 +93,14 @@ public class PurchaseService {
 
         supplierRepo.save(supplier);
 
-        // 4. Prepare Income (payments)
         List<Expense> expenseList = new ArrayList<>();
 
         if (dto.getPayments() != null && !dto.getPayments().isEmpty()) {
             for (ExpenseReqDTO req : dto.getPayments()) {
 
-                // Fetch Payment Method correctly
                 PaymentMethod paymentMethod = paymentMethodRepo.findById(req.getPaymentMethodId())
-                        .orElseThrow(() -> new RuntimeException("Payment method not found"));
+                        .orElseThrow(() -> new CustomException("Payment method not found",HttpStatus.NOT_FOUND));
 
-                // Fetch category "sales"
                 TransactionCategory category =
                         transactionCategoryRepo.findByNameIgnoreCase("purchase")
                                 .orElse(null);
@@ -134,14 +128,6 @@ public class PurchaseService {
 
         Purchase save = repo.save(purchase);
 
-        try {
-            addStockFromPurchase(purchase);
-            log.info("Purchase completed and stock added: {}", purchase.getInvoiceNo());
-        } catch (Exception e) {
-            log.error("Failed to add stock for purchase: {}", purchase.getInvoiceNo(), e);
-            throw new RuntimeException("Failed to update stock: " + e.getMessage());
-        }
-
         return ResponseUtils.SuccessResponseWithData("Sales created successfully!", mapper.toResDto(save));
     }
 
@@ -158,24 +144,17 @@ public class PurchaseService {
             throw new CustomException("Cannot complete cancelled purchase", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // Update status
         purchase.setStatus(OrderStatus.COMPLETED);
         purchase.setDeliveryDate(LocalDate.now());
         Purchase updated = repo.save(purchase);
 
-        // **ADD STOCK** - This is where stock increases
         try {
             addStockFromPurchase(purchase);
-            log.info("Purchase completed and stock added: {}", purchase.getInvoiceNo());
         } catch (Exception e) {
-            log.error("Failed to add stock for purchase: {}", purchase.getInvoiceNo(), e);
             throw new RuntimeException("Failed to update stock: " + e.getMessage());
         }
 
-        return ResponseUtils.SuccessResponseWithData(
-                "Purchase completed and stock updated!",
-                mapper.toResDto(updated)
-        );
+        return ResponseUtils.SuccessResponseWithData("Purchase completed and stock updated!", mapper.toResDto(updated));
     }
 
 
@@ -184,11 +163,8 @@ public class PurchaseService {
     private void addStockFromPurchase(Purchase purchase) {
         for (PurchaseItem item : purchase.getItems()) {
 
-            // Find or create product
-            Product product = productRepo.findByName(item.getItemName())
-                    .orElseThrow(()-> new CustomException("Product Not Found", HttpStatus.NOT_FOUND));
+            Product product = productRepo.findByName(item.getItemName()).orElseThrow(()-> new CustomException("Product Not Found", HttpStatus.NOT_FOUND));
 
-            // Add stock
             stockService.addStock(
                     product,
                     new BigDecimal(item.getQuantity()),
@@ -207,21 +183,17 @@ public class PurchaseService {
         String year = String.valueOf(LocalDate.now().getYear()).substring(2);  // YY
         String month = String.format("%02d", LocalDate.now().getMonthValue()); // MM
 
-        // If no previous ID → start with 001
         if (lastId == null) {
             return "PUR" + year + month + "001";
         }
 
-        // Extract last ID's year and month
         String lastYear = lastId.substring(3, 5);
         String lastMonth = lastId.substring(5, 7);
 
-        // If month OR year changed → reset counter to 001
         if (!lastYear.equals(year) || !lastMonth.equals(month)) {
             return "PUR" + year + month + "001";
         }
 
-        // Otherwise, increment existing number
         int number = Integer.parseInt(lastId.substring(7));
         number++;
 

@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.enums.ProductType;
+import jakarta.persistence.Column;
 import lombok.*;
 import java.math.BigDecimal;
 
@@ -19,5 +20,6 @@ public class ProductResDto {
     private Integer sortingOrder;
     private BigDecimal pricePerUnit;
     private Boolean active;
+    private BigDecimal alertQuantity;
 }
 

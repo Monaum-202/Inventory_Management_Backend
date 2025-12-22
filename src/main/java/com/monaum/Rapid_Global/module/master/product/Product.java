@@ -42,5 +42,7 @@ public class Product extends AbstractModel {
     @Column(name = "active")
     private Boolean active = true;
 
+    @Column(name = "alert_quantity", precision = 15, scale = 3)
+    private BigDecimal alertQuantity;
 }
 

@@ -8,6 +8,8 @@ import com.monaum.Rapid_Global.module.master.product_log.ProductLogRepo;
 import com.monaum.Rapid_Global.module.master.unit.Unit;
 import com.monaum.Rapid_Global.module.master.unit.UnitRepo;
 import com.monaum.Rapid_Global.module.master.unit.UnitResDto;
+import com.monaum.Rapid_Global.module.stockManagement.stock.Stock;
+import com.monaum.Rapid_Global.module.stockManagement.stock.StockRepo;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +36,7 @@ public class ProductService {
     @Autowired private UnitRepo unitRepo;
     @Autowired private SecurityUtil  securityUtil;
     @Autowired private ProductLogRepo productLogRepo;
+    @Autowired private StockRepo stockRepo;
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search){
         List<Product> products;
@@ -68,14 +72,25 @@ public class ProductService {
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> create(ProductReqDto dto) {
-        Unit unit = unitRepo.findById(dto.getUnitId()).orElseThrow(()->new EntityNotFoundException("Unit not found"));
+
+        Unit unit = unitRepo.findById(dto.getUnitId())
+                .orElseThrow(() -> new CustomException("Unit not found", HttpStatus.NOT_FOUND));
 
         Product product = mapper.toEntity(dto);
         product.setUnit(unit);
         product = repo.save(product);
 
+        Stock stock = new Stock();
+        stock.setProduct(product);
+        stock.setQuantity(BigDecimal.ZERO);
+        stock.setAlertQuantity(dto.getAlertQuantity());
+        stock.setAverageCost(BigDecimal.ZERO);
+
+        stockRepo.save(stock);
+
         return ResponseUtils.SuccessResponseWithData(mapper.toDto(product));
     }
+
 
     @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> update(Long id, ProductReqDto dto) {
@@ -100,6 +115,12 @@ public class ProductService {
         product.setUnit(newUnit);
 
         product = repo.save(product);
+
+        Stock stock = stockRepo.findByProduct(product)
+                .orElseThrow(() -> new CustomException("Stock not found",HttpStatus.NOT_FOUND));
+
+        stock.setAlertQuantity(dto.getAlertQuantity());
+        stockRepo.save(stock);
 
         log.setNewName(product.getName());
         log.setNewDescription(product.getDescription());

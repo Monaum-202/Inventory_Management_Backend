@@ -38,6 +38,13 @@ public class PurchaseController {
     public ResponseEntity<BaseApiResponseDTO<?>> create(
             @Valid @RequestBody PurchaseReqDTO dto
     ){
-        return   service.create(dto);
+        return service.create(dto);
+    }
+
+    @PutMapping("/{id}/receive-goods")
+    public ResponseEntity<BaseApiResponseDTO<?>> completePurchase(
+            @PathVariable Long id
+    ){
+        return service.completePurchase(id);
     }
 }

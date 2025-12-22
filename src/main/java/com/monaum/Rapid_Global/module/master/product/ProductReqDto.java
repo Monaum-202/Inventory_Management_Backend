@@ -26,5 +26,7 @@ public class ProductReqDto {
 
     @DecimalMin(value = "0.00", inclusive = false, message = "Price must be greater than 0.")
     private BigDecimal pricePerUnit;
+
+    private BigDecimal alertQuantity;
 }
 
