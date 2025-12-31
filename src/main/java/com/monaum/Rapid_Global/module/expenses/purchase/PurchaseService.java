@@ -40,33 +40,37 @@ import java.util.List;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
+ *
  * @since 17-Dec-25 12:32 AM
  */
 @Service
 @Slf4j
 public class PurchaseService {
 
-    @Autowired public PurchaseRepo repo;
-    @Autowired public PurchaseMapper mapper;
-    @Autowired public SupplierRepo supplierRepo;
-    @Autowired public ExpenseService expenseService;
-    @Autowired public TransactionCategoryRepo transactionCategoryRepo;
-    @Autowired private RepoPaymentMethod paymentMethodRepo;
-    @Autowired public ProductRepo productRepo;
-    @Autowired public StockService stockService;
-
+    @Autowired
+    public PurchaseRepo repo;
+    @Autowired
+    public PurchaseMapper mapper;
+    @Autowired
+    public SupplierRepo supplierRepo;
+    @Autowired
+    public ExpenseService expenseService;
+    @Autowired
+    public TransactionCategoryRepo transactionCategoryRepo;
+    @Autowired
+    private RepoPaymentMethod paymentMethodRepo;
+    @Autowired
+    public ProductRepo productRepo;
+    @Autowired
+    public StockService stockService;
 
 
     @Transactional(readOnly = true)
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Pageable pageable) {
 
-        Page<PurchaseResDto> purchaseResDtos =
-                (search != null && !search.trim().isEmpty())
-                        ? repo.search(search.trim(), pageable).map(mapper::toResDto)
-                        : repo.findAll(pageable).map(mapper::toResDto);
+        Page<PurchaseResDto> purchaseResDtos = (search != null && !search.trim().isEmpty()) ? repo.search(search.trim(), pageable).map(mapper::toResDto) : repo.findAll(pageable).map(mapper::toResDto);
 
-        CustomPageResponseDTO<PurchaseResDto> response =
-                PaginationUtil.buildPageResponse(purchaseResDtos, pageable);
+        CustomPageResponseDTO<PurchaseResDto> response = PaginationUtil.buildPageResponse(purchaseResDtos, pageable);
 
         return ResponseUtils.SuccessResponseWithData(response);
     }
@@ -82,8 +86,7 @@ public class PurchaseService {
             item.setPurchase(purchase);
         }
 
-        Supplier supplier = supplierRepo.findByPhone(dto.getPhone())
-                .orElse(new Supplier());
+        Supplier supplier = supplierRepo.findByPhone(dto.getPhone()).orElse(new Supplier());
 
         supplier.setName(dto.getSupplierName());
         supplier.setEmail(dto.getEmail());
@@ -98,12 +101,9 @@ public class PurchaseService {
         if (dto.getPayments() != null && !dto.getPayments().isEmpty()) {
             for (ExpenseReqDTO req : dto.getPayments()) {
 
-                PaymentMethod paymentMethod = paymentMethodRepo.findById(req.getPaymentMethodId())
-                        .orElseThrow(() -> new CustomException("Payment method not found",HttpStatus.NOT_FOUND));
+                PaymentMethod paymentMethod = paymentMethodRepo.findById(req.getPaymentMethodId()).orElseThrow(() -> new CustomException("Payment method not found", HttpStatus.NOT_FOUND));
 
-                TransactionCategory category =
-                        transactionCategoryRepo.findByNameIgnoreCase("purchase")
-                                .orElse(null);
+                TransactionCategory category = transactionCategoryRepo.findByNameIgnoreCase("purchase").orElse(null);
 
                 Expense expense = new Expense();
                 expense.setExpenseId(expenseService.generateExpenseId());
@@ -131,10 +131,10 @@ public class PurchaseService {
         return ResponseUtils.SuccessResponseWithData("Sales created successfully!", mapper.toResDto(save));
     }
 
+    @Transactional
     public ResponseEntity<BaseApiResponseDTO<?>> completePurchase(Long purchaseId) {
 
-        Purchase purchase = repo.findById(purchaseId)
-                .orElseThrow(() -> new CustomException("Purchase not found", HttpStatus.NOT_FOUND));
+        Purchase purchase = repo.findById(purchaseId).orElseThrow(() -> new CustomException("Purchase not found", HttpStatus.NOT_FOUND));
 
         if (purchase.getStatus() == OrderStatus.COMPLETED) {
             throw new CustomException("Purchase already completed", HttpStatus.ALREADY_REPORTED);
@@ -163,16 +163,9 @@ public class PurchaseService {
     private void addStockFromPurchase(Purchase purchase) {
         for (PurchaseItem item : purchase.getItems()) {
 
-            Product product = productRepo.findByName(item.getItemName()).orElseThrow(()-> new CustomException("Product Not Found", HttpStatus.NOT_FOUND));
+            Product product = productRepo.findByName(item.getItemName()).orElseThrow(() -> new CustomException("Product Not Found", HttpStatus.NOT_FOUND));
 
-            stockService.addStock(
-                    product,
-                    new BigDecimal(item.getQuantity()),
-                    item.getUnitPrice(),
-                    "PURCHASE",
-                    purchase.getId(),
-                    "Purchase: " + purchase.getInvoiceNo() + " from " + purchase.getSupplierName()
-            );
+            stockService.addStock(product, new BigDecimal(item.getQuantity()), item.getUnitPrice(), "PURCHASE", purchase.getId(), "Purchase: " + purchase.getInvoiceNo() + " from " + purchase.getSupplierName());
         }
     }
 

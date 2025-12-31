@@ -40,10 +40,7 @@ public class StockTransaction extends AbstractModel {
     
     @Column(name = "quantity", nullable = false, precision = 15, scale = 3)
     private BigDecimal quantity; // Positive = IN, Negative = OUT
-    
-    @Column(name = "unit_cost", precision = 15, scale = 2)
-    private BigDecimal unitCost;
-    
+
     @Column(name = "balance", nullable = false, precision = 15, scale = 3)
     private BigDecimal balance;
     

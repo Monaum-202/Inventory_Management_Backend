@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.master.transectionCategory;
 
 import com.monaum.Rapid_Global.enums.TransactionType;
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.personnel.role.Role;
 import com.monaum.Rapid_Global.util.PaginationUtil;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
@@ -92,4 +93,25 @@ public class TransactionCategoryService {
 
         return ResponseUtils.SuccessResponse("Payment Method has been deleted successfully", HttpStatus.OK);
     }
+
+    public void initializeSystemCategory() {
+        createCategory("Sales", "---", 1, TransactionType.INCOME);
+        createCategory("Purchase", "--", 2, TransactionType.EXPENSE);
+    }
+
+    private void createCategory(String name, String description, Integer sqn, TransactionType type) {
+
+        if (repo.existsByNameIgnoreCase(name)) {
+            return;
+        }
+
+        TransactionCategory category = new TransactionCategory();
+        category.setName(name);
+        category.setDescription(description);
+        category.setSqn(sqn);
+        category.setType(type);
+
+        repo.save(category);
+    }
+
 }

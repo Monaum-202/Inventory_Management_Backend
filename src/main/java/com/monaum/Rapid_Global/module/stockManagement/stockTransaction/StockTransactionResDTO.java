@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class StockTransactionDTO {
+public class StockTransactionResDTO {
     private Long id;
     private Long productId;
     private String productName;
@@ -20,4 +20,5 @@ public class StockTransactionDTO {
     private String referenceType;
     private String referenceNumber;
     private String note;
+    private String createdBy;
 }

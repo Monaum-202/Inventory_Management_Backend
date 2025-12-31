@@ -29,4 +29,6 @@ public interface TransactionCategoryRepo extends JpaRepository<TransactionCatego
         """)
     List<TransactionCategory> search(@Param("search") String search);
     Optional<TransactionCategory> findByNameIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCase(String name);
 }

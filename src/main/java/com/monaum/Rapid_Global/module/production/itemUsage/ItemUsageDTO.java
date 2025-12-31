@@ -1,0 +1,22 @@
+package com.monaum.Rapid_Global.module.production.itemUsage;
+
+import com.monaum.Rapid_Global.enums.Status;
+import com.monaum.Rapid_Global.module.production.item.ItemDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ItemUsageDTO {
+
+    private LocalDate date;
+
+    private Status status;
+
+    private List<ItemDTO> items;
+}
