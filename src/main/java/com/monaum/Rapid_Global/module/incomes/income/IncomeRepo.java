@@ -1,12 +1,21 @@
 package com.monaum.Rapid_Global.module.incomes.income;
 
 
+import com.monaum.Rapid_Global.enums.Status;
+import com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown;
+import com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown;
+import com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IncomeRepo extends JpaRepository<Income, Long> {
@@ -30,4 +39,74 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     Double getTotalTransaction(Long customerId);
 
 
+
+
+    // ============================================
+    // DASHBOARD QUERY METHODS
+    // ============================================
+
+    /**
+     * Calculate total income amount for a date range with specific status
+     */
+    @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i " +
+            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
+            "AND i.status = :status")
+    Optional<BigDecimal> sumAmountByDateRangeAndStatus(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get income breakdown by category
+     */
+    @Query("SELECT CategoryBreakdown(" +
+            "tc.name, " +
+            "COALESCE(SUM(i.amount), 0), " +
+            "COUNT(i), " +
+            "0) " +
+            "FROM Income i " +
+            "LEFT JOIN i.incomeCategory tc " +
+            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
+            "AND i.status = :status " +
+            "GROUP BY tc.name")
+    List<CategoryBreakdown> findCategoryBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get income breakdown by payment method
+     */
+    @Query("SELECT PaymentMethodBreakdown(" +
+            "pm.name, " +
+            "COALESCE(SUM(i.amount), 0), " +
+            "COUNT(i)) " +
+            "FROM Income i " +
+            "LEFT JOIN i.paymentMethod pm " +
+            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
+            "AND i.status = :status " +
+            "GROUP BY pm.name")
+    List<PaymentMethodBreakdown> findPaymentMethodBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get daily trend data
+     */
+    @Query("SELECT TrendPoint(" +
+            "i.incomeDate, " +
+            "COALESCE(SUM(i.amount), 0), " +
+            "COUNT(i)) " +
+            "FROM Income i " +
+            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
+            "AND i.status = :status " +
+            "GROUP BY i.incomeDate " +
+            "ORDER BY i.incomeDate")
+    List<TrendPoint> findDailyTrend(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
 }
+

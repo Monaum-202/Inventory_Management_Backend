@@ -1,6 +1,9 @@
 package com.monaum.Rapid_Global.module.expenses.expense;
 
 import com.monaum.Rapid_Global.enums.Status;
+import com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown;
+import com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown;
+import com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Monaum Hossain
@@ -169,4 +173,72 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
 
     @Query("SELECT SUM(i.amount) FROM Expense i WHERE i.paidToId = :supplierId")
     Double getTotalTransaction(Long supplierId);
+
+
+    // ============================================
+    // DASHBOARD QUERY METHODS
+    // ============================================
+
+    /**
+     * Calculate total expense amount for a date range with specific status
+     */
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e " +
+            "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
+            "AND e.status = :status")
+    Optional<BigDecimal> sumAmountByDateRangeAndStatus(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get expense breakdown by category
+     */
+    @Query("SELECT CategoryBreakdown(" +
+            "tc.name, " +
+            "COALESCE(SUM(e.amount), 0), " +
+            "COUNT(e), " +
+            "0) " +
+            "FROM Expense e " +
+            "LEFT JOIN e.expenseCategory tc " +
+            "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
+            "AND e.status = :status " +
+            "GROUP BY tc.name")
+    List<CategoryBreakdown> findCategoryBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get expense breakdown by payment method
+     */
+    @Query("SELECT PaymentMethodBreakdown(" +
+            "pm.name, " +
+            "COALESCE(SUM(e.amount), 0), " +
+            "COUNT(e)) " +
+            "FROM Expense e " +
+            "LEFT JOIN e.paymentMethod pm " +
+            "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
+            "AND e.status = :status " +
+            "GROUP BY pm.name")
+    List<PaymentMethodBreakdown> findPaymentMethodBreakdown(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
+
+    /**
+     * Get daily trend data
+     */
+    @Query("SELECT TrendPoint(" +
+            "e.expenseDate, " +
+            "COALESCE(SUM(e.amount), 0), " +
+            "COUNT(e)) " +
+            "FROM Expense e " +
+            "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
+            "AND e.status = :status " +
+            "GROUP BY e.expenseDate " +
+            "ORDER BY e.expenseDate")
+    List<TrendPoint> findDailyTrend(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") Status status);
 }
