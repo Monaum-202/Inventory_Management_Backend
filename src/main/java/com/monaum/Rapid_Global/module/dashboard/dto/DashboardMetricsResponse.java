@@ -20,6 +20,7 @@ public class DashboardMetricsResponse {
     private MetricData totalExpenses;
     private MetricData netProfit;
     private MetricData profitMargin;
+    private MetricData totalOrders;
     private String period;
     private LocalDate startDate;
     private LocalDate endDate;

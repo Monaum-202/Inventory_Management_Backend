@@ -2,10 +2,6 @@ package com.monaum.Rapid_Global.module.dashboard;
 
 import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.enums.TimePeriod;
-import com.monaum.Rapid_Global.module.dashboard.dto.DashboardMetricsResponse;
-import com.monaum.Rapid_Global.module.dashboard.dto.ExpenseDetailsResponse;
-import com.monaum.Rapid_Global.module.dashboard.dto.RevenueDetailsResponse;
-import com.monaum.Rapid_Global.module.dashboard.dto.TrendDataResponse;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -49,32 +45,29 @@ public class DashboardController {
      * Get detailed revenue breakdown
      */
     @GetMapping("/revenue-details")
-    public ResponseEntity<RevenueDetailsResponse> getRevenueDetails(
+    public ResponseEntity<BaseApiResponseDTO<?>> getRevenueDetails(
             @RequestParam(defaultValue = "MONTH") TimePeriod period) {
 
-        RevenueDetailsResponse details = dashboardService.getRevenueDetails(period);
-        return ResponseEntity.ok(details);
-    }
+        return dashboardService.getRevenueDetails(period);
+        }
 
     /**
      * Get detailed expense breakdown
      */
     @GetMapping("/expense-details")
-    public ResponseEntity<ExpenseDetailsResponse> getExpenseDetails(
+    public ResponseEntity<BaseApiResponseDTO<?>> getExpenseDetails(
             @RequestParam(defaultValue = "MONTH") TimePeriod period) {
 
-        ExpenseDetailsResponse details = dashboardService.getExpenseDetails(period);
-        return ResponseEntity.ok(details);
+        return dashboardService.getExpenseDetails(period);
     }
 
     /**
      * Get trend data for charts
      */
     @GetMapping("/trends")
-    public ResponseEntity<TrendDataResponse> getTrendData(
+    public ResponseEntity<BaseApiResponseDTO<?>> getTrendData(
             @RequestParam(defaultValue = "MONTH") TimePeriod period) {
 
-        TrendDataResponse trends = dashboardService.getTrendData(period);
-        return ResponseEntity.ok(trends);
+        return dashboardService.getTrendData(period);
     }
 }

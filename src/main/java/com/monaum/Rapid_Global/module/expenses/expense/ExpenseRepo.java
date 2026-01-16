@@ -173,11 +173,7 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
 
     @Query("SELECT SUM(i.amount) FROM Expense i WHERE i.paidToId = :supplierId")
     Double getTotalTransaction(Long supplierId);
-
-
-    // ============================================
-    // DASHBOARD QUERY METHODS
-    // ============================================
+    
 
     /**
      * Calculate total expense amount for a date range with specific status
@@ -190,14 +186,18 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
             @Param("endDate") LocalDate endDate,
             @Param("status") Status status);
 
+    // ============================================
+    // DASHBOARD QUERY METHODS - CORRECTED
+    // ============================================
+
     /**
      * Get expense breakdown by category
      */
-    @Query("SELECT CategoryBreakdown(" +
-            "tc.name, " +
-            "COALESCE(SUM(e.amount), 0), " +
-            "COUNT(e), " +
-            "0) " +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown(" +
+            "COALESCE(tc.name, 'Uncategorized'), " +
+            "COALESCE(SUM(e.amount), 0.0), " +
+            "COUNT(e.id), " +
+            "CAST(0.0 AS java.math.BigDecimal)) " +
             "FROM Expense e " +
             "LEFT JOIN e.expenseCategory tc " +
             "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
@@ -211,10 +211,10 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
     /**
      * Get expense breakdown by payment method
      */
-    @Query("SELECT PaymentMethodBreakdown(" +
-            "pm.name, " +
-            "COALESCE(SUM(e.amount), 0), " +
-            "COUNT(e)) " +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown(" +
+            "COALESCE(pm.name, 'Unknown'), " +
+            "COALESCE(SUM(e.amount), 0.0), " +
+            "COUNT(e.id)) " +
             "FROM Expense e " +
             "LEFT JOIN e.paymentMethod pm " +
             "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
@@ -228,10 +228,10 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long> {
     /**
      * Get daily trend data
      */
-    @Query("SELECT TrendPoint(" +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint(" +
             "e.expenseDate, " +
-            "COALESCE(SUM(e.amount), 0), " +
-            "COUNT(e)) " +
+            "COALESCE(SUM(e.amount), 0.0), " +
+            "COUNT(e.id)) " +
             "FROM Expense e " +
             "WHERE e.expenseDate BETWEEN :startDate AND :endDate " +
             "AND e.status = :status " +

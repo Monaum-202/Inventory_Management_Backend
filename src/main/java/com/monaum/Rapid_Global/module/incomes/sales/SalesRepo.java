@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
+import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.module.incomes.income.Income;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SalesRepo extends JpaRepository<Sales, Long> {
@@ -43,5 +46,11 @@ public interface SalesRepo extends JpaRepository<Sales, Long> {
 """)
     List<BigDecimal> calculatePerSaleTotalsByCustomer(Long customerId);
 
+    //dashboard
+    @Query("SELECT COUNT(s) FROM Sales s " +
+            "WHERE s.sellDate BETWEEN :startDate AND :endDate " )
+    Optional<BigDecimal> sumAmountByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
 }

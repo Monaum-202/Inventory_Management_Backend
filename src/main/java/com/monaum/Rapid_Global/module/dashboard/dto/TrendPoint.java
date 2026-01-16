@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrendPoint {
+public class    TrendPoint {
     private LocalDate date;
     private BigDecimal amount;
     private Long count;

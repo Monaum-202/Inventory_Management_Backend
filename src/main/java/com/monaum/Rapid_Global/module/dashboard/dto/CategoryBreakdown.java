@@ -13,13 +13,27 @@ import java.math.BigDecimal;
  *
  * @since 13-Jan-26 9:26 PM
  */
+/**
+ * Category Breakdown DTO
+ * Used for dashboard analytics
+ */
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class CategoryBreakdown {
     private String categoryName;
     private BigDecimal amount;
     private Long count;
     private BigDecimal percentage;
+
+    /**
+     * Constructor for JPA query projection
+     * This is what JPA will call from the @Query
+     */
+    public CategoryBreakdown(String categoryName, BigDecimal amount, Long count, BigDecimal percentage) {
+        this.categoryName = categoryName;
+        this.amount = amount;
+        this.count = count;
+        this.percentage = percentage;
+    }
 }

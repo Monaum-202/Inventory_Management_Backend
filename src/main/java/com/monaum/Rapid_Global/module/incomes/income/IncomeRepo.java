@@ -56,14 +56,19 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
             @Param("endDate") LocalDate endDate,
             @Param("status") Status status);
 
+
+    // ============================================
+    // DASHBOARD QUERY METHODS - CORRECTED
+    // ============================================
+
     /**
      * Get income breakdown by category
      */
-    @Query("SELECT CategoryBreakdown(" +
-            "tc.name, " +
-            "COALESCE(SUM(i.amount), 0), " +
-            "COUNT(i), " +
-            "0) " +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown(" +
+            "COALESCE(tc.name, 'Uncategorized'), " +
+            "COALESCE(SUM(i.amount), 0.0), " +
+            "COUNT(i.id), " +
+            "CAST(0.0 AS java.math.BigDecimal)) " +
             "FROM Income i " +
             "LEFT JOIN i.incomeCategory tc " +
             "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
@@ -77,10 +82,10 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     /**
      * Get income breakdown by payment method
      */
-    @Query("SELECT PaymentMethodBreakdown(" +
-            "pm.name, " +
-            "COALESCE(SUM(i.amount), 0), " +
-            "COUNT(i)) " +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown(" +
+            "COALESCE(pm.name, 'Unknown'), " +
+            "COALESCE(SUM(i.amount), 0.0), " +
+            "COUNT(i.id)) " +
             "FROM Income i " +
             "LEFT JOIN i.paymentMethod pm " +
             "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
@@ -94,10 +99,10 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     /**
      * Get daily trend data
      */
-    @Query("SELECT TrendPoint(" +
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint(" +
             "i.incomeDate, " +
-            "COALESCE(SUM(i.amount), 0), " +
-            "COUNT(i)) " +
+            "COALESCE(SUM(i.amount), 0.0), " +
+            "COUNT(i.id)) " +
             "FROM Income i " +
             "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
             "AND i.status = :status " +

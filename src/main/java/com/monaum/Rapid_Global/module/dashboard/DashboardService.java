@@ -1,10 +1,12 @@
 package com.monaum.Rapid_Global.module.dashboard;
 
+import com.monaum.Rapid_Global.enums.OrderStatus;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.enums.TimePeriod;
 import com.monaum.Rapid_Global.module.dashboard.dto.*;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
+import com.monaum.Rapid_Global.module.incomes.sales.SalesRepo;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class DashboardService {
 
     private final IncomeRepo incomeRepository;
     private final ExpenseRepo expenseRepository;
+    private final SalesRepo salesRepository;
 
     /**
      * Get comprehensive dashboard metrics with period comparison
@@ -44,12 +47,15 @@ public class DashboardService {
 
         BigDecimal currentRevenue = calculateTotalRevenue(currentRange);
         BigDecimal currentExpenses = calculateTotalExpenses(currentRange);
+        BigDecimal currentOrders = calculateTotalOrders(currentRange);
 
         BigDecimal previousRevenue = calculateTotalRevenue(previousRange);
         BigDecimal previousExpenses = calculateTotalExpenses(previousRange);
+        BigDecimal previousOrders = calculateTotalOrders(previousRange);
 
         BigDecimal revenueChange = calculatePercentageChange(previousRevenue, currentRevenue);
         BigDecimal expenseChange = calculatePercentageChange(previousExpenses, currentExpenses);
+        BigDecimal  orderChange = calculatePercentageChange(previousOrders, currentOrders);
 
         BigDecimal currentProfit = currentRevenue.subtract(currentExpenses);
         BigDecimal previousProfit = previousRevenue.subtract(previousExpenses);
@@ -91,6 +97,13 @@ public class DashboardService {
                         .formattedChange("0%")
                         .isPositive(true)
                         .build())
+                .totalOrders(MetricData.builder()
+                        .value(currentOrders)
+                        .formattedValue(formatCurrency(currentOrders))
+                        .change(orderChange)
+                        .formattedChange(formatPercentage(orderChange))
+                        .isPositive(orderChange.compareTo(BigDecimal.ZERO) >= 0)
+                        .build())
                 .period(period.name())
                 .startDate(currentRange.getStartDate())
                 .endDate(currentRange.getEndDate())
@@ -121,10 +134,18 @@ public class DashboardService {
         ).orElse(BigDecimal.ZERO);
     }
 
+    private BigDecimal calculateTotalOrders(DateRange range) {
+        return salesRepository.sumAmountByDateRange(
+                range.getStartDate(),
+                range.getEndDate()
+        ).orElse(BigDecimal.ZERO);
+
+    }
+
     /**
      * Get detailed revenue breakdown
      */
-    public RevenueDetailsResponse getRevenueDetails(TimePeriod period) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getRevenueDetails(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
         List<CategoryBreakdown> categoryBreakdown = incomeRepository
@@ -132,19 +153,19 @@ public class DashboardService {
 
         List<PaymentMethodBreakdown> paymentBreakdown = incomeRepository
                 .findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
-
-        return RevenueDetailsResponse.builder()
+        RevenueDetailsResponse response = RevenueDetailsResponse.builder()
                 .totalRevenue(calculateTotalRevenue(range))
                 .categoryBreakdown(categoryBreakdown)
                 .paymentMethodBreakdown(paymentBreakdown)
                 .period(period.name())
                 .build();
+        return ResponseUtils.SuccessResponseWithData(response);
     }
 
     /**
      * Get detailed expense breakdown
      */
-    public ExpenseDetailsResponse getExpenseDetails(TimePeriod period) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getExpenseDetails(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
         List<CategoryBreakdown> categoryBreakdown = expenseRepository
@@ -153,18 +174,20 @@ public class DashboardService {
         List<PaymentMethodBreakdown> paymentBreakdown = expenseRepository
                 .findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        return ExpenseDetailsResponse.builder()
+        ExpenseDetailsResponse response = ExpenseDetailsResponse.builder()
                 .totalExpenses(calculateTotalExpenses(range))
                 .categoryBreakdown(categoryBreakdown)
                 .paymentMethodBreakdown(paymentBreakdown)
                 .period(period.name())
                 .build();
+
+        return ResponseUtils.SuccessResponseWithData(response);
     }
 
     /**
      * Get trend data for charts
      */
-    public TrendDataResponse getTrendData(TimePeriod period) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getTrendData(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
         List<TrendPoint> revenueTrend = incomeRepository
@@ -173,11 +196,13 @@ public class DashboardService {
         List<TrendPoint> expenseTrend = expenseRepository
                 .findDailyTrend(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        return TrendDataResponse.builder()
+        TrendDataResponse response = TrendDataResponse.builder()
                 .revenueTrend(revenueTrend)
                 .expenseTrend(expenseTrend)
                 .period(period.name())
                 .build();
+
+        return ResponseUtils.SuccessResponseWithData(response);
     }
 
     /**
@@ -240,7 +265,7 @@ public class DashboardService {
      * Format currency value
      */
     private String formatCurrency(BigDecimal value) {
-        return "$" + String.format("%,.2f", value);
+        return String.format("%,.2f", value);
     }
 
     /**
