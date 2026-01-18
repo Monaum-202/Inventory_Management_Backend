@@ -5,6 +5,7 @@ import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.enums.TimePeriod;
 import com.monaum.Rapid_Global.module.dashboard.dto.*;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
+import com.monaum.Rapid_Global.module.expenses.purchase.PurchaseRepo;
 import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
 import com.monaum.Rapid_Global.module.incomes.sales.SalesRepo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class DashboardService {
     private final ExpenseRepo expenseRepository;
     private final SalesRepo salesRepository;
     private final CustomerRepo customerRepository;
+    private final PurchaseRepo purchaseRepo;
 
     /**
      * Get comprehensive dashboard metrics with period comparison
@@ -51,16 +54,22 @@ public class DashboardService {
         BigDecimal currentExpenses = calculateTotalExpenses(currentRange);
         BigDecimal currentOrders = calculateTotalOrders(currentRange);
         BigDecimal currentCustomer = calculateTotalCustomers(currentRange);
+        BigDecimal currentDue = calculateTotalDue(currentRange);
+        BigDecimal currentOwed = calculateTotalOwed(currentRange);
 
         BigDecimal previousRevenue = calculateTotalRevenue(previousRange);
         BigDecimal previousExpenses = calculateTotalExpenses(previousRange);
         BigDecimal previousOrders = calculateTotalOrders(previousRange);
         BigDecimal previousCustomer = calculateTotalCustomers(previousRange);
+        BigDecimal previousDue = calculateTotalDue(previousRange);
+        BigDecimal previousOwed = calculateTotalOwed(previousRange);
 
         BigDecimal revenueChange = calculatePercentageChange(previousRevenue, currentRevenue);
         BigDecimal expenseChange = calculatePercentageChange(previousExpenses, currentExpenses);
         BigDecimal orderChange = calculatePercentageChange(previousOrders, currentOrders);
         BigDecimal customerChange = calculatePercentageChange(previousCustomer, currentCustomer);
+        BigDecimal dueChange = calculatePercentageChange(previousDue, currentDue);
+        BigDecimal owedChange = calculatePercentageChange(previousOwed, currentOwed);
 
         BigDecimal currentProfit = currentRevenue.subtract(currentExpenses);
         BigDecimal previousProfit = previousRevenue.subtract(previousExpenses);
@@ -116,6 +125,20 @@ public class DashboardService {
                         .formattedChange(formatPercentage(customerChange))
                         .isPositive(customerChange.compareTo(BigDecimal.ZERO) >= 0)
                         .build())
+                .totalDue(MetricData.builder()
+                        .value(currentDue)
+                        .formattedValue(formatCurrency(currentDue))
+                        .change(dueChange)
+                        .formattedChange(formatPercentage(dueChange))
+                        .isPositive(expenseChange.compareTo(BigDecimal.ZERO) < 0)
+                        .build())
+                .totalOwed(MetricData.builder()
+                        .value(currentOwed)
+                        .formattedValue(formatCurrency(currentOwed))
+                        .change(owedChange)
+                        .formattedChange(formatPercentage(owedChange))
+                        .isPositive(owedChange.compareTo(BigDecimal.ZERO) >= 0)
+                        .build())
                 .period(period.name())
                 .startDate(currentRange.getStartDate())
                 .endDate(currentRange.getEndDate())
@@ -156,9 +179,23 @@ public class DashboardService {
 
     private BigDecimal calculateTotalCustomers(DateRange range) {
         return customerRepository.sumCustomerByDateRange(
+                range.getStartDate().atStartOfDay(),
+                range.getEndDate().atTime(LocalTime.MAX)
+        ).orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal calculateTotalDue(DateRange range) {
+        return purchaseRepo.getDueAmountByDateRange(
                 range.getStartDate(),
                 range.getEndDate()
-        ).orElse(BigDecimal.ZERO);
+        );
+    }
+
+    private BigDecimal calculateTotalOwed(DateRange range) {
+        return salesRepository.getOwedAmountByDateRange(
+                range.getStartDate(),
+                range.getEndDate()
+        );
     }
 
     /**

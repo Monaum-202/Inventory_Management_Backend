@@ -18,39 +18,47 @@ import java.util.Optional;
 public interface SalesRepo extends JpaRepository<Sales, Long> {
 
     @Query("""
-    SELECT s FROM Sales s
-    WHERE 
-        LOWER(COALESCE(s.invoiceNo, '')) LIKE LOWER(CONCAT('%', :search, '%'))
-        OR LOWER(COALESCE(s.phone, '')) LIKE LOWER(CONCAT('%', :search, '%'))
-""")
+                SELECT s FROM Sales s
+                WHERE 
+                    LOWER(COALESCE(s.invoiceNo, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(COALESCE(s.phone, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+            """)
     Page<Sales> search(@Param("search") String search, Pageable pageable);
 
 
-    @Query(value = "SELECT invoice_no FROM SALES " +
-            "WHERE invoice_no LIKE CONCAT('INv', SUBSTRING(YEAR(CURDATE()),3,2), '%') " +
-            "ORDER BY CAST(SUBSTRING(invoice_no, 7) AS UNSIGNED) DESC " +
-            "LIMIT 1 FOR UPDATE",
-            nativeQuery = true)
+    @Query(value = "SELECT invoice_no FROM SALES " + "WHERE invoice_no LIKE CONCAT('INv', SUBSTRING(YEAR(CURDATE()),3,2), '%') " + "ORDER BY CAST(SUBSTRING(invoice_no, 7) AS UNSIGNED) DESC " + "LIMIT 1 FOR UPDATE", nativeQuery = true)
     String findLastInvoiceNoForUpdate();
 
     @Query("""
-    SELECT 
-      (SUM(i.totalPrice) 
-       - COALESCE(s.discount, 0)
-       + (SUM(i.totalPrice) * (COALESCE(s.vat, 0) / 100))
-      )
-    FROM Sales s
-    JOIN s.items i
-    WHERE s.customerId = :customerId
-    GROUP BY s.id
-""")
+                SELECT 
+                  (SUM(i.totalPrice) 
+                   - COALESCE(s.discount, 0)
+                   + (SUM(i.totalPrice) * (COALESCE(s.vat, 0) / 100))
+                  )
+                FROM Sales s
+                JOIN s.items i
+                WHERE s.customerId = :customerId
+                GROUP BY s.id
+            """)
     List<BigDecimal> calculatePerSaleTotalsByCustomer(Long customerId);
 
     //dashboard
-    @Query("SELECT COUNT(s) FROM Sales s " +
-            "WHERE s.sellDate BETWEEN :startDate AND :endDate " )
-    Optional<BigDecimal> sumAmountByDateRange(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+    @Query("SELECT COUNT(s) FROM Sales s " + "WHERE s.sellDate BETWEEN :startDate AND :endDate ")
+    Optional<BigDecimal> sumAmountByDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("""
+                SELECT 
+                  COALESCE(SUM(si.totalPrice), 0)
+                  -
+                  COALESCE(SUM(i.amount), 0)
+                FROM Sales s
+                JOIN s.items si
+                LEFT JOIN s.payments i
+                       ON i.status = com.monaum.Rapid_Global.enums.Status.APPROVED
+                       AND i.incomeDate BETWEEN :fromDate AND :toDate
+                WHERE s.sellDate BETWEEN :fromDate AND :toDate
+            """)
+    BigDecimal getOwedAmountByDateRange(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+
 
 }

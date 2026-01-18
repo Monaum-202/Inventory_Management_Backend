@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,6 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
     @Query("SELECT COUNT(c) FROM Customer c " +
             "WHERE c.createdAt BETWEEN :startDate AND :endDate " )
     Optional<BigDecimal> sumCustomerByDateRange(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

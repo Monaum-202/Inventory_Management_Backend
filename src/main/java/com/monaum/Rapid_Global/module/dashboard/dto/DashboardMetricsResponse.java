@@ -22,6 +22,8 @@ public class DashboardMetricsResponse {
     private MetricData profitMargin;
     private MetricData totalOrders;
     private MetricData totalCustomers;
+    private MetricData totalDue;
+    private MetricData totalOwed;
     private String period;
     private LocalDate startDate;
     private LocalDate endDate;

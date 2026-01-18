@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -50,5 +51,23 @@ public interface PurchaseRepo extends JpaRepository<Purchase, Long> {
     GROUP BY s.id
 """)
     List<BigDecimal> calculatePerSaleTotalsByCustomer(Long supplierId);
+
+    @Query("""
+                SELECT 
+                  COALESCE(SUM(pi.totalPrice), 0)
+                  -
+                  COALESCE(SUM(e.amount), 0)
+                FROM Purchase p
+                JOIN p.items pi
+                LEFT JOIN p.payments e
+                       ON e.status = com.monaum.Rapid_Global.enums.Status.APPROVED
+                       AND e.expenseDate BETWEEN :fromDate AND :toDate
+                WHERE p.purchaseDate BETWEEN :fromDate AND :toDate
+            """)
+    BigDecimal getDueAmountByDateRange(
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
+    );
+
 
 }
