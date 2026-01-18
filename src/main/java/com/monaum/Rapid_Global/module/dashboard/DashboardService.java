@@ -5,6 +5,7 @@ import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.enums.TimePeriod;
 import com.monaum.Rapid_Global.module.dashboard.dto.*;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
+import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
 import com.monaum.Rapid_Global.module.incomes.sales.SalesRepo;
 import com.monaum.Rapid_Global.util.ResponseUtils;
@@ -32,6 +33,7 @@ public class DashboardService {
     private final IncomeRepo incomeRepository;
     private final ExpenseRepo expenseRepository;
     private final SalesRepo salesRepository;
+    private final CustomerRepo customerRepository;
 
     /**
      * Get comprehensive dashboard metrics with period comparison
@@ -48,14 +50,17 @@ public class DashboardService {
         BigDecimal currentRevenue = calculateTotalRevenue(currentRange);
         BigDecimal currentExpenses = calculateTotalExpenses(currentRange);
         BigDecimal currentOrders = calculateTotalOrders(currentRange);
+        BigDecimal currentCustomer = calculateTotalCustomers(currentRange);
 
         BigDecimal previousRevenue = calculateTotalRevenue(previousRange);
         BigDecimal previousExpenses = calculateTotalExpenses(previousRange);
         BigDecimal previousOrders = calculateTotalOrders(previousRange);
+        BigDecimal previousCustomer = calculateTotalCustomers(previousRange);
 
         BigDecimal revenueChange = calculatePercentageChange(previousRevenue, currentRevenue);
         BigDecimal expenseChange = calculatePercentageChange(previousExpenses, currentExpenses);
-        BigDecimal  orderChange = calculatePercentageChange(previousOrders, currentOrders);
+        BigDecimal orderChange = calculatePercentageChange(previousOrders, currentOrders);
+        BigDecimal customerChange = calculatePercentageChange(previousCustomer, currentCustomer);
 
         BigDecimal currentProfit = currentRevenue.subtract(currentExpenses);
         BigDecimal previousProfit = previousRevenue.subtract(previousExpenses);
@@ -104,6 +109,13 @@ public class DashboardService {
                         .formattedChange(formatPercentage(orderChange))
                         .isPositive(orderChange.compareTo(BigDecimal.ZERO) >= 0)
                         .build())
+                .totalCustomers(MetricData.builder()
+                        .value(currentCustomer)
+                        .formattedValue(formatCurrency(currentCustomer))
+                        .change(customerChange)
+                        .formattedChange(formatPercentage(customerChange))
+                        .isPositive(customerChange.compareTo(BigDecimal.ZERO) >= 0)
+                        .build())
                 .period(period.name())
                 .startDate(currentRange.getStartDate())
                 .endDate(currentRange.getEndDate())
@@ -140,6 +152,13 @@ public class DashboardService {
                 range.getEndDate()
         ).orElse(BigDecimal.ZERO);
 
+    }
+
+    private BigDecimal calculateTotalCustomers(DateRange range) {
+        return customerRepository.sumCustomerByDateRange(
+                range.getStartDate(),
+                range.getEndDate()
+        ).orElse(BigDecimal.ZERO);
     }
 
     /**

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +26,11 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
             OR c.phone LIKE CONCAT('%', :search, '%')
         """)
     Page<Customer> search(@Param("search") String search,  Pageable pageable);
+
+    //dashboard
+    @Query("SELECT COUNT(c) FROM Customer c " +
+            "WHERE c.createdAt BETWEEN :startDate AND :endDate " )
+    Optional<BigDecimal> sumCustomerByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }
