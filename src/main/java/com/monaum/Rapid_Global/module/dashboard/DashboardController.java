@@ -41,6 +41,11 @@ public class DashboardController {
         return  dashboardService.getDashboardMetrics(period, startDate, endDate);
     }
 
+    @GetMapping("/stock")
+    public ResponseEntity<BaseApiResponseDTO<?>> getStockDetails(){
+        return dashboardService.getStockDetails();
+    }
+
     /**
      * Get detailed revenue breakdown
      */

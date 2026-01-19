@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import com.monaum.Rapid_Global.enums.TokenType;
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.personnel.role.Role;
+import com.monaum.Rapid_Global.module.personnel.role.RoleRepo;
 import com.monaum.Rapid_Global.security.JwtService;
 import com.monaum.Rapid_Global.security.tokens.Token;
 import com.monaum.Rapid_Global.security.tokens.TokenRepo;
@@ -37,6 +39,7 @@ public class AuthenticationService {
 	@Autowired PasswordEncoder passwordEncoder;
 	@Autowired private TokenRepo tokensRepo;
 	@Autowired private UserService userService;
+	@Autowired private RoleRepo roleRepo;
 
 	// ===============================================================
 	// REGISTER
@@ -48,6 +51,7 @@ public class AuthenticationService {
 		} else if (userRepo.findByUserNameIgnoreCase(request.getUserName()).isPresent()) {
 			throw new CustomException("Username is already registered.", HttpStatus.BAD_REQUEST);
 		}
+		Role role = roleRepo.findById(2L).orElseThrow(() -> new CustomException("Role not found.", HttpStatus.BAD_REQUEST));
 
 		// 2. Create user
 		User user = User.builder()
@@ -55,6 +59,7 @@ public class AuthenticationService {
 				.email(request.getEmail())
 				.userName(request.getUserName())
 				.password(passwordEncoder.encode(request.getPassword()))
+				.role(role)
 				.isActive(Boolean.TRUE)
 				.build();
 

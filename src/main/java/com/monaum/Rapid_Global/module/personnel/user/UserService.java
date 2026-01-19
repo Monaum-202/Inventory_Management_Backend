@@ -3,7 +3,9 @@ package com.monaum.Rapid_Global.module.personnel.user;
 import java.util.Optional;
 
 import com.monaum.Rapid_Global.config.SecurityUtil;
+import com.monaum.Rapid_Global.enums.TransactionType;
 import com.monaum.Rapid_Global.exception.CustomException;
+import com.monaum.Rapid_Global.module.master.transectionCategory.TransactionCategory;
 import com.monaum.Rapid_Global.module.personnel.role.Role;
 import com.monaum.Rapid_Global.module.personnel.role.RoleRepo;
 import com.monaum.Rapid_Global.security.UserDetailsImpl;
@@ -160,5 +162,27 @@ public class UserService implements UserDetailsService {
 		if (Boolean.FALSE.equals(user.getIsActive())) throw new CustomException("User is inactive", HttpStatus.UNAUTHORIZED);
 
 		return new UserDetailsImpl(user);
+	}
+
+	public void initializeAdminUser() {
+		createUser("Monaum Hossain", "monaum", "monaoum14@gmail.com", "123456", 1L);
+		createUser("Admin", "admin", "admin@mail.com", "123456", 2L);
+	}
+
+	private void createUser(String fullName, String userName, String email, String password, Long roleId) {
+
+		if (userRepo.existsByUserName(userName)) {
+			return;
+		}
+		Role role = roleRepo.findById(roleId).orElseThrow(() -> new CustomException("Role not found with id: " + roleId, HttpStatus.NOT_FOUND));
+
+		User user = new User();
+		user.setFullName(fullName);
+		user.setUserName(userName);
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setRole(role);
+
+		userRepo.save(user);
 	}
 }

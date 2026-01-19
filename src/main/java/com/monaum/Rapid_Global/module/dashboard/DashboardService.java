@@ -9,6 +9,8 @@ import com.monaum.Rapid_Global.module.expenses.purchase.PurchaseRepo;
 import com.monaum.Rapid_Global.module.incomes.customer.CustomerRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
 import com.monaum.Rapid_Global.module.incomes.sales.SalesRepo;
+import com.monaum.Rapid_Global.module.stockManagement.stock.Stock;
+import com.monaum.Rapid_Global.module.stockManagement.stock.StockRepo;
 import com.monaum.Rapid_Global.util.ResponseUtils;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.List;
 /**
  * Monaum Hossain
  * monaum.202@gmail.com
+ *
  * @since 12-Jan-26 11:31 PM
  */
 
@@ -37,15 +40,12 @@ public class DashboardService {
     private final SalesRepo salesRepository;
     private final CustomerRepo customerRepository;
     private final PurchaseRepo purchaseRepo;
+    private final StockRepo stockRepo;
 
     /**
      * Get comprehensive dashboard metrics with period comparison
      */
-    public ResponseEntity<BaseApiResponseDTO<?>> getDashboardMetrics(
-            TimePeriod period,
-            LocalDate customStart,
-            LocalDate customEnd
-    ) {
+    public ResponseEntity<BaseApiResponseDTO<?>> getDashboardMetrics(TimePeriod period, LocalDate customStart, LocalDate customEnd) {
 
         DateRange currentRange = calculateDateRange(period, customStart, customEnd);
         DateRange previousRange = calculatePreviousDateRange(currentRange);
@@ -77,73 +77,10 @@ public class DashboardService {
 
         BigDecimal profitMargin = BigDecimal.ZERO;
         if (currentRevenue.compareTo(BigDecimal.ZERO) > 0) {
-            profitMargin = currentProfit
-                    .divide(currentRevenue, 4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"));
+            profitMargin = currentProfit.divide(currentRevenue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
         }
 
-        DashboardMetricsResponse metrics = DashboardMetricsResponse.builder()
-                .totalRevenue(MetricData.builder()
-                        .value(currentRevenue)
-                        .formattedValue(formatCurrency(currentRevenue))
-                        .change(revenueChange)
-                        .formattedChange(formatPercentage(revenueChange))
-                        .isPositive(revenueChange.compareTo(BigDecimal.ZERO) >= 0)
-                        .build())
-                .totalExpenses(MetricData.builder()
-                        .value(currentExpenses)
-                        .formattedValue(formatCurrency(currentExpenses))
-                        .change(expenseChange)
-                        .formattedChange(formatPercentage(expenseChange))
-                        .isPositive(expenseChange.compareTo(BigDecimal.ZERO) < 0)
-                        .build())
-                .netProfit(MetricData.builder()
-                        .value(currentProfit)
-                        .formattedValue(formatCurrency(currentProfit))
-                        .change(profitChange)
-                        .formattedChange(formatPercentage(profitChange))
-                        .isPositive(profitChange.compareTo(BigDecimal.ZERO) >= 0)
-                        .build())
-                .profitMargin(MetricData.builder()
-                        .value(profitMargin)
-                        .formattedValue(formatPercentage(profitMargin))
-                        .change(BigDecimal.ZERO)
-                        .formattedChange("0%")
-                        .isPositive(true)
-                        .build())
-                .totalOrders(MetricData.builder()
-                        .value(currentOrders)
-                        .formattedValue(formatCurrency(currentOrders))
-                        .change(orderChange)
-                        .formattedChange(formatPercentage(orderChange))
-                        .isPositive(orderChange.compareTo(BigDecimal.ZERO) >= 0)
-                        .build())
-                .totalCustomers(MetricData.builder()
-                        .value(currentCustomer)
-                        .formattedValue(formatCurrency(currentCustomer))
-                        .change(customerChange)
-                        .formattedChange(formatPercentage(customerChange))
-                        .isPositive(customerChange.compareTo(BigDecimal.ZERO) >= 0)
-                        .build())
-                .totalDue(MetricData.builder()
-                        .value(currentDue)
-                        .formattedValue(formatCurrency(currentDue))
-                        .change(dueChange)
-                        .formattedChange(formatPercentage(dueChange))
-                        .isPositive(expenseChange.compareTo(BigDecimal.ZERO) < 0)
-                        .build())
-                .totalOwed(MetricData.builder()
-                        .value(currentOwed)
-                        .formattedValue(formatCurrency(currentOwed))
-                        .change(owedChange)
-                        .formattedChange(formatPercentage(owedChange))
-                        .isPositive(owedChange.compareTo(BigDecimal.ZERO) >= 0)
-                        .build())
-                .period(period.name())
-                .startDate(currentRange.getStartDate())
-                .endDate(currentRange.getEndDate())
-                .build();
-
+        DashboardMetricsResponse metrics = DashboardMetricsResponse.builder().totalRevenue(MetricData.builder().value(currentRevenue).formattedValue(formatCurrency(currentRevenue)).change(revenueChange).formattedChange(formatPercentage(revenueChange)).isPositive(revenueChange.compareTo(BigDecimal.ZERO) >= 0).build()).totalExpenses(MetricData.builder().value(currentExpenses).formattedValue(formatCurrency(currentExpenses)).change(expenseChange).formattedChange(formatPercentage(expenseChange)).isPositive(expenseChange.compareTo(BigDecimal.ZERO) < 0).build()).netProfit(MetricData.builder().value(currentProfit).formattedValue(formatCurrency(currentProfit)).change(profitChange).formattedChange(formatPercentage(profitChange)).isPositive(profitChange.compareTo(BigDecimal.ZERO) >= 0).build()).profitMargin(MetricData.builder().value(profitMargin).formattedValue(formatPercentage(profitMargin)).change(BigDecimal.ZERO).formattedChange("0%").isPositive(true).build()).totalOrders(MetricData.builder().value(currentOrders).formattedValue(formatCurrency(currentOrders)).change(orderChange).formattedChange(formatPercentage(orderChange)).isPositive(orderChange.compareTo(BigDecimal.ZERO) >= 0).build()).totalCustomers(MetricData.builder().value(currentCustomer).formattedValue(formatCurrency(currentCustomer)).change(customerChange).formattedChange(formatPercentage(customerChange)).isPositive(customerChange.compareTo(BigDecimal.ZERO) >= 0).build()).totalDue(MetricData.builder().value(currentDue).formattedValue(formatCurrency(currentDue)).change(dueChange).formattedChange(formatPercentage(dueChange)).isPositive(expenseChange.compareTo(BigDecimal.ZERO) < 0).build()).totalOwed(MetricData.builder().value(currentOwed).formattedValue(formatCurrency(currentOwed)).change(owedChange).formattedChange(formatPercentage(owedChange)).isPositive(owedChange.compareTo(BigDecimal.ZERO) >= 0).build()).period(period.name()).startDate(currentRange.getStartDate()).endDate(currentRange.getEndDate()).build();
         return ResponseUtils.SuccessResponseWithData(metrics);
     }
 
@@ -151,51 +88,31 @@ public class DashboardService {
      * Calculate total revenue for a date range
      */
     private BigDecimal calculateTotalRevenue(DateRange range) {
-        return incomeRepository.sumAmountByDateRangeAndStatus(
-                range.getStartDate(),
-                range.getEndDate(),
-                Status.APPROVED
-        ).orElse(BigDecimal.ZERO);
+        return incomeRepository.sumAmountByDateRangeAndStatus(range.getStartDate(), range.getEndDate(), Status.APPROVED).orElse(BigDecimal.ZERO);
     }
 
     /**
      * Calculate total expenses for a date range
      */
     private BigDecimal calculateTotalExpenses(DateRange range) {
-        return expenseRepository.sumAmountByDateRangeAndStatus(
-                range.getStartDate(),
-                range.getEndDate(),
-                Status.APPROVED
-        ).orElse(BigDecimal.ZERO);
+        return expenseRepository.sumAmountByDateRangeAndStatus(range.getStartDate(), range.getEndDate(), Status.APPROVED).orElse(BigDecimal.ZERO);
     }
 
     private BigDecimal calculateTotalOrders(DateRange range) {
-        return salesRepository.sumAmountByDateRange(
-                range.getStartDate(),
-                range.getEndDate()
-        ).orElse(BigDecimal.ZERO);
+        return salesRepository.sumAmountByDateRange(range.getStartDate(), range.getEndDate()).orElse(BigDecimal.ZERO);
 
     }
 
     private BigDecimal calculateTotalCustomers(DateRange range) {
-        return customerRepository.sumCustomerByDateRange(
-                range.getStartDate().atStartOfDay(),
-                range.getEndDate().atTime(LocalTime.MAX)
-        ).orElse(BigDecimal.ZERO);
+        return customerRepository.sumCustomerByDateRange(range.getStartDate().atStartOfDay(), range.getEndDate().atTime(LocalTime.MAX)).orElse(BigDecimal.ZERO);
     }
 
     private BigDecimal calculateTotalDue(DateRange range) {
-        return purchaseRepo.getDueAmountByDateRange(
-                range.getStartDate(),
-                range.getEndDate()
-        );
+        return purchaseRepo.getDueAmountByDateRange(range.getStartDate(), range.getEndDate());
     }
 
     private BigDecimal calculateTotalOwed(DateRange range) {
-        return salesRepository.getOwedAmountByDateRange(
-                range.getStartDate(),
-                range.getEndDate()
-        );
+        return salesRepository.getOwedAmountByDateRange(range.getStartDate(), range.getEndDate());
     }
 
     /**
@@ -204,17 +121,10 @@ public class DashboardService {
     public ResponseEntity<BaseApiResponseDTO<?>> getRevenueDetails(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
-        List<CategoryBreakdown> categoryBreakdown = incomeRepository
-                .findCategoryBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        List<CategoryBreakdown> categoryBreakdown = incomeRepository.findCategoryBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        List<PaymentMethodBreakdown> paymentBreakdown = incomeRepository
-                .findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
-        RevenueDetailsResponse response = RevenueDetailsResponse.builder()
-                .totalRevenue(calculateTotalRevenue(range))
-                .categoryBreakdown(categoryBreakdown)
-                .paymentMethodBreakdown(paymentBreakdown)
-                .period(period.name())
-                .build();
+        List<PaymentMethodBreakdown> paymentBreakdown = incomeRepository.findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        RevenueDetailsResponse response = RevenueDetailsResponse.builder().totalRevenue(calculateTotalRevenue(range)).categoryBreakdown(categoryBreakdown).paymentMethodBreakdown(paymentBreakdown).period(period.name()).build();
         return ResponseUtils.SuccessResponseWithData(response);
     }
 
@@ -224,18 +134,11 @@ public class DashboardService {
     public ResponseEntity<BaseApiResponseDTO<?>> getExpenseDetails(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
-        List<CategoryBreakdown> categoryBreakdown = expenseRepository
-                .findCategoryBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        List<CategoryBreakdown> categoryBreakdown = expenseRepository.findCategoryBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        List<PaymentMethodBreakdown> paymentBreakdown = expenseRepository
-                .findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        List<PaymentMethodBreakdown> paymentBreakdown = expenseRepository.findPaymentMethodBreakdown(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        ExpenseDetailsResponse response = ExpenseDetailsResponse.builder()
-                .totalExpenses(calculateTotalExpenses(range))
-                .categoryBreakdown(categoryBreakdown)
-                .paymentMethodBreakdown(paymentBreakdown)
-                .period(period.name())
-                .build();
+        ExpenseDetailsResponse response = ExpenseDetailsResponse.builder().totalExpenses(calculateTotalExpenses(range)).categoryBreakdown(categoryBreakdown).paymentMethodBreakdown(paymentBreakdown).period(period.name()).build();
 
         return ResponseUtils.SuccessResponseWithData(response);
     }
@@ -246,20 +149,22 @@ public class DashboardService {
     public ResponseEntity<BaseApiResponseDTO<?>> getTrendData(TimePeriod period) {
         DateRange range = calculateDateRange(period, null, null);
 
-        List<TrendPoint> revenueTrend = incomeRepository
-                .findDailyTrend(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        List<TrendPoint> revenueTrend = incomeRepository.findDailyTrend(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        List<TrendPoint> expenseTrend = expenseRepository
-                .findDailyTrend(range.getStartDate(), range.getEndDate(), Status.APPROVED);
+        List<TrendPoint> expenseTrend = expenseRepository.findDailyTrend(range.getStartDate(), range.getEndDate(), Status.APPROVED);
 
-        TrendDataResponse response = TrendDataResponse.builder()
-                .revenueTrend(revenueTrend)
-                .expenseTrend(expenseTrend)
-                .period(period.name())
-                .build();
+        TrendDataResponse response = TrendDataResponse.builder().revenueTrend(revenueTrend).expenseTrend(expenseTrend).period(period.name()).build();
 
         return ResponseUtils.SuccessResponseWithData(response);
     }
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getStockDetails() {
+
+        List<DashboardStockResponseDto> response = stockRepo.findAll().stream().map(stock -> new DashboardStockResponseDto(stock.getProduct().getName(), stock.getQuantity())).toList();
+
+        return ResponseUtils.SuccessResponseWithData(response);
+    }
+
 
     /**
      * Calculate date range based on period
@@ -312,9 +217,7 @@ public class DashboardService {
             return newValue.compareTo(BigDecimal.ZERO) > 0 ? new BigDecimal("100") : BigDecimal.ZERO;
         }
 
-        return newValue.subtract(oldValue)
-                .divide(oldValue, 4, RoundingMode.HALF_UP)
-                .multiply(new BigDecimal("100"));
+        return newValue.subtract(oldValue).divide(oldValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
     }
 
     /**
