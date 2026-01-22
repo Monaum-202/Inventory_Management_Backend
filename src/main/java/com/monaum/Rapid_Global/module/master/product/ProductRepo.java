@@ -1,6 +1,7 @@
 package com.monaum.Rapid_Global.module.master.product;
 
 import com.monaum.Rapid_Global.enums.ProductType;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public interface ProductRepo extends JpaRepository<Product,Long> {
 
     List<Product> findAllByActive(Boolean status);
+    List<Product> findByNameContainingIgnoreCase(String name, Sort sort);
 
     Optional<Product> findByName(String name);
 

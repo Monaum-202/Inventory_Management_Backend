@@ -15,6 +15,7 @@ import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,20 +39,19 @@ public class ProductService {
     @Autowired private ProductLogRepo productLogRepo;
     @Autowired private StockRepo stockRepo;
 
-    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search){
+    public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Sort sort) {
+
         List<Product> products;
 
         if (search != null && !search.isBlank()) {
-            products = repo.search(search);
+            products = repo.findByNameContainingIgnoreCase(search, sort);
         } else {
-            products = repo.findAll();
+            products = repo.findAll(sort);
         }
 
-        List<ProductResDto> productResDtos = products.stream().map(mapper::toDto).toList();
-
-        return ResponseUtils.SuccessResponseWithData("Data fetched successfully.", productResDtos);
-
+        return ResponseUtils.SuccessResponseWithData("Fetched Successfully", products);
     }
+
 
 //    public ResponseEntity<BaseApiResponseDTO<?>> getAllActive(Boolean status) {
 //

@@ -20,7 +20,7 @@ public class Unit extends AbstractModel {
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "full_name", unique = true, length = 100)
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "active", nullable = false)

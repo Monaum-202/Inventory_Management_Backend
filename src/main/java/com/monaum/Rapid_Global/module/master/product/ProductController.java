@@ -6,6 +6,7 @@ import com.monaum.Rapid_Global.module.master.unit.UnitReqDto;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,9 @@ public class ProductController {
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(
             @RequestParam(required = false) String search
     ){
-        return service.getAll(search);
+        Sort sort = Sort.by(Sort.Direction.ASC, "sortingOrder");
+
+        return service.getAll(search, sort);
     }
 
 //    @GetMapping("/all-active")

@@ -1,4 +1,5 @@
 package com.monaum.Rapid_Global.module.master.product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.monaum.Rapid_Global.enums.ProductType;
 import com.monaum.Rapid_Global.model.AbstractModel;
 import com.monaum.Rapid_Global.module.master.company.Company;
@@ -29,6 +30,7 @@ public class Product extends AbstractModel {
     @Column(length = 255)
     private String description;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_id", nullable = false)
     private Unit unit;
