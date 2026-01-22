@@ -15,6 +15,4 @@ public class CreateModuleReqDto {
 
     private Integer sqnce;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
 }

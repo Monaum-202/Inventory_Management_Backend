@@ -22,7 +22,7 @@ public class UpdateMenuReqDto {
 
     private Integer sqnce;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
+//    @NotNull(message = "Company ID is required.")
+//    private Long companyId;
 }
 

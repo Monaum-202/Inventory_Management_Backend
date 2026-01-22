@@ -32,8 +32,8 @@ public class Menu extends AbstractModel {
     @Column(name = "SEQUENCE")
     private Integer sqnce;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "company_id", nullable = false)
+//    private Company company;
 }

@@ -19,6 +19,6 @@ public class CreateMenuReqDto {
 
     private Integer sqnce;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
+//    @NotNull(message = "Company ID is required.")
+//    private Long companyId;
 }

@@ -13,5 +13,5 @@ public class MenuDto {
     private Long moduleId;
     private String route;
     private Integer sqnce;
-    private Long companyId;
+//    private Long companyId;
 }

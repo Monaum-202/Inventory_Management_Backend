@@ -12,6 +12,5 @@ public class ModuleDto {
     private String name;
     private String route;
     private Integer sqnce;
-    private Long companyId;
 }
 

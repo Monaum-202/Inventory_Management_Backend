@@ -27,6 +27,4 @@ public class Module extends AbstractModel {
     @Column(name = "SEQUENCE")
     private Integer sqnce;
 
-    @Column(name = "COMPANY_ID", nullable = false)
-    private Long companyId;
 }

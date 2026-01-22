@@ -20,6 +20,4 @@ public class UpdateModuleReqDto {
 
     private Integer sqnce;
 
-    @NotNull(message = "Company ID is required.")
-    private Long companyId;
 }
