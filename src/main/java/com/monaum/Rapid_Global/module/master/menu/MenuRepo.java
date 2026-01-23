@@ -25,4 +25,6 @@ public interface MenuRepo extends JpaRepository<Menu, Long> {
         ORDER BY m.sqnce
     """)
     List<Menu> findByRoleAndModule(Long roleId, Long moduleId);
+
+    List<Menu> findByModuleId(Long moduleId);
 }

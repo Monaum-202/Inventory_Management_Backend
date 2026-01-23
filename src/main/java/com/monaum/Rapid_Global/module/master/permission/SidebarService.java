@@ -37,8 +37,7 @@ public class SidebarService {
 
             SidebarModuleDTO moduleDTO = mapper.toDto(module);
 
-            List<Menu> menus =
-                    menuRepository.findByRoleAndModule(roleId, module.getId());
+            List<Menu> menus = menuRepository.findByRoleAndModule(roleId, module.getId());
 
             moduleDTO.setMenus(mapper.toDtoList(menus));
 
@@ -49,30 +48,35 @@ public class SidebarService {
         return ResponseUtils.SuccessResponseWithData(sidebarModules);
     }
 
-    public void assignPermissions(RolePermissionRequestDTO dto) {
+    public ResponseEntity<BaseApiResponseDTO<?>> assignPermissions(RolePermissionRequestDTO dto) {
 
-        // 1️⃣ Remove old permissions
         roleModuleRepo.deleteByRoleId(dto.getRoleId());
         roleMenuRepo.deleteByRoleId(dto.getRoleId());
 
-        // 2️⃣ Insert module permissions
-        dto.getModuleIds().forEach(moduleId ->
-                roleModuleRepo.save(
-                        RoleModule.builder()
-                                .roleId(dto.getRoleId())
-                                .moduleId(moduleId)
-                                .build()
-                )
-        );
+        dto.getModuleIds().stream().distinct().forEach(moduleId -> roleModuleRepo.save(RoleModule.builder().roleId(dto.getRoleId()).moduleId(moduleId).build()));
 
-        // 3️⃣ Insert menu permissions
-        dto.getMenuIds().forEach(menuId ->
-                roleMenuRepo.save(
-                        RoleMenu.builder()
-                                .roleId(dto.getRoleId())
-                                .menuId(menuId)
-                                .build()
-                )
-        );
+        dto.getMenuIds().stream().distinct().forEach(menuId -> roleMenuRepo.save(RoleMenu.builder().roleId(dto.getRoleId()).menuId(menuId).build()));
+
+        return ResponseUtils.SuccessResponseWithData(dto);
     }
+
+
+    public ResponseEntity<BaseApiResponseDTO<?>> getAssignedPermissions(Long roleId) {
+
+        List<Module> modules = moduleRepository.findByRoleId(roleId);
+
+        List<SidebarModuleDTO> result = modules.stream().map(module -> {
+
+            SidebarModuleDTO dto = mapper.toDto(module);
+
+            List<Menu> menus = menuRepository.findByRoleAndModule(roleId, module.getId());
+
+            dto.setMenus(mapper.toDtoList(menus));
+            return dto;
+
+        }).toList();
+
+        return ResponseUtils.SuccessResponseWithData(result);
+    }
+
 }

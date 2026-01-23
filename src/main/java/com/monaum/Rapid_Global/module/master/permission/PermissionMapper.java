@@ -2,6 +2,7 @@ package com.monaum.Rapid_Global.module.master.permission;
 
 import com.monaum.Rapid_Global.module.master.menu.Menu;
 import com.monaum.Rapid_Global.module.master.module.Module;
+import com.monaum.Rapid_Global.module.master.module.ModuleDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,6 +20,8 @@ public interface PermissionMapper {
     SidebarMenuDTO toDto(Menu entity);
     @Mapping(source = "sqnce", target = "sequence")
     SidebarModuleDTO toDto(Module entity);
+
+//    public ModuleDto toDto(Module module)
 
     List<SidebarMenuDTO> toDtoList(List<Menu> entities);
 }

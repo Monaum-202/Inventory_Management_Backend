@@ -1,6 +1,9 @@
 package com.monaum.Rapid_Global.module.master.permission;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Monaum Hossain
@@ -9,5 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface RoleMenuRepository extends JpaRepository<RoleMenu, Long> {
-    void deleteByRoleId(Long roleId);
+    @Modifying
+    @Query("DELETE FROM RoleMenu rm WHERE rm.roleId = :roleId")
+    void deleteByRoleId(@Param("roleId") Long roleId);
 }
