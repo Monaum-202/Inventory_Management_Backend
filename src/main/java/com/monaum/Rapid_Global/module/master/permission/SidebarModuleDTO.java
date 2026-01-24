@@ -18,5 +18,6 @@ public class SidebarModuleDTO {
     private String name;
     private String route;
     private Integer sequence;
+    private String icon;
     private List<SidebarMenuDTO> menus;
 }

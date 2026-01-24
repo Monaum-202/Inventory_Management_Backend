@@ -24,6 +24,9 @@ public class Module extends AbstractModel {
     @Column(name = "ROUTE", length = 100, nullable = false)
     private String route;
 
+    @Column(name = "ICON", length = 50)
+    private String icon;
+
     @Column(name = "SEQUENCE")
     private Integer sqnce;
 

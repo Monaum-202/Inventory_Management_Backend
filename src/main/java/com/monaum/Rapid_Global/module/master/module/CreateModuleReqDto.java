@@ -15,4 +15,5 @@ public class CreateModuleReqDto {
 
     private Integer sqnce;
 
+    private String icon;
 }

@@ -18,6 +18,8 @@ public class UpdateModuleReqDto {
     @NotBlank(message = "Route is required.")
     private String route;
 
+    private String icon;
+
     private Integer sqnce;
 
 }
