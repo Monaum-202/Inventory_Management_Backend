@@ -30,6 +30,11 @@ public class RoleService {
         return ResponseUtils.SuccessResponseWithData(paginatedResponse);
     }
 
+    public ResponseEntity<BaseApiResponseDTO<?>> create( Role role ) {
+        Role roles = repo.save(role);
+        return ResponseUtils.SuccessResponseWithData(roles);
+    }
+
     public void initializeSystemRoles() {
         createRole(1L, "ROLE_ADMIN", "System Administrator");
         createRole(2L, "ROLE_SUPER_ADMIN", "Super Administrator");

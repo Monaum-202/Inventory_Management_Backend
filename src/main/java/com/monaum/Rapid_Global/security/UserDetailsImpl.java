@@ -25,7 +25,15 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        if (user.getRole() == null || user.getRole().getName() == null) {
+            return Collections.emptyList();
+        }
+
+        return Collections.singletonList(
+                new org.springframework.security.core.authority.SimpleGrantedAuthority(
+                        user.getRole().getName()
+                )
+        );
     }
 
     @Override
