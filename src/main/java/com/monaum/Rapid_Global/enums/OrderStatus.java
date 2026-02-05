@@ -8,6 +8,7 @@ package com.monaum.Rapid_Global.enums;
 public enum OrderStatus {
 
     PENDING,
+    CONFIRMED,
     PROCESSING,
     PROCESSED,
     COMPLETED,

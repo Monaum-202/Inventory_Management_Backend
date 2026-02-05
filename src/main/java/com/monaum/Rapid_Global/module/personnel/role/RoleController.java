@@ -38,13 +38,4 @@ public class RoleController {
         return service.create(role);
     }
 
-    @GetMapping("/_debug/auth")
-    public Object debug(Authentication authentication) {
-        return Map.of(
-                "principal", authentication.getPrincipal(),
-                "authorities", authentication.getAuthorities(),
-                "class", authentication.getClass().getName()
-        );
-    }
-
 }
