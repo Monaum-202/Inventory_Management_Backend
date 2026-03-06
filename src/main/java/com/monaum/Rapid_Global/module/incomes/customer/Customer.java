@@ -31,7 +31,7 @@ public class Customer extends AbstractModel {
     @Column(name = "alt_phone", length = 20)
     private String altPhone;
 
-    @Column(name = "Email", nullable = false, length = 20)
+    @Column(name = "Email", length = 20)
     private String email;
 
     @Column(name = "Address", length = 100)

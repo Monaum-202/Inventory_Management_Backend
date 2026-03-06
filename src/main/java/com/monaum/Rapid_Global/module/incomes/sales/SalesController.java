@@ -3,8 +3,10 @@ package com.monaum.Rapid_Global.module.incomes.sales;
 import com.monaum.Rapid_Global.annotations.RestApiController;
 import com.monaum.Rapid_Global.enums.OrderStatus;
 import com.monaum.Rapid_Global.model.NumberToWordsUtil;
+import com.monaum.Rapid_Global.module.incomes.income.IncomeReqDTO;
 import com.monaum.Rapid_Global.module.incomes.sales.pdf.SalesEmailService;
 import com.monaum.Rapid_Global.module.incomes.sales.pdf.SalesInvoiceReportService;
+import com.monaum.Rapid_Global.module.incomes.salesItem.SalesItemReqDto;
 import com.monaum.Rapid_Global.util.response.BaseApiResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestApiController
 @RequestMapping("/api/sales")
@@ -137,5 +142,41 @@ public class SalesController {
                 .body(pdfBytes);
     }
 
+    @PostMapping("/bulk/{count}")
+    public ResponseEntity<?> generateBulk(@PathVariable int count) {
 
+        for (int i = 1; i <= count; i++) {
+
+            SalesReqDTO dto = new SalesReqDTO();
+
+            dto.setCustomerName("Test Customer " + i);
+            dto.setPhone("01700000" + i);
+            dto.setAddress("Uttara");
+            dto.setCompanyName("Test Company");
+            dto.setSellDate(LocalDate.now());
+            dto.setDeliveryDate(LocalDate.now().plusDays(1));
+
+            // Item
+            SalesItemReqDto item = new SalesItemReqDto();
+            item.setItemName("Item " + i);
+            item.setUnitName("Meter");
+            item.setQuantity(10+i);
+            item.setUnitPrice(BigDecimal.valueOf(50.0+i));
+            item.setTotalPrice(BigDecimal.valueOf(500.0+i));
+
+            dto.setItems(List.of(item));
+
+            // Payment
+            IncomeReqDTO payment = new IncomeReqDTO();
+            payment.setAmount(BigDecimal.valueOf(500.0+i));
+            payment.setPaymentMethodId(1L);
+            payment.setIncomeDate(LocalDate.now());
+
+            dto.setPayments(List.of(payment));
+
+            service.create(dto);
+        }
+
+        return ResponseEntity.ok("Bulk " + count + " sales created!");
+    }
 }

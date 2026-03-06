@@ -41,12 +41,12 @@ public class ProductService {
 
     public ResponseEntity<BaseApiResponseDTO<?>> getAll(String search, Sort sort) {
 
-        List<Product> products;
+        List<ProductResDto> products;
 
         if (search != null && !search.isBlank()) {
-            products = repo.findByNameContainingIgnoreCase(search, sort);
+            products = repo.findByNameContainingIgnoreCase(search, sort).stream().map(mapper::toDto).toList();
         } else {
-            products = repo.findAll(sort);
+            products = repo.findAll(sort).stream().map(mapper::toDto).toList();
         }
 
         return ResponseUtils.SuccessResponseWithData("Fetched Successfully", products);

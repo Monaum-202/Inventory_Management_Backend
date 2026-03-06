@@ -287,13 +287,12 @@ public class SalesReportService {
             topProducts = salesReportRepository.getTopSellingProductsDirect(startDate, endDate, status, pageable);
         }
 
-        BigDecimal totalRevenue = topProducts.stream().map(row -> (BigDecimal) row[2]).reduce(BigDecimal.ZERO, BigDecimal::add);
-
+        BigDecimal totalRevenue = topProducts.stream().map(row -> toBigDecimal(row[2])).reduce(BigDecimal.ZERO, BigDecimal::add);
         List<ProductPerformanceDTO.TopProductDTO> productList = topProducts.stream().map(row -> {
             String itemName = (String) row[0];
             long totalQuantity = ((Number) row[1]).longValue();
-            BigDecimal revenue = (BigDecimal) row[2];
-            BigDecimal avgUnitPrice = (BigDecimal) row[3];
+            BigDecimal revenue = toBigDecimal(row[2]);
+            BigDecimal avgUnitPrice = toBigDecimal(row[3]);
             long orderCount = ((Number) row[4]).longValue();
 
             BigDecimal revenuePercentage = totalRevenue.compareTo(BigDecimal.ZERO) > 0 ? revenue.divide(totalRevenue, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)) : BigDecimal.ZERO;
@@ -351,5 +350,20 @@ public class SalesReportService {
         CustomerAnalyticsDTO.CustomerSummary summary = CustomerAnalyticsDTO.CustomerSummary.builder().totalCustomers(totalCustomers.intValue()).build();
 
         return ResponseUtils.SuccessResponseWithData(summary);
+    }
+
+    private BigDecimal toBigDecimal(Object value) {
+
+        if (value == null) return BigDecimal.ZERO;
+
+        if (value instanceof BigDecimal bd) {
+            return bd;
+        }
+
+        if (value instanceof Number num) {
+            return BigDecimal.valueOf(num.doubleValue());
+        }
+
+        throw new IllegalArgumentException("Cannot convert to BigDecimal: " + value);
     }
 }
