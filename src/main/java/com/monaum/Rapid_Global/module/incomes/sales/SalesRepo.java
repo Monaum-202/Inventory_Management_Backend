@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.incomes.sales;
 
+import com.monaum.Rapid_Global.enums.OrderStatus;
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.module.incomes.income.Income;
 import org.springframework.data.domain.Page;
@@ -61,4 +62,105 @@ public interface SalesRepo extends JpaRepository<Sales, Long> {
     BigDecimal getOwedAmountByDateRange(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
 
 
+//    Report
+
+    // ----------------------------------------------------------------
+    // 1. Main sales query — fetches items only (no payments join)
+    //    Used by: SalesReportService for export (Excel / PDF)
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT s FROM Sales s
+            LEFT JOIN FETCH s.items
+            WHERE (:dateFrom  IS NULL OR s.sellDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR s.sellDate       <= :dateTo)
+              AND (:status    IS NULL OR s.status          = :status)
+              AND (:customer  IS NULL OR LOWER(s.customerName)
+                                        LIKE LOWER(CONCAT('%', :customer, '%')))
+            ORDER BY s.sellDate DESC, s.id DESC
+            """)
+    List<Sales> fetchSalesWithItems(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo")   LocalDate dateTo,
+            @Param("status")   OrderStatus status,
+            @Param("customer") String customer
+    );
+
+    // ----------------------------------------------------------------
+    // 2. Paginated ID-only query (no fetch join — just IDs + sort)
+    //    Used by: JSON endpoint so the caller gets one page at a time.
+    //    Spring Data handles COUNT query automatically.
+    // ----------------------------------------------------------------
+    @Query(value = """
+            SELECT s FROM Sales s
+            WHERE (:dateFrom  IS NULL OR s.sellDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR s.sellDate       <= :dateTo)
+              AND (:status    IS NULL OR s.status          = :status)
+              AND (:customer  IS NULL OR LOWER(s.customerName)
+                                        LIKE LOWER(CONCAT('%', :customer, '%')))
+            """,
+            countQuery = """
+            SELECT COUNT(s) FROM Sales s
+            WHERE (:dateFrom  IS NULL OR s.sellDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR s.sellDate       <= :dateTo)
+              AND (:status    IS NULL OR s.status          = :status)
+              AND (:customer  IS NULL OR LOWER(s.customerName)
+                                        LIKE LOWER(CONCAT('%', :customer, '%')))
+            """)
+    Page<Sales> fetchSalesPage(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo")   LocalDate dateTo,
+            @Param("status") OrderStatus status,
+            @Param("customer") String customer,
+            Pageable pageable
+    );
+
+    // ----------------------------------------------------------------
+    // 3. Fetch items for a specific page of sale IDs
+    //    Avoids the HibernateJpaDialect "cannot simultaneously fetch
+    //    multiple bags" problem on paginated queries.
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT s FROM Sales s
+            LEFT JOIN FETCH s.items
+            WHERE s.id IN :ids
+            """)
+    List<Sales> fetchItemsForIds(@Param("ids") List<Long> ids);
+
+    // ----------------------------------------------------------------
+    // 4. Aggregate paid amounts per sale in ONE query
+    //    Returns Object[]{salesId (Long), paidTotal (BigDecimal)}
+    //    Called with the list of sale IDs already loaded — avoids
+    //    an N+1 loop over payments.
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT i.sales.id, SUM(i.amount)
+            FROM Income i
+            WHERE i.sales.id IN :ids
+            GROUP BY i.sales.id
+            """)
+    List<Object[]> sumPaymentsByIds(@Param("ids") List<Long> ids);
+
+    // ----------------------------------------------------------------
+    // 5. Lightweight summary stats (no entity hydration at all)
+    //    Used by the summary section of the report — avoids loading
+    //    item/payment collections just to count and sum.
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT
+                COUNT(s),
+                COALESCE(SUM(s.discount), 0),
+                COALESCE(SUM(s.vat),      0)
+            FROM Sales s
+            WHERE (:dateFrom  IS NULL OR s.sellDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR s.sellDate       <= :dateTo)
+              AND (:status    IS NULL OR s.status          = :status)
+              AND (:customer  IS NULL OR LOWER(s.customerName)
+                                        LIKE LOWER(CONCAT('%', :customer, '%')))
+            """)
+    Object[] fetchSummaryStats(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo")   LocalDate dateTo,
+            @Param("status")   OrderStatus status,
+            @Param("customer") String customer
+    );
 }
