@@ -27,7 +27,17 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Sales")
+@Table(
+        name = "Sales",
+        indexes = {
+                @Index(name = "idx_sales_sell_date",     columnList = "sell_date"),
+                @Index(name = "idx_sales_status",        columnList = "status"),
+                @Index(name = "idx_sales_customer_name", columnList = "customerName"),
+                // Composite index covers the most common report query:
+                // "give me all COMPLETED sales between date X and date Y"
+                @Index(name = "idx_sales_date_status",   columnList = "sell_date, status")
+        }
+)
 @EqualsAndHashCode(callSuper = false)
 public class Sales extends AbstractModel {
 
