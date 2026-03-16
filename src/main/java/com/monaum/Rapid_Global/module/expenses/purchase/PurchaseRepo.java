@@ -1,5 +1,6 @@
 package com.monaum.Rapid_Global.module.expenses.purchase;
 
+import com.monaum.Rapid_Global.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -69,5 +70,73 @@ public interface PurchaseRepo extends JpaRepository<Purchase, Long> {
             @Param("toDate") LocalDate toDate
     );
 
+    @Query("""
+            SELECT p FROM Purchase p
+            LEFT JOIN FETCH p.items
+            WHERE (:dateFrom  IS NULL OR p.purchaseDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR p.purchaseDate       <= :dateTo)
+              AND (:status    IS NULL OR p.status              = :status)
+              AND (:supplier  IS NULL OR LOWER(p.supplierName)
+                                        LIKE LOWER(CONCAT('%', :supplier, '%')))
+            ORDER BY p.purchaseDate DESC, p.id DESC
+            """)
+    List<Purchase> fetchPurchasesWithItems(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo")   LocalDate dateTo,
+            @Param("status")   OrderStatus status,
+            @Param("supplier") String supplier
+    );
 
+    // ----------------------------------------------------------------
+    // 2. Paginated query — no fetch join (avoids HHH-90003004)
+    //    Used by: JSON endpoint so the caller gets one page at a time.
+    // ----------------------------------------------------------------
+    @Query(value = """
+            SELECT p FROM Purchase p
+            WHERE (:dateFrom  IS NULL OR p.purchaseDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR p.purchaseDate       <= :dateTo)
+              AND (:status    IS NULL OR p.status              = :status)
+              AND (:supplier  IS NULL OR LOWER(p.supplierName)
+                                        LIKE LOWER(CONCAT('%', :supplier, '%')))
+            """,
+            countQuery = """
+            SELECT COUNT(p) FROM Purchase p
+            WHERE (:dateFrom  IS NULL OR p.purchaseDate       >= :dateFrom)
+              AND (:dateTo    IS NULL OR p.purchaseDate       <= :dateTo)
+              AND (:status    IS NULL OR p.status              = :status)
+              AND (:supplier  IS NULL OR LOWER(p.supplierName)
+                                        LIKE LOWER(CONCAT('%', :supplier, '%')))
+            """)
+    Page<Purchase> fetchPurchasesPage(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo")   LocalDate dateTo,
+            @Param("status") OrderStatus status,
+            @Param("supplier") String supplier,
+            Pageable pageable
+    );
+
+    // ----------------------------------------------------------------
+    // 3. Fetch items for a specific page of purchase IDs
+    //    Avoids the "cannot simultaneously fetch multiple bags" problem.
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT p FROM Purchase p
+            LEFT JOIN FETCH p.items
+            WHERE p.id IN :ids
+            """)
+    List<Purchase> fetchItemsForIds(@Param("ids") List<Long> ids);
+
+    // ----------------------------------------------------------------
+    // 4. Aggregate paid amounts per purchase in ONE query
+    //    Returns Object[]{purchaseId (Long), paidTotal (BigDecimal)}
+    //    Uses the Expense entity (purchase-side payment), identical
+    //    pattern to the Income query on the sales side.
+    // ----------------------------------------------------------------
+    @Query("""
+            SELECT e.purchase.id, SUM(e.amount)
+            FROM Expense e
+            WHERE e.purchase.id IN :ids
+            GROUP BY e.purchase.id
+            """)
+    List<Object[]> sumPaymentsByIds(@Param("ids") List<Long> ids);
 }
