@@ -1,0 +1,339 @@
+package com.monaum.Rapid_Global.module.report.incomeReport.newReport;
+
+import com.monaum.Rapid_Global.enums.Status;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Monaum Hossain
+ * monaum.202@gmail.com
+ */
+@Component
+public class IncomeExcelExporter {
+
+    private static final int ROW_WINDOW = 500;
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+    private static final DateTimeFormatter DT_FMT   = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+
+    // Colour palette
+    private static final byte[] C_NAVY   = hex("1F3864");
+    private static final byte[] C_WHITE  = hex("FFFFFF");
+    private static final byte[] C_LIGHT  = hex("DCE6F1");
+    private static final byte[] C_ALT    = hex("F2F2F2");
+    private static final byte[] C_GRN_FG = hex("375623");
+    private static final byte[] C_RED_FG = hex("9C0006");
+    private static final byte[] C_GRN_BG = hex("C6EFCE");
+    private static final byte[] C_RED_BG = hex("FFC7CE");
+    private static final byte[] C_YEL_BG = hex("FFEB9C");
+    private static final byte[] C_YEL_FG = hex("9C6500");
+
+    // ----------------------------------------------------------------
+
+    public void export(IncomeReportDTO report, HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"Income_Report_" + System.currentTimeMillis() + ".xlsx\"");
+
+        XSSFWorkbook xssfWb = new XSSFWorkbook();
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(xssfWb, ROW_WINDOW)) {
+            wb.setCompressTempFiles(true);
+            StyleBundle st = new StyleBundle(xssfWb);
+            writeSummarySheet(wb, xssfWb, st, report);
+            writeDetailsSheet(wb, xssfWb, st, report);
+            wb.write(response.getOutputStream());
+        }
+    }
+
+    // ================================================================
+    // SHEET 1 — SUMMARY
+    // ================================================================
+
+    private void writeSummarySheet(SXSSFWorkbook wb, XSSFWorkbook xssfWb,
+                                    StyleBundle st, IncomeReportDTO r) {
+        SXSSFSheet sheet = wb.createSheet("Summary");
+        sheet.setColumnWidth(0, 5500);
+        sheet.setColumnWidth(1, 7000);
+
+        int row = 0;
+        row = mergedHeader(sheet, st.header,    row, "RAPID GLOBAL — Income Report", 2);
+        row = mergedHeader(sheet, st.subHeader, row, dateRangeLabel(r), 2);
+        row++;
+
+        row = statCard(sheet, st, row, "Total Records",      String.valueOf(r.getTotalRecords()), C_NAVY,   C_LIGHT);
+        row = statCard(sheet, st, row, "Total Income",        fmt(r.getTotalAmount()),              C_NAVY,   C_LIGHT);
+        row = statCard(sheet, st, row, "Approved Amount",     fmt(r.getTotalApproved()),            C_GRN_FG, C_GRN_BG);
+        row = statCard(sheet, st, row, "Pending Amount",      fmt(r.getTotalPending()),             C_YEL_FG, C_YEL_BG);
+        row++;
+
+        row = mergedHeader(sheet, st.header, row, "Status Breakdown", 2);
+        tableHeader(sheet, st.tableHeader, row++, List.of("Status", "Count"), 2);
+        for (Map.Entry<String, Long> e : r.getCountByStatus().entrySet()) {
+            SXSSFRow r2 = sheet.createRow(row++);
+            cell(r2, 0, e.getKey(),               st.plain);
+            cell(r2, 1, e.getValue().toString(),  st.plain);
+        }
+        row++;
+
+        row = mergedHeader(sheet, st.header, row, "Category Breakdown", 2);
+        tableHeader(sheet, st.tableHeader, row++, List.of("Category", "Count"), 2);
+        for (Map.Entry<String, Long> e : r.getCountByCategory().entrySet()) {
+            SXSSFRow r2 = sheet.createRow(row++);
+            cell(r2, 0, e.getKey(),               st.plain);
+            cell(r2, 1, e.getValue().toString(),  st.plain);
+        }
+    }
+
+    // ================================================================
+    // SHEET 2 — DETAILS
+    // ================================================================
+
+    private void writeDetailsSheet(SXSSFWorkbook wb, XSSFWorkbook xssfWb,
+                                    StyleBundle st, IncomeReportDTO r) {
+        SXSSFSheet sheet = wb.createSheet("Income Details");
+
+        // SL | Income ID | Category | Payment Method | Paid From | Company | Invoice | Amount | Date | Description | Status | Approved At
+        int[] widths = {3000, 5500, 5500, 5000, 6000, 5500, 4500, 5500, 4500, 7000, 4000, 5500};
+        for (int i = 0; i < widths.length; i++) sheet.setColumnWidth(i, widths[i]);
+
+        int rowIdx = 0;
+        rowIdx = mergedHeader(sheet, st.header,    rowIdx, "RAPID GLOBAL — Income Detail Report", widths.length);
+        rowIdx = mergedHeader(sheet, st.subHeader, rowIdx, dateRangeLabel(r),                      widths.length);
+        rowIdx++;
+
+        List<String> cols = List.of(
+                "SL", "Income ID", "Category", "Payment Method",
+                "Paid From", "Company", "Invoice No",
+                "Amount", "Income Date", "Description", "Status", "Approved At");
+
+        int headerRowIdx = rowIdx;
+        tableHeader(sheet, st.tableHeader, rowIdx++, cols, cols.size());
+        sheet.createFreezePane(0, rowIdx);
+
+        int sl  = 1;
+        boolean alt = false;
+
+        for (IncomeReportRowDTO row : r.getRows()) {
+            SXSSFRow xRow = sheet.createRow(rowIdx++);
+            xRow.setHeightInPoints(18);
+            CellStyle base = alt ? st.alt : st.plain;
+
+            cell   (xRow, 0,  String.valueOf(sl++),                                                         base);
+            cell   (xRow, 1,  row.getIncomeId(),                                                             base);
+            cell   (xRow, 2,  row.getCategoryName(),                                                         base);
+            cell   (xRow, 3,  row.getPaymentMethod(),                                                        base);
+            cell   (xRow, 4,  row.getPaidFrom(),                                                             base);
+            cell   (xRow, 5,  row.getPaidFromCompany(),                                                      base);
+            cell   (xRow, 6,  row.getInvoiceNo() != null ? row.getInvoiceNo() : "—",                        base);
+            numCell(xRow, 7,  row.getAmount(),                                         st.number(xssfWb, base));
+            cell   (xRow, 8,  row.getIncomeDate() != null ? row.getIncomeDate().format(DATE_FMT) : "",       base);
+            cell   (xRow, 9,  row.getDescription(),                                                          base);
+            cell   (xRow, 10, row.getStatus() != null ? row.getStatus().name() : "",
+                    st.status(xssfWb, row.getStatus()));
+            cell   (xRow, 11, row.getApprovedAt() != null ? row.getApprovedAt().format(DT_FMT) : "—",       base);
+
+            alt = !alt;
+        }
+
+        // Totals row
+        SXSSFRow total = sheet.createRow(rowIdx);
+        total.setHeightInPoints(20);
+        for (int c = 0; c <= 6; c++) cell(total, c, c == 1 ? "TOTALS" : "", st.totalStyle);
+        numCell(total, 7, r.getTotalAmount(), st.totalNum(xssfWb));
+        for (int c = 8; c < cols.size(); c++) cell(total, c, "", st.totalStyle);
+
+        sheet.setAutoFilter(new CellRangeAddress(headerRowIdx, rowIdx, 0, cols.size() - 1));
+    }
+
+    // ================================================================
+    // ROW HELPERS
+    // ================================================================
+
+    private int mergedHeader(SXSSFSheet sheet, CellStyle style, int rowIdx, String text, int span) {
+        SXSSFRow row = sheet.createRow(rowIdx);
+        row.setHeightInPoints(26);
+        SXSSFCell first = row.createCell(0);
+        first.setCellValue(text);
+        first.setCellStyle(style);
+        for (int c = 1; c < span; c++) row.createCell(c).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(rowIdx, rowIdx, 0, span - 1));
+        return rowIdx + 1;
+    }
+
+    private void tableHeader(SXSSFSheet sheet, CellStyle style, int rowIdx,
+                              List<String> labels, int count) {
+        SXSSFRow row = sheet.createRow(rowIdx);
+        row.setHeightInPoints(20);
+        for (int i = 0; i < count; i++) {
+            SXSSFCell c = row.createCell(i);
+            c.setCellValue(i < labels.size() ? labels.get(i) : "");
+            c.setCellStyle(style);
+        }
+    }
+
+    private int statCard(SXSSFSheet sheet, StyleBundle st, int rowIdx,
+                          String label, String value, byte[] fg, byte[] bg) {
+        SXSSFRow row = sheet.createRow(rowIdx);
+        row.setHeightInPoints(22);
+        XSSFWorkbook xwb = (XSSFWorkbook) ((SXSSFWorkbook) sheet.getWorkbook()).getXSSFWorkbook();
+        XSSFCellStyle ls = buildStatStyle(xwb, fg, bg, false);
+        XSSFCellStyle vs = buildStatStyle(xwb, fg, bg, true);
+        SXSSFCell lc = row.createCell(0); lc.setCellValue(label); lc.setCellStyle(ls);
+        SXSSFCell vc = row.createCell(1); vc.setCellValue(value); vc.setCellStyle(vs);
+        return rowIdx + 1;
+    }
+
+    private XSSFCellStyle buildStatStyle(XSSFWorkbook wb, byte[] fg, byte[] bg, boolean bold) {
+        XSSFCellStyle s = wb.createCellStyle();
+        s.setFillForegroundColor(new XSSFColor(bg, null));
+        s.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        s.setAlignment(bold ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT);
+        s.setVerticalAlignment(VerticalAlignment.CENTER);
+        setBorders(s, BorderStyle.THIN);
+        XSSFFont f = wb.createFont(); f.setBold(true);
+        if (bold) f.setFontHeightInPoints((short) 12);
+        f.setColor(new XSSFColor(fg, null)); s.setFont(f);
+        return s;
+    }
+
+    private void cell(Row row, int col, String value, CellStyle style) {
+        Cell c = row.createCell(col);
+        c.setCellValue(value != null ? value : "");
+        c.setCellStyle(style);
+    }
+
+    private void numCell(Row row, int col, BigDecimal value, CellStyle style) {
+        Cell c = row.createCell(col);
+        c.setCellValue(value != null ? value.doubleValue() : 0.0);
+        c.setCellStyle(style);
+    }
+
+    // ================================================================
+    // STYLE BUNDLE
+    // ================================================================
+
+    private class StyleBundle {
+        final XSSFCellStyle header, subHeader, tableHeader, plain, alt, totalStyle;
+        private final DataFormat dataFormat;
+
+        StyleBundle(XSSFWorkbook wb) {
+            dataFormat = wb.createDataFormat();
+
+            header = wb.createCellStyle();
+            header.setFillForegroundColor(new XSSFColor(C_NAVY, null));
+            header.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            header.setAlignment(HorizontalAlignment.CENTER);
+            header.setVerticalAlignment(VerticalAlignment.CENTER);
+            setBorders(header, BorderStyle.THIN);
+            XSSFFont hf = wb.createFont(); hf.setBold(true); hf.setFontHeightInPoints((short) 14);
+            hf.setColor(new XSSFColor(C_WHITE, null)); header.setFont(hf);
+
+            subHeader = wb.createCellStyle();
+            subHeader.setFillForegroundColor(new XSSFColor(C_LIGHT, null));
+            subHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            subHeader.setAlignment(HorizontalAlignment.CENTER);
+            XSSFFont shf = wb.createFont(); shf.setItalic(true); subHeader.setFont(shf);
+
+            tableHeader = wb.createCellStyle();
+            tableHeader.setFillForegroundColor(new XSSFColor(C_NAVY, null));
+            tableHeader.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            tableHeader.setAlignment(HorizontalAlignment.CENTER);
+            tableHeader.setVerticalAlignment(VerticalAlignment.CENTER);
+            setBorders(tableHeader, BorderStyle.THIN);
+            XSSFFont thf = wb.createFont(); thf.setBold(true); thf.setFontHeightInPoints((short) 10);
+            thf.setColor(new XSSFColor(C_WHITE, null)); tableHeader.setFont(thf);
+
+            plain = wb.createCellStyle();
+            plain.setAlignment(HorizontalAlignment.CENTER);
+            plain.setVerticalAlignment(VerticalAlignment.CENTER);
+            setBorders(plain, BorderStyle.THIN);
+
+            alt = wb.createCellStyle();
+            alt.cloneStyleFrom(plain);
+            alt.setFillForegroundColor(new XSSFColor(C_ALT, null));
+            alt.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            totalStyle = wb.createCellStyle();
+            totalStyle.setFillForegroundColor(new XSSFColor(C_NAVY, null));
+            totalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            totalStyle.setAlignment(HorizontalAlignment.RIGHT);
+            totalStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            setBorders(totalStyle, BorderStyle.MEDIUM);
+            XSSFFont tf = wb.createFont(); tf.setBold(true); tf.setFontHeightInPoints((short) 10);
+            tf.setColor(new XSSFColor(C_WHITE, null)); totalStyle.setFont(tf);
+        }
+
+        XSSFCellStyle number(XSSFWorkbook wb, CellStyle base) {
+            XSSFCellStyle s = wb.createCellStyle();
+            s.cloneStyleFrom(base);
+            s.setAlignment(HorizontalAlignment.RIGHT);
+            s.setDataFormat(dataFormat.getFormat("#,##0.00"));
+            return s;
+        }
+
+        XSSFCellStyle totalNum(XSSFWorkbook wb) {
+            XSSFCellStyle s = wb.createCellStyle();
+            s.cloneStyleFrom(totalStyle);
+            s.setDataFormat(dataFormat.getFormat("#,##0.00"));
+            return s;
+        }
+
+        XSSFCellStyle status(XSSFWorkbook wb, Status status) {
+            XSSFCellStyle s = wb.createCellStyle();
+            s.cloneStyleFrom(plain);
+            XSSFFont f = wb.createFont(); f.setBold(true); f.setFontHeightInPoints((short) 9);
+            if (status == null) {
+                s.setFillForegroundColor(new XSSFColor(C_ALT, null));
+            } else {
+                switch (status) {
+                    case APPROVED -> { s.setFillForegroundColor(new XSSFColor(C_GRN_BG, null)); f.setColor(new XSSFColor(C_GRN_FG, null)); }
+                    case PENDING  -> { s.setFillForegroundColor(new XSSFColor(C_YEL_BG, null)); f.setColor(new XSSFColor(C_YEL_FG, null)); }
+                    default       -> { s.setFillForegroundColor(new XSSFColor(C_RED_BG, null)); f.setColor(new XSSFColor(C_RED_FG, null)); }
+                }
+            }
+            s.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            s.setFont(f);
+            return s;
+        }
+    }
+
+    // ================================================================
+    // UTILITIES
+    // ================================================================
+
+    private void setBorders(CellStyle s, BorderStyle bs) {
+        s.setBorderTop(bs); s.setBorderBottom(bs);
+        s.setBorderLeft(bs); s.setBorderRight(bs);
+    }
+
+    private String fmt(BigDecimal v) { return v != null ? String.format("%,.2f", v) : "0.00"; }
+
+    private String dateRangeLabel(IncomeReportDTO r) {
+        String from = r.getDateFrom() != null ? r.getDateFrom().format(DATE_FMT) : "Beginning";
+        String to   = r.getDateTo()   != null ? r.getDateTo().format(DATE_FMT)   : "Today";
+        return "Period: " + from + " → " + to + "   |   Status: " + r.getStatusFilter();
+    }
+
+    private static byte[] hex(String h) {
+        byte[] b = new byte[h.length() / 2];
+        for (int i = 0; i < b.length; i++)
+            b[i] = (byte) ((Character.digit(h.charAt(i * 2), 16) << 4)
+                          + Character.digit(h.charAt(i * 2 + 1), 16));
+        return b;
+    }
+}
