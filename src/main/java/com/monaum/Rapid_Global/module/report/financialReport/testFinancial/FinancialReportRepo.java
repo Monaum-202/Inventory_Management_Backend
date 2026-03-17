@@ -4,7 +4,6 @@ import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.module.expenses.expense.Expense;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
 import com.monaum.Rapid_Global.module.incomes.income.Income;
-import com.monaum.Rapid_Global.module.report.financialReport.FinancialTrendDto;
 import com.monaum.Rapid_Global.module.report.financialReport.incomeReport.IncomeReportRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
