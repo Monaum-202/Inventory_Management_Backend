@@ -21,24 +21,18 @@ import java.util.Optional;
 public interface IncomeRepo extends JpaRepository<Income, Long> {
 
     @Query("""
-    SELECT i FROM Income i
-    WHERE 
-        LOWER(COALESCE(i.incomeId, '')) LIKE LOWER(CONCAT('%', :search, '%'))
-        OR LOWER(COALESCE(i.paidFrom, '')) LIKE LOWER(CONCAT('%', :search, '%'))
-""")
+                SELECT i FROM Income i
+                WHERE 
+                    LOWER(COALESCE(i.incomeId, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(COALESCE(i.paidFrom, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+            """)
     Page<Income> search(@Param("search") String search, Pageable pageable);
 
-    @Query(value = "SELECT income_id FROM income " +
-            "WHERE income_id LIKE CONCAT('INC', SUBSTRING(YEAR(CURDATE()),3,2), '%') " +
-            "ORDER BY CAST(SUBSTRING(income_id, 7) AS UNSIGNED) DESC " +
-            "LIMIT 1 FOR UPDATE",
-            nativeQuery = true)
+    @Query(value = "SELECT income_id FROM income " + "WHERE income_id LIKE CONCAT('INC', SUBSTRING(YEAR(CURDATE()),3,2), '%') " + "ORDER BY CAST(SUBSTRING(income_id, 7) AS UNSIGNED) DESC " + "LIMIT 1 FOR UPDATE", nativeQuery = true)
     String findLastIncomeIdForUpdate();
 
     @Query("SELECT SUM(i.amount) FROM Income i WHERE i.paidFromId = :customerId")
     Double getTotalTransaction(Long customerId);
-
-
 
 
     // ============================================
@@ -48,13 +42,8 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     /**
      * Calculate total income amount for a date range with specific status
      */
-    @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i " +
-            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
-            "AND i.status = :status")
-    Optional<BigDecimal> sumAmountByDateRangeAndStatus(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("status") Status status);
+    @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i " + "WHERE i.incomeDate BETWEEN :startDate AND :endDate " + "AND i.status = :status")
+    Optional<BigDecimal> sumAmountByDateRangeAndStatus(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Status status);
 
 
     // ============================================
@@ -64,54 +53,20 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
     /**
      * Get income breakdown by category
      */
-    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown(" +
-            "COALESCE(tc.name, 'Uncategorized'), " +
-            "COALESCE(SUM(i.amount), 0.0), " +
-            "COUNT(i.id), " +
-            "CAST(0.0 AS java.math.BigDecimal)) " +
-            "FROM Income i " +
-            "LEFT JOIN i.incomeCategory tc " +
-            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
-            "AND i.status = :status " +
-            "GROUP BY tc.name")
-    List<CategoryBreakdown> findCategoryBreakdown(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("status") Status status);
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.CategoryBreakdown(" + "COALESCE(tc.name, 'Uncategorized'), " + "COALESCE(SUM(i.amount), 0.0), " + "COUNT(i.id), " + "CAST(0.0 AS java.math.BigDecimal)) " + "FROM Income i " + "LEFT JOIN i.incomeCategory tc " + "WHERE i.incomeDate BETWEEN :startDate AND :endDate " + "AND i.status = :status " + "GROUP BY tc.name")
+    List<CategoryBreakdown> findCategoryBreakdown(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Status status);
 
     /**
      * Get income breakdown by payment method
      */
-    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown(" +
-            "COALESCE(pm.name, 'Unknown'), " +
-            "COALESCE(SUM(i.amount), 0.0), " +
-            "COUNT(i.id)) " +
-            "FROM Income i " +
-            "LEFT JOIN i.paymentMethod pm " +
-            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
-            "AND i.status = :status " +
-            "GROUP BY pm.name")
-    List<PaymentMethodBreakdown> findPaymentMethodBreakdown(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("status") Status status);
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.PaymentMethodBreakdown(" + "COALESCE(pm.name, 'Unknown'), " + "COALESCE(SUM(i.amount), 0.0), " + "COUNT(i.id)) " + "FROM Income i " + "LEFT JOIN i.paymentMethod pm " + "WHERE i.incomeDate BETWEEN :startDate AND :endDate " + "AND i.status = :status " + "GROUP BY pm.name")
+    List<PaymentMethodBreakdown> findPaymentMethodBreakdown(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Status status);
 
     /**
      * Get daily trend data
      */
-    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint(" +
-            "i.incomeDate, " +
-            "COALESCE(SUM(i.amount), 0.0), " +
-            "COUNT(i.id)) " +
-            "FROM Income i " +
-            "WHERE i.incomeDate BETWEEN :startDate AND :endDate " +
-            "AND i.status = :status " +
-            "GROUP BY i.incomeDate " +
-            "ORDER BY i.incomeDate")
-    List<TrendPoint> findDailyTrend(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("status") Status status);
+    @Query("SELECT new com.monaum.Rapid_Global.module.dashboard.dto.TrendPoint(" + "i.incomeDate, " + "COALESCE(SUM(i.amount), 0.0), " + "COUNT(i.id)) " + "FROM Income i " + "WHERE i.incomeDate BETWEEN :startDate AND :endDate " + "AND i.status = :status " + "GROUP BY i.incomeDate " + "ORDER BY i.incomeDate")
+    List<TrendPoint> findDailyTrend(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("status") Status status);
 
     // ----------------------------------------------------------------
     // 1. Full list with associations — used by Excel / PDF export
@@ -133,13 +88,7 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
                                             LIKE LOWER(CONCAT('%', :categoryName, '%')))
             ORDER BY i.incomeDate DESC, i.id DESC
             """)
-    List<Income> fetchIncomesForReport(
-            @Param("dateFrom")     LocalDate dateFrom,
-            @Param("dateTo")       LocalDate dateTo,
-            @Param("status")       Status    status,
-            @Param("paidFrom")     String    paidFrom,
-            @Param("categoryName") String    categoryName
-    );
+    List<Income> fetchIncomesForReport(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("status") Status status, @Param("paidFrom") String paidFrom, @Param("categoryName") String categoryName);
 
     // ----------------------------------------------------------------
     // 2. Paginated query — no fetch joins (avoids HHH-90003004)
@@ -157,8 +106,7 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
                                             LIKE LOWER(CONCAT('%', :paidFrom, '%')))
               AND (:categoryName  IS NULL OR LOWER(COALESCE(cat.name,''))
                                             LIKE LOWER(CONCAT('%', :categoryName, '%')))
-            """,
-            countQuery = """
+            """, countQuery = """
             SELECT COUNT(i) FROM Income i
             LEFT JOIN i.incomeCategory cat
             WHERE (:dateFrom      IS NULL OR i.incomeDate                    >= :dateFrom)
@@ -171,14 +119,7 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
               AND (:categoryName  IS NULL OR LOWER(COALESCE(cat.name,''))
                                             LIKE LOWER(CONCAT('%', :categoryName, '%')))
             """)
-    Page<Income> fetchIncomesPage(
-            @Param("dateFrom")     LocalDate dateFrom,
-            @Param("dateTo")       LocalDate dateTo,
-            @Param("status")       Status    status,
-            @Param("paidFrom")     String    paidFrom,
-            @Param("categoryName") String    categoryName,
-            Pageable pageable
-    );
+    Page<Income> fetchIncomesPage(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("status") Status status, @Param("paidFrom") String paidFrom, @Param("categoryName") String categoryName, Pageable pageable);
 
     // ----------------------------------------------------------------
     // 3. Enrich a page of IDs with their associations
@@ -215,13 +156,33 @@ public interface IncomeRepo extends JpaRepository<Income, Long> {
                                             LIKE LOWER(CONCAT('%', :categoryName, '%')))
             GROUP BY i.status
             """)
-    List<Object[]> sumAmountByStatus(
-            @Param("dateFrom")     LocalDate dateFrom,
-            @Param("dateTo")       LocalDate dateTo,
-            @Param("status")       Status    status,
-            @Param("paidFrom")     String    paidFrom,
-            @Param("categoryName") String    categoryName
-    );
+    List<Object[]> sumAmountByStatus(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("status") Status status, @Param("paidFrom") String paidFrom, @Param("categoryName") String categoryName);
+
+    // P&L — income grouped by category (APPROVED only)
+    @Query("""
+            SELECT COALESCE(i.incomeCategory.name, 'Uncategorised'),
+                   COALESCE(SUM(i.amount), 0)
+            FROM Income i
+            WHERE i.status = com.monaum.Rapid_Global.enums.Status.APPROVED
+              AND (:dateFrom IS NULL OR i.incomeDate >= :dateFrom)
+              AND (:dateTo   IS NULL OR i.incomeDate <= :dateTo)
+            GROUP BY i.incomeCategory.name
+            ORDER BY SUM(i.amount) DESC
+            """)
+    List<Object[]> sumIncomeByCategoryForPL(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    // P&L — monthly income totals (APPROVED only)
+    @Query("""
+            SELECT YEAR(i.incomeDate), MONTH(i.incomeDate),
+                   COALESCE(SUM(i.amount), 0)
+            FROM Income i
+            WHERE i.status = com.monaum.Rapid_Global.enums.Status.APPROVED
+              AND (:dateFrom IS NULL OR i.incomeDate >= :dateFrom)
+              AND (:dateTo   IS NULL OR i.incomeDate <= :dateTo)
+            GROUP BY YEAR(i.incomeDate), MONTH(i.incomeDate)
+            ORDER BY YEAR(i.incomeDate), MONTH(i.incomeDate)
+            """)
+    List<Object[]> monthlyIncomeSumsForPL(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
 }
 
