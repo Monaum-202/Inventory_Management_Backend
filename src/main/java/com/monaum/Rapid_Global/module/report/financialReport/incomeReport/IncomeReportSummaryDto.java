@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.incomeReport;
+package com.monaum.Rapid_Global.module.report.financialReport.incomeReport;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.incomeReport.newReport;
+package com.monaum.Rapid_Global.module.report.financialReport.incomeReport.newReport;
 
 import com.monaum.Rapid_Global.enums.Status;
 import jakarta.servlet.http.HttpServletResponse;
