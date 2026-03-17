@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN"
+        "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ProfitLoss_Report"
+              pageWidth="595" pageHeight="842"
+              orientation="Portrait"
+              columnWidth="555" leftMargin="20" rightMargin="20"
+              topMargin="15" bottomMargin="15">
+
+    <!-- ==================== PARAMETERS ==================== -->
+    <parameter name="dateFrom"     class="java.lang.String"/>
+    <parameter name="dateTo"       class="java.lang.String"/>
+    <parameter name="generatedAt"  class="java.lang.String"/>
+    <parameter name="totalIncome"  class="java.lang.Double"/>
+    <parameter name="totalExpense" class="java.lang.Double"/>
+    <parameter name="netProfit"    class="java.lang.Double"/>
+    <parameter name="netLabel"     class="java.lang.String"/>
+    <parameter name="netMarginPct" class="java.lang.Double"/>
+    <parameter name="isProfit"     class="java.lang.Boolean"/>
+
+    <!-- ==================== FIELDS (ProfitLossLineItemDTO) ==================== -->
+    <field name="lineType"   class="java.lang.String"/>
+    <field name="label"      class="java.lang.String"/>
+    <field name="amount"     class="java.math.BigDecimal"/>
+    <field name="percentage" class="java.math.BigDecimal"/>
+    <field name="positive"   class="java.lang.Boolean"/>
+
+    <!-- ==================== PAGE HEADER ==================== -->
+    <pageHeader>
+        <band height="118" splitType="Stretch">
+
+            <!-- Navy top bar -->
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="42" backcolor="#1F3864" mode="Opaque"/>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+
+            <!-- Company -->
+            <staticText>
+                <reportElement x="8" y="4" width="300" height="34" forecolor="#FFFFFF"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="20" isBold="true" fontName="SansSerif"/>
+                </textElement>
+                <text><![CDATA[RAPID GLOBAL]]></text>
+            </staticText>
+
+            <!-- P&L badge -->
+            <rectangle>
+                <reportElement x="350" y="6" width="197" height="30" backcolor="#FFFFFF" mode="Opaque"/>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="350" y="6" width="197" height="30" forecolor="#1F3864"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="13" isBold="true" fontName="SansSerif"/>
+                </textElement>
+                <text><![CDATA[PROFIT & LOSS STATEMENT]]></text>
+            </staticText>
+
+            <!-- Divider -->
+            <line>
+                <reportElement x="0" y="45" width="555" height="1"/>
+                <graphicElement><pen lineWidth="2.0" lineColor="#1F3864"/></graphicElement>
+            </line>
+
+            <!-- Period row -->
+            <staticText>
+                <reportElement x="0" y="52" width="60" height="16"/>
+                <textElement verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+                <text><![CDATA[Period:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="60" y="52" width="90" height="16"/>
+                <textElement verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$P{dateFrom}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="150" y="52" width="20" height="16"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="9"/></textElement>
+                <text><![CDATA[→]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="170" y="52" width="90" height="16"/>
+                <textElement verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$P{dateTo}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="320" y="52" width="70" height="16"/>
+                <textElement verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+                <text><![CDATA[Generated:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="390" y="52" width="165" height="16"/>
+                <textElement verticalAlignment="Middle"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{generatedAt}]]></textFieldExpression>
+            </textField>
+
+            <!-- Address -->
+            <staticText>
+                <reportElement x="0" y="74" width="555" height="10"/>
+                <textElement textAlignment="Center"><font size="7" isBold="true"/></textElement>
+                <text><![CDATA[683, West Shewrapara Busstand, Begum Rokeya Sharani, Mirpur, Dhaka-1216  |  ☎ +8801718343943]]></text>
+            </staticText>
+
+            <!-- Divider -->
+            <line>
+                <reportElement x="0" y="90" width="555" height="1"/>
+                <graphicElement><pen lineWidth="1.5" lineColor="#1F3864"/></graphicElement>
+            </line>
+
+            <!-- Column headers -->
+            <rectangle>
+                <reportElement x="0" y="94" width="555" height="22" backcolor="#344F6E" mode="Opaque"/>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="10"  y="94" width="350" height="22" forecolor="#FFFFFF"/>
+                <textElement verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+                <text><![CDATA[DESCRIPTION]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="360" y="94" width="120" height="22" forecolor="#FFFFFF"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+                <text><![CDATA[AMOUNT (BDT)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="488" y="94" width="65" height="22" forecolor="#FFFFFF"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font isBold="true" size="9"/></textElement>
+                <text><![CDATA[% SHARE]]></text>
+            </staticText>
+
+        </band>
+    </pageHeader>
+
+    <!-- ==================== DETAIL ==================== -->
+    <detail>
+        <band height="22" splitType="Prevent">
+
+            <!-- ── SECTION_HEADER row ───────────────────────────────── -->
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#344F6E" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SECTION_HEADER")]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="10" y="0" width="545" height="22" forecolor="#FFFFFF">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SECTION_HEADER")]]></printWhenExpression>
+                </reportElement>
+                <textElement verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+            </textField>
+
+            <!-- ── CATEGORY row ─────────────────────────────────────── -->
+            <!-- Zebra on even CATEGORY rows -->
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#F2F2F2" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY") && $V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <textField textAdjust="StretchHeight">
+                <reportElement x="20" y="0" width="335" height="22">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY")]]></printWhenExpression>
+                </reportElement>
+                <textElement verticalAlignment="Middle"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+            </textField>
+            <!-- Amount — green if positive, red if not -->
+            <textField pattern="#,##0.00">
+                <reportElement x="360" y="0" width="120" height="22" forecolor="#375623">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00">
+                <reportElement x="360" y="0" width="120" height="22" forecolor="#9C0006">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="9" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="488" y="0" width="65" height="22">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY") && $F{percentage} != null]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$F{percentage} + "%"]]></textFieldExpression>
+            </textField>
+
+            <!-- ── SUBTOTAL row ──────────────────────────────────────── -->
+            <!-- Subtotal green bg -->
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#C6EFCE" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SUBTOTAL") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="1.5" lineColor="#375623"/></graphicElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#FFC7CE" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SUBTOTAL") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="1.5" lineColor="#9C0006"/></graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="10" y="0" width="345" height="22">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SUBTOTAL")]]></printWhenExpression>
+                </reportElement>
+                <textElement verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00">
+                <reportElement x="355" y="0" width="130" height="22" forecolor="#375623">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SUBTOTAL") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00">
+                <reportElement x="355" y="0" width="130" height="22" forecolor="#9C0006">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("SUBTOTAL") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+
+            <!-- ── NET row ───────────────────────────────────────────── -->
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#C6EFCE" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="2.0" lineColor="#375623"/></graphicElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="22" backcolor="#FFC7CE" mode="Opaque">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="2.0" lineColor="#9C0006"/></graphicElement>
+            </rectangle>
+            <textField>
+                <reportElement x="10" y="0" width="345" height="22" forecolor="#375623">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <textElement verticalAlignment="Middle"><font size="12" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="10" y="0" width="345" height="22" forecolor="#9C0006">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <textElement verticalAlignment="Middle"><font size="12" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00">
+                <reportElement x="355" y="0" width="130" height="22" forecolor="#375623">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="12" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00">
+                <reportElement x="355" y="0" width="130" height="22" forecolor="#9C0006">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("NET") && !Boolean.TRUE.equals($F{positive})]]></printWhenExpression>
+                </reportElement>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle"><font size="12" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+            </textField>
+
+            <!-- Row divider (only for CATEGORY rows) -->
+            <line>
+                <reportElement x="0" y="21" width="555" height="1">
+                    <printWhenExpression><![CDATA[$F{lineType}.equals("CATEGORY")]]></printWhenExpression>
+                </reportElement>
+                <graphicElement><pen lineWidth="0.3" lineColor="#DDDDDD"/></graphicElement>
+            </line>
+
+        </band>
+    </detail>
+
+    <!-- ==================== PAGE FOOTER ==================== -->
+    <pageFooter>
+        <band height="16">
+            <textField>
+                <reportElement x="0" y="2" width="555" height="12"/>
+                <textElement textAlignment="Right"><font size="7" isItalic="true"/></textElement>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <!-- ==================== SUMMARY ==================== -->
+    <summary>
+        <band height="50" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="5" width="555" height="1"/>
+                <graphicElement><pen lineWidth="1.5" lineColor="#1F3864"/></graphicElement>
+            </line>
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="10"/>
+                <textElement textAlignment="Center">
+                    <font size="7" isBold="true" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[* Figures include APPROVED transactions only.   RAPID GLOBAL  |  rapidglobal1971@gmail.com  |  +8801718343943]]></text>
+            </staticText>
+
+            <!-- Net margin note -->
+            <textField>
+                <reportElement x="0" y="25" width="555" height="20"/>
+                <textElement textAlignment="Center"><font size="9" isBold="true"/></textElement>
+                <textFieldExpression>
+                    <![CDATA["Net Margin: " + String.format("%.2f", $P{netMarginPct}) + "%  (" + $P{netLabel} + ")"]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+
+</jasperReport>
