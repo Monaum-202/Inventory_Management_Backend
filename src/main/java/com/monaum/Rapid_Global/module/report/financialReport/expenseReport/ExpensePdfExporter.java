@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.expenseReport;
+package com.monaum.Rapid_Global.module.report.financialReport.expenseReport;
 
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.*;

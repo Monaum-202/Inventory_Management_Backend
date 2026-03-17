@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.expenseReport;
+package com.monaum.Rapid_Global.module.report.financialReport.expenseReport;
 
 import com.monaum.Rapid_Global.enums.Status;
 import lombok.AllArgsConstructor;
