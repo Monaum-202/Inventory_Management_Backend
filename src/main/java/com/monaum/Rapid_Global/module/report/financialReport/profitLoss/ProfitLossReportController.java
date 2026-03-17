@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.profitLoss;
+package com.monaum.Rapid_Global.module.report.financialReport.profitLoss;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

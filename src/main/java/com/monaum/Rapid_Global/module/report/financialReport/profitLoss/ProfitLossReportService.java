@@ -1,4 +1,4 @@
-package com.monaum.Rapid_Global.module.report.profitLoss;
+package com.monaum.Rapid_Global.module.report.financialReport.profitLoss;
 
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
 import com.monaum.Rapid_Global.module.incomes.income.IncomeRepo;
