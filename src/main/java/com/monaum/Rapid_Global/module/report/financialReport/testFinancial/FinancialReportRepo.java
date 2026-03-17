@@ -1,10 +1,11 @@
-package com.monaum.Rapid_Global.module.report.financialReport;
+package com.monaum.Rapid_Global.module.report.financialReport.testFinancial;
 
 import com.monaum.Rapid_Global.enums.Status;
 import com.monaum.Rapid_Global.module.expenses.expense.Expense;
 import com.monaum.Rapid_Global.module.expenses.expense.ExpenseRepo;
 import com.monaum.Rapid_Global.module.incomes.income.Income;
-import com.monaum.Rapid_Global.module.report.incomeReport.IncomeReportRepo;
+import com.monaum.Rapid_Global.module.report.financialReport.FinancialTrendDto;
+import com.monaum.Rapid_Global.module.report.financialReport.incomeReport.IncomeReportRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
